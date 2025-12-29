@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Madrasah Attendance Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#11d452",
+                        "primary-dark": "#0ea640",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a3324",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .islamic-pattern {
+            background-image: radial-gradient(rgba(17, 212, 82, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .dark .islamic-pattern {
+            background-image: radial-gradient(rgba(17, 212, 82, 0.05) 1px, transparent 1px);
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-50 transition-colors duration-300">
+    <div
+        class="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark pb-24">
+        <!-- Header Section -->
+        <header class="relative bg-surface-light dark:bg-surface-dark rounded-b-3xl shadow-sm z-10 overflow-hidden">
+            <!-- Decorative Pattern Background -->
+            <div class="absolute inset-0 islamic-pattern opacity-50 pointer-events-none"></div>
+            <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+            <div class="relative p-6 pb-8">
+                <!-- Top Bar -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <div class="bg-center bg-no-repeat bg-cover rounded-full size-12 ring-2 ring-primary/20"
+                                data-alt="Profile picture of Ustadz Ahmed"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBgmdLj49e6WgYKM8cOdO76fjgPKgIrcL1oHwTwdVXM2GWlZSqXxvudRK7At3NqUCSawkE_5ch97DMmaxzdKELQqnB3kFeFZQLy398Yu9yV1rqIqHRJySUr7aWJ_6Q305t20OjXmne1aHFhUViXZQQMeBIvuJlnHQIvZ1MtNqaVQEiwdsbW2XD4LrZ_0PSE6SsRwinVgVuyzY-g4b3EUt_LaTtzwo2Daqx0gLYiXbyUzU9MOor7haURlGv0EwzIzU1oW4EcJuPeZGk");'>
+                            </div>
+                            <div
+                                class="absolute bottom-0 right-0 size-3 bg-primary border-2 border-white dark:border-surface-dark rounded-full">
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Selamat Datang</span>
+                            <h2 class="text-slate-900 dark:text-white text-sm font-bold leading-tight">Ustadz Ahmed</h2>
+                        </div>
+                    </div>
+                    <button
+                        class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-300 relative">
+                        <span class="material-symbols-outlined text-[24px]">notifications</span>
+                        <span
+                            class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-white dark:border-surface-dark"></span>
+                    </button>
+                </div>
+                <!-- Headline & Date -->
+                <div class="mb-2">
+                    <h3 class="text-slate-900 dark:text-white tracking-tight text-2xl font-bold leading-tight mb-2">
+                        Assalamualaikum,</h3>
+                    <p class="text-primary font-medium text-sm flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                        Senin, 14 Okt | 29 Rabiul Awal
+                    </p>
+                </div>
+            </div>
+        </header>
+        <!-- Stats Overview -->
+        <div class="px-5 -mt-6 relative z-20">
+            <div class="grid grid-cols-2 gap-3">
+                <!-- Hadir -->
+                <div
+                    class="flex flex-col gap-1 rounded-2xl p-4 bg-white dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-white/5">
+                    <div class="flex justify-between items-start">
+                        <div class="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-green-600 dark:text-green-400">
+                            <span class="material-symbols-outlined text-[24px]">check_circle</span>
+                        </div>
+                        <span
+                            class="text-xs font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">+95%</span>
+                    </div>
+                    <div class="mt-2">
+                        <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Hadir</p>
+                        <p class="text-slate-900 dark:text-white text-2xl font-bold">320</p>
+                    </div>
+                </div>
+                <!-- Sakit -->
+                <div
+                    class="flex flex-col gap-1 rounded-2xl p-4 bg-white dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-white/5">
+                    <div class="flex justify-between items-start">
+                        <div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
+                            <span class="material-symbols-outlined text-[24px]">sick</span>
+                        </div>
+                        <span
+                            class="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-full">+1%</span>
+                    </div>
+                    <div class="mt-2">
+                        <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Sakit</p>
+                        <p class="text-slate-900 dark:text-white text-2xl font-bold">5</p>
+                    </div>
+                </div>
+                <!-- Izin -->
+                <div
+                    class="flex flex-col gap-1 rounded-2xl p-4 bg-white dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-white/5">
+                    <div class="flex justify-between items-start">
+                        <div
+                            class="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg text-yellow-600 dark:text-yellow-400">
+                            <span class="material-symbols-outlined text-[24px]">mail</span>
+                        </div>
+                        <span
+                            class="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-full">+2%</span>
+                    </div>
+                    <div class="mt-2">
+                        <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Izin</p>
+                        <p class="text-slate-900 dark:text-white text-2xl font-bold">10</p>
+                    </div>
+                </div>
+                <!-- Alpha -->
+                <div
+                    class="flex flex-col gap-1 rounded-2xl p-4 bg-white dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-white/5">
+                    <div class="flex justify-between items-start">
+                        <div class="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg text-red-600 dark:text-red-400">
+                            <span class="material-symbols-outlined text-[24px]">close</span>
+                        </div>
+                        <span
+                            class="text-xs font-bold text-red-600 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-full">+2%</span>
+                    </div>
+                    <div class="mt-2">
+                        <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Alpha</p>
+                        <p class="text-slate-900 dark:text-white text-2xl font-bold">15</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Action Card -->
+        <div class="p-5">
+            <div
+                class="flex flex-col overflow-hidden rounded-2xl shadow-sm bg-surface-light dark:bg-surface-dark border border-slate-100 dark:border-white/5">
+                <div class="relative h-32 w-full overflow-hidden">
+                    <div class="absolute inset-0 bg-cover bg-center"
+                        data-alt="Abstract islamic geometric pattern header for card"
+                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCP1uTDTLdkV6cnmkQ8gvQQGrrGQumhzFllVq5u0R0pFO_BkAuj5wZ1XYm-2g-M8aO5FhvtHc3l64SjGYNB8iPNt2SncGpGpk_zZtjA8EfcPbn4dsu9WkqMnrdKAc2uSRihgLKFSUviWapJqh_z9VRhGO6X9Wd6F1YW5ZngC2KOPcYkZT4EMIi264JmvWGnHN68ft6HYwJ9ynSmSXnFY7bEV6MJVWcFPTHSQWpmKMXN22k9RRcZQxR_SxPK-xwvgXGChUd6EjRq5VI");'>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div class="absolute bottom-4 left-4 text-white">
+                        <h3 class="text-lg font-bold">Catat Kehadiran</h3>
+                        <p class="text-xs text-white/80">Scan QR Code siswa atau mulai sesi manual.</p>
+                    </div>
+                </div>
+                <div class="p-4 flex gap-3">
+                    <button
+                        class="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl bg-primary hover:bg-primary-dark text-slate-900 font-bold text-sm transition-all shadow-lg shadow-primary/20">
+                        <span class="material-symbols-outlined text-[20px]">qr_code_scanner</span>
+                        Scan QR
+                    </button>
+                    <button
+                        class="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-900 dark:text-white font-semibold text-sm transition-all">
+                        <span class="material-symbols-outlined text-[20px]">edit_note</span>
+                        Manual
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Class Schedule -->
+        <div class="px-5 pb-2">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-slate-900 dark:text-white text-lg font-bold">Jadwal Hari Ini</h3>
+                <a class="text-primary text-sm font-semibold hover:underline" href="#">Lihat Semua</a>
+            </div>
+            <div class="flex flex-col gap-3">
+                <!-- Class Card 1 -->
+                <div
+                    class="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-100 dark:border-white/5 shadow-sm hover:shadow-md transition-shadow">
+                    <div
+                        class="flex flex-col items-center justify-center min-w-[3.5rem] h-[3.5rem] rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30">
+                        <span class="text-xs font-bold">08:00</span>
+                        <span class="text-[10px] font-medium opacity-80">WIB</span>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-slate-900 dark:text-white font-bold text-base">Kelas 7A - Fiqih</h4>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                                <span class="material-symbols-outlined text-[14px]">group</span>
+                                32 Siswa
+                            </span>
+                            <span class="size-1 bg-slate-300 rounded-full"></span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">R. Imam Ghazali</span>
+                        </div>
+                    </div>
+                    <div
+                        class="flex items-center justify-center size-8 rounded-full bg-slate-50 dark:bg-white/5 text-slate-400">
+                        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+                    </div>
+                </div>
+                <!-- Class Card 2 -->
+                <div
+                    class="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-100 dark:border-white/5 shadow-sm hover:shadow-md transition-shadow">
+                    <div
+                        class="flex flex-col items-center justify-center min-w-[3.5rem] h-[3.5rem] rounded-xl bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-white/10">
+                        <span class="text-xs font-bold">10:00</span>
+                        <span class="text-[10px] font-medium opacity-80">WIB</span>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-slate-900 dark:text-white font-bold text-base">Kelas 11B - Tahfidz</h4>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                                <span class="material-symbols-outlined text-[14px]">group</span>
+                                28 Siswa
+                            </span>
+                            <span class="size-1 bg-slate-300 rounded-full"></span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">Masjid Lt. 2</span>
+                        </div>
+                    </div>
+                    <div
+                        class="flex items-center justify-center size-8 rounded-full bg-slate-50 dark:bg-white/5 text-slate-400">
+                        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Recent Activity / Empty State Placeholder -->
+        <div class="p-5">
+            <h3 class="text-slate-900 dark:text-white text-lg font-bold mb-4">Aktivitas Terbaru</h3>
+            <div class="flex flex-col gap-0 border-l-2 border-slate-200 dark:border-slate-700 ml-2 pl-6 py-1 relative">
+                <!-- Timeline Item 1 -->
+                <div class="mb-6 relative">
+                    <div
+                        class="absolute -left-[31px] top-1 size-3 rounded-full bg-primary ring-4 ring-white dark:ring-background-dark">
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">07:45 WIB</p>
+                    <p class="text-sm text-slate-800 dark:text-slate-200"><span class="font-bold">Ahmad Faisal</span>
+                        (7A) telah melakukan absensi.</p>
+                </div>
+                <!-- Timeline Item 2 -->
+                <div class="mb-6 relative">
+                    <div
+                        class="absolute -left-[31px] top-1 size-3 rounded-full bg-slate-300 dark:bg-slate-600 ring-4 ring-white dark:ring-background-dark">
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">07:42 WIB</p>
+                    <p class="text-sm text-slate-800 dark:text-slate-200"><span class="font-bold">Siti Aminah</span>
+                        (7A) mengirim surat sakit.</p>
+                </div>
+                <!-- Timeline Item 3 -->
+                <div class="relative">
+                    <div
+                        class="absolute -left-[31px] top-1 size-3 rounded-full bg-primary ring-4 ring-white dark:ring-background-dark">
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">07:40 WIB</p>
+                    <p class="text-sm text-slate-800 dark:text-slate-200"><span class="font-bold">Rizky Ramadhan</span>
+                        (7A) telah melakukan absensi.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Bottom Navigation -->
+        <nav
+            class="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-surface-dark border-t border-slate-100 dark:border-white/5 pb-5 pt-3 px-6 shadow-[0_-4px_10px_rgba(0,0,0,0.03)] dark:shadow-none">
+            <div class="flex justify-between items-center">
+                <a class="flex flex-col items-center gap-1 text-primary" href="#">
+                    <span class="material-symbols-outlined text-[26px]">grid_view</span>
+                    <span class="text-[10px] font-medium">Dashboard</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary dark:text-slate-500 dark:hover:text-primary transition-colors"
+                    href="#">
+                    <span class="material-symbols-outlined text-[26px]">school</span>
+                    <span class="text-[10px] font-medium">Siswa</span>
+                </a>
+                <div class="relative -top-6">
+                    <button
+                        class="flex items-center justify-center size-14 rounded-full bg-primary text-slate-900 shadow-lg shadow-primary/40 border-4 border-white dark:border-background-dark transform transition-transform active:scale-95">
+                        <span class="material-symbols-outlined text-[28px]">add</span>
+                    </button>
+                </div>
+                <a href="{{ url_for('laporan') }}"
+                    class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary dark:text-slate-500 dark:hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-[26px]">assignment</span>
+                    <span class="text-[10px] font-medium">Laporan</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary dark:text-slate-500 dark:hover:text-primary transition-colors"
+                    href="#">
+                    <span class="material-symbols-outlined text-[26px]">person</span>
+                    <span class="text-[10px] font-medium">Profil</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+</body>
+
+</html>

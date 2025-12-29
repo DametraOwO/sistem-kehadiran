@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Login Portal Madrasah</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#11d432",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102213",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Custom scrollbar hide for cleaner UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col items-center justify-center">
+    <!-- Mobile Container -->
+    <div
+        class="relative flex h-full min-h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark">
+        <!-- Decorative Background Pattern -->
+        <div class="absolute top-0 left-0 w-full h-64 bg-primary/10 rounded-b-[3rem] -z-0 overflow-hidden">
+            <div class="absolute inset-0 opacity-20"
+                style="background-image: radial-gradient(#11d432 1px, transparent 1px); background-size: 20px 20px;">
+            </div>
+            <!-- Abstract Islamic Shape -->
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-primary/20 rounded-full blur-2xl"></div>
+            <div class="absolute -left-10 top-20 w-32 h-32 bg-primary/20 rounded-full blur-2xl"></div>
+        </div>
+        <!-- Top Bar -->
+        <div class="relative z-10 flex items-center justify-between p-6">
+            <a href="{{ url_for('index') }}"
+                class="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/60 dark:bg-black/20 backdrop-blur-md text-gray-800 dark:text-white hover:bg-white dark:hover:bg-black/40 transition-colors">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+        </div>
+        <!-- Content Area -->
+        <div class="relative z-10 flex-1 flex flex-col px-6 pt-2 pb-6 overflow-y-auto no-scrollbar">
+            <!-- Logo / Illustration -->
+            <div class="self-center mb-6 relative">
+                <div
+                    class="w-24 h-24 bg-white dark:bg-gray-800 rounded-2xl shadow-lg flex items-center justify-center overflow-hidden relative">
+                    <div class="absolute inset-0 bg-primary/5"></div>
+                    <div class="w-full h-full bg-center bg-contain bg-no-repeat scale-75"
+                        data-alt="Modern Islamic madrasah logo green geometric"
+                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAdksTq4LmzlKSebNJr-hvxJ6V5NUxem3e1SparimpiNw47Rmg9IpW8YBnFJJu6Nu2hVf0Q4nFr18ygW3EjXQtn7Knae2kbJ1eLJzHv3JJzWQvDcgLQMFP6giM5a8mru7mpnGRp7YRSY1_p8TITbQQKWhG2pFKQLVQfV9oXzBXnHGGX6DPn8h0Uzx5zLOE6TfkUoaaY9kN8gd4EBd9tqfDep32n1z7km_p8ZJ9MQFucBYsAj-wEqf5UmvUB0wyL2A3Qww2ybRT_2oQ");'>
+                    </div>
+                </div>
+            </div>
+            <!-- Headlines -->
+            <div class="text-center mb-8">
+                <h1 class="text-gray-900 dark:text-white tracking-tight text-[28px] font-bold leading-tight mb-2">
+                    Assalamualaikum</h1>
+                <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-relaxed px-4">
+                    Sistem Presensi Digital Madrasah Al-Hidayah.
+                </p>
+            </div>
+            <!-- Segmented Control (Tabs) -->
+            <div class="mb-8">
+                <div
+                    class="flex h-12 w-full items-center justify-center rounded-xl bg-gray-200/50 dark:bg-gray-800 p-1">
+                    <label
+                        class="group flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm transition-all duration-200">
+                        <input checked="" class="peer invisible w-0 absolute" name="auth-mode" type="radio"
+                            value="Masuk" />
+                        <span
+                            class="text-gray-500 dark:text-gray-400 group-has-[:checked]:text-primary font-semibold text-sm truncate transition-colors">Masuk</span>
+                    </label>
+                    <label
+                        class="group flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm transition-all duration-200">
+                        <input class="peer invisible w-0 absolute" name="auth-mode" type="radio" value="Daftar" />
+                        <span
+                            class="text-gray-500 dark:text-gray-400 group-has-[:checked]:text-primary font-semibold text-sm truncate transition-colors">Daftar</span>
+                    </label>
+                </div>
+            </div>
+            <!-- Login Form -->
+            <form class="flex flex-col gap-5">
+                <!-- Username Input -->
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">ID Pengguna atau Email</label>
+                    <div class="relative flex items-center">
+                        <span class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">badge</span>
+                        <input
+                            class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                            placeholder="alhidayah@madrasah.com" type="text" />
+                    </div>
+                </div>
+                <!-- Password Input -->
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Kata Sandi</label>
+                    <div class="relative flex items-center">
+                        <span class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock</span>
+                        <input id="password"
+                            class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                            placeholder="••••••••" type="password" />
+                        <button id="togglePassword"
+                            class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center"
+                            type="button">
+                            <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                        </button>
+                    </div>
+                    <div class="flex justify-end mt-1">
+                        <a class="text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+                            href="#">Lupa Kata Sandi?</a>
+                    </div>
+                </div>
+                <!-- Submit Button -->
+                <a href="{{ url_for('admin') }}"
+                    class="mt-2 w-full h-12 bg-primary hover:bg-green-600 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-primary/30 transition-all duration-200 flex items-center justify-center gap-2 group">
+                    <span>Masuk Sekarang</span>
+                    <span
+                        class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('span');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.textContent = 'visibility';
+            } else {
+                passwordInput.type = 'password';
+                icon.textContent = 'visibility_off';
+            }
+        });
+    </script>
+</body>
+
+</html>
