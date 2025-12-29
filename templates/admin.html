@@ -21,12 +21,12 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#11d452",
-                        "primary-dark": "#0ea640",
-                        "background-light": "#f6f8f6",
-                        "background-dark": "#102216",
+                        "primary": "#14b881",
+                        "primary-dark": "#0f8c61",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#11211c",
                         "surface-light": "#ffffff",
-                        "surface-dark": "#1a3324",
+                        "surface-dark": "#1a2c26",
                     },
                     fontFamily: {
                         "display": ["Lexend", "sans-serif"]
@@ -38,12 +38,12 @@
     </script>
     <style>
         .islamic-pattern {
-            background-image: radial-gradient(rgba(17, 212, 82, 0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-
-        .dark .islamic-pattern {
-            background-image: radial-gradient(rgba(17, 212, 82, 0.05) 1px, transparent 1px);
+            background-color: #14b881;
+            background-image:
+                radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.15) 15%, transparent 20%),
+                radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.1) 15%, transparent 20%),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.05) 75%, transparent 75%, transparent);
+            background-size: 100% 100%, 100% 100%, 40px 40px;
         }
     </style>
     <style>
@@ -57,47 +57,49 @@
     class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-50 transition-colors duration-300">
     <div
         class="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark pb-24">
-        <!-- Header Section -->
-        <header class="relative bg-surface-light dark:bg-surface-dark rounded-b-3xl shadow-sm z-10 overflow-hidden">
-            <!-- Decorative Pattern Background -->
-            <div class="absolute inset-0 islamic-pattern opacity-50 pointer-events-none"></div>
-            <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
-            <div class="relative p-6 pb-8">
-                <!-- Top Bar -->
+
+        <!-- Standard Green Header -->
+        <div class="relative w-full islamic-pattern rounded-b-3xl shadow-lg pt-12 pb-8 px-5 group/header z-10">
+            <!-- Pattern Overlay -->
+            <div class="absolute inset-0 islamic-pattern opacity-100 mix-blend-normal rounded-b-3xl"></div>
+
+            <div class="relative z-10">
+                <!-- Top Bar: Profile & Notif -->
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center gap-3">
                         <div class="relative">
-                            <div class="bg-center bg-no-repeat bg-cover rounded-full size-12 ring-2 ring-primary/20"
+                            <div class="bg-center bg-no-repeat bg-cover rounded-full size-12 ring-2 ring-white/30"
                                 data-alt="Profile picture of Ustadz Ahmed"
                                 style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBgmdLj49e6WgYKM8cOdO76fjgPKgIrcL1oHwTwdVXM2GWlZSqXxvudRK7At3NqUCSawkE_5ch97DMmaxzdKELQqnB3kFeFZQLy398Yu9yV1rqIqHRJySUr7aWJ_6Q305t20OjXmne1aHFhUViXZQQMeBIvuJlnHQIvZ1MtNqaVQEiwdsbW2XD4LrZ_0PSE6SsRwinVgVuyzY-g4b3EUt_LaTtzwo2Daqx0gLYiXbyUzU9MOor7haURlGv0EwzIzU1oW4EcJuPeZGk");'>
                             </div>
                             <div
-                                class="absolute bottom-0 right-0 size-3 bg-primary border-2 border-white dark:border-surface-dark rounded-full">
+                                class="absolute bottom-0 right-0 size-3 bg-green-400 border-2 border-primary rounded-full">
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Selamat Datang</span>
-                            <h2 class="text-slate-900 dark:text-white text-sm font-bold leading-tight">Ustadz Ahmed</h2>
+                            <span class="text-xs text-white/80 font-medium tracking-wide">Selamat Datang</span>
+                            <h2 class="text-white text-base font-bold leading-none">Ustadz Ahmed</h2>
                         </div>
                     </div>
                     <button
-                        class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-300 relative">
+                        class="flex items-center justify-center size-10 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md transition-colors text-white relative">
                         <span class="material-symbols-outlined text-[24px]">notifications</span>
                         <span
-                            class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-white dark:border-surface-dark"></span>
+                            class="absolute top-2.5 right-2.5 size-2 bg-red-400 rounded-full border border-white/20"></span>
                     </button>
                 </div>
+
                 <!-- Headline & Date -->
                 <div class="mb-2">
-                    <h3 class="text-slate-900 dark:text-white tracking-tight text-2xl font-bold leading-tight mb-2">
-                        Assalamualaikum,</h3>
-                    <p class="text-primary font-medium text-sm flex items-center gap-2">
+                    <h3 class="text-white tracking-tight text-3xl font-bold leading-tight mb-2">
+                        Assalamu'alaikum</h3>
+                    <p class="text-white/90 font-medium text-sm flex items-center gap-2" id="realtime-date">
                         <span class="material-symbols-outlined text-[18px]">calendar_month</span>
-                        Senin, 14 Okt | 29 Rabiul Awal
+                        --
                     </p>
                 </div>
             </div>
-        </header>
+        </div>
         <!-- Stats Overview -->
         <div class="px-5 -mt-6 relative z-20">
             <div class="grid grid-cols-2 gap-3">
@@ -163,6 +165,72 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Prayer Times (Jadwal Sholat) -->
+        <div class="px-5 pt-5">
+            <section
+                class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 shadow-soft border border-slate-100 dark:border-slate-800">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-slate-800 dark:text-white text-lg font-bold">Jadwal Sholat</h3>
+                    <span class="text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded-full">Bandung,
+                        ID</span>
+                </div>
+                <div class="flex items-center justify-between relative" id="prayer-times-container">
+                    <!-- Decorative Line -->
+                    <div class="absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 dark:bg-slate-700 -z-10"></div>
+
+                    <!-- Subuh -->
+                    <div id="subuh-card"
+                        class="flex flex-col items-center gap-1 group transition-transform duration-300">
+                        <div
+                            class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 mb-2 group-hover:bg-primary transition-colors indicator-dot">
+                        </div>
+                        <span class="text-xs text-slate-500 font-medium label">Subuh</span>
+                        <span id="subuh-time" class="text-xs text-slate-800 dark:text-white font-bold">--:--</span>
+                    </div>
+
+                    <!-- Dzuhur -->
+                    <div id="dzuhur-card"
+                        class="flex flex-col items-center gap-1 group transition-transform duration-300">
+                        <div
+                            class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 mb-2 group-hover:bg-primary transition-colors indicator-dot">
+                        </div>
+                        <span class="text-xs text-slate-500 font-medium label">Dzuhur</span>
+                        <span id="dzuhur-time" class="text-xs text-slate-800 dark:text-white font-bold">--:--</span>
+                    </div>
+
+                    <!-- Ashar -->
+                    <div id="ashar-card"
+                        class="flex flex-col items-center gap-1 group transition-transform duration-300">
+                        <div
+                            class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 mb-2 group-hover:bg-primary transition-colors indicator-dot">
+                        </div>
+                        <span class="text-xs text-slate-500 font-medium label">Ashar</span>
+                        <span id="ashar-time" class="text-xs text-slate-800 dark:text-white font-bold">--:--</span>
+                    </div>
+
+                    <!-- Maghrib -->
+                    <div id="maghrib-card"
+                        class="flex flex-col items-center gap-1 group transition-transform duration-300">
+                        <div
+                            class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 mb-2 group-hover:bg-primary transition-colors indicator-dot">
+                        </div>
+                        <span class="text-xs text-slate-500 font-medium label">Maghrib</span>
+                        <span id="maghrib-time" class="text-xs text-slate-800 dark:text-white font-bold">--:--</span>
+                    </div>
+
+                    <!-- Isya -->
+                    <div id="isya-card"
+                        class="flex flex-col items-center gap-1 group transition-transform duration-300">
+                        <div
+                            class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 mb-2 group-hover:bg-primary transition-colors indicator-dot">
+                        </div>
+                        <span class="text-xs text-slate-500 font-medium label">Isya</span>
+                        <span id="isya-time" class="text-xs text-slate-800 dark:text-white font-bold">--:--</span>
+                    </div>
+                </div>
+            </section>
         </div>
         <!-- Action Card -->
         <div class="p-5">
@@ -316,6 +384,7 @@
             </div>
         </nav>
     </div>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 </body>
 
 </html>

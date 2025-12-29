@@ -26,16 +26,21 @@ function updateDateUI(dateData) {
     const hijriElement = document.getElementById('hijri-date');
     if (hijriElement) hijriElement.textContent = hijriString;
 
-    // Format: 24 Januari 2024 (Using Gregorian from API or manual format)
-    // The API returns distinct parts properly.
-
+    // Format: Senin, 24 Januari 2024
     const monthMap = {
         "January": "Januari", "February": "Februari", "March": "Maret", "April": "April", "May": "Mei", "June": "Juni",
         "July": "Juli", "August": "Agustus", "September": "September", "October": "Oktober", "November": "November", "December": "Desember"
     };
 
+    const dayMap = {
+        "Sunday": "Ahad", "Monday": "Senin", "Tuesday": "Selasa", "Wednesday": "Rabu",
+        "Thursday": "Kamis", "Friday": "Jumat", "Saturday": "Sabtu"
+    };
+
     const indoMonth = monthMap[gregorian.month.en] || gregorian.month.en;
-    const masehiString = `${gregorian.day} ${indoMonth} ${gregorian.year}`;
+    const indoDay = dayMap[gregorian.weekday.en] || gregorian.weekday.en;
+
+    const masehiString = `${indoDay}, ${gregorian.day} ${indoMonth} ${gregorian.year}`;
     const gregorianElement = document.getElementById('gregorian-date');
     if (gregorianElement) gregorianElement.textContent = masehiString;
 }
@@ -115,3 +120,21 @@ function updatePrayerUI(timings) {
 
 // Fetch immediately
 fetchPrayerTimes();
+
+
+// Announcement Slider Logic
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('announcement-container');
+    const prevBtn = document.getElementById('prev-slide');
+    const nextBtn = document.getElementById('next-slide');
+
+    if (container && prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => {
+            container.scrollBy({ left: -300, behavior: 'smooth' });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            container.scrollBy({ left: 300, behavior: 'smooth' });
+        });
+    }
+});

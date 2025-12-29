@@ -26,9 +26,12 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#11d432",
-                        "background-light": "#f6f8f6",
-                        "background-dark": "#102213",
+                        "primary": "#14b881",
+                        "primary-dark": "#0f8c61",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#11211c",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2c26",
                     },
                     fontFamily: {
                         "display": ["Lexend", "sans-serif"]
@@ -48,6 +51,16 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        /* Standard Islamic Pattern */
+        .islamic-pattern {
+            background-color: #14b881;
+            background-image:
+                radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.15) 15%, transparent 20%),
+                radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.1) 15%, transparent 20%),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.05) 75%, transparent 75%, transparent);
+            background-size: 100% 100%, 100% 100%, 40px 40px;
+        }
     </style>
     <style>
         body {
@@ -62,13 +75,9 @@
     <div
         class="relative flex h-full min-h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark">
         <!-- Decorative Background Pattern -->
-        <div class="absolute top-0 left-0 w-full h-64 bg-primary/10 rounded-b-[3rem] -z-0 overflow-hidden">
-            <div class="absolute inset-0 opacity-20"
-                style="background-image: radial-gradient(#11d432 1px, transparent 1px); background-size: 20px 20px;">
-            </div>
-            <!-- Abstract Islamic Shape -->
-            <div class="absolute -right-10 -top-10 w-40 h-40 bg-primary/20 rounded-full blur-2xl"></div>
-            <div class="absolute -left-10 top-20 w-32 h-32 bg-primary/20 rounded-full blur-2xl"></div>
+        <div class="absolute top-0 left-0 w-full h-64 islamic-pattern rounded-b-[3rem] -z-0 overflow-hidden">
+            <!-- Pattern Overlay -->
+            <div class="absolute inset-0 islamic-pattern opacity-100 mix-blend-normal"></div>
         </div>
         <!-- Top Bar -->
         <div class="relative z-10 flex items-center justify-between p-6">
@@ -89,9 +98,9 @@
             </div>
             <!-- Headlines -->
             <div class="text-center mb-8">
-                <h1 class="text-gray-900 dark:text-white tracking-tight text-[28px] font-bold leading-tight mb-2">
+                <h1 class="text-white tracking-tight text-[28px] font-bold leading-tight mb-2">
                     Assalamu'alaikum</h1>
-                <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-relaxed px-4">
+                <p class="text-slate-900 text-sm font-normal leading-relaxed px-4">
                     Sistem Presensi Digital Madrasah Al-Hidayah.
                 </p>
             </div>

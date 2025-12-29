@@ -22,6 +22,10 @@ def laporan():
 def about():
     return render_template('about.html')
 
+@app.route('/calendar')
+def calendar():
+    return render_template('calendar.html')
+
 @app.route('/maintenance')
 def maintenance():
     return render_template('maintenance.html')

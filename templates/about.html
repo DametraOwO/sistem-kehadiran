@@ -176,8 +176,10 @@
             class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 shadow-soft border border-slate-100 dark:border-slate-800 mb-8">
             <div class="flex items-center justify-between mb-5">
                 <h3 class="font-bold text-lg text-slate-800 dark:text-white">Hubungi Kami</h3>
-                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-md font-medium">Buka • 07:00 -
-                    15:00</span>
+                <span id="business-status"
+                    class="text-xs px-2 py-1 rounded-md font-medium transition-colors duration-300">
+                    Buka • 07:00 - 18:00
+                </span>
             </div>
             <div class="space-y-4 relative">
                 <div class="absolute left-[19px] top-4 bottom-4 w-0.5 bg-slate-100 dark:bg-slate-800 -z-10"></div>
@@ -213,7 +215,7 @@
                     <div>
                         <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-0.5">Alamat</p>
                         <p class="text-sm font-semibold text-slate-800 dark:text-white leading-snug">
-                            KP.Babakan Tarogong RT01 / RW 03 Desa Ciparay. Kec. Ciparay. Kab. Bandung. 40381.
+                            KP.Babakan Tarogong RT 01 / RW 03 Desa Ciparay. Kec. Ciparay. Kab. Bandung. 40381.
                         </p>
                     </div>
                 </div>
@@ -248,7 +250,7 @@
             <span
                 class="text-[10px] font-medium text-slate-500 group-hover:text-primary transition-colors">Beranda</span>
         </a>
-        <a class="flex flex-col items-center gap-1 group w-16" href="{{ url_for('maintenance') }}">
+        <a class="flex flex-col items-center gap-1 group w-16" href="{{ url_for('calendar') }}">
             <span
                 class="material-symbols-outlined text-slate-400 text-[28px] group-hover:text-primary transition-colors">calendar_month</span>
             <span
@@ -262,6 +264,7 @@
 
     </nav>
 
+    <script src="{{ url_for('static', filename='js/about.js') }}"></script>
 </body>
 
 </html>
