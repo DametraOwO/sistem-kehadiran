@@ -75,7 +75,7 @@
     <div
         class="relative flex h-full min-h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark">
         <!-- Decorative Background Pattern -->
-        <div class="absolute top-0 left-0 w-full h-64 islamic-pattern rounded-b-[3rem] -z-0 overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-[22rem] islamic-pattern rounded-b-[3rem] -z-0 overflow-hidden">
             <!-- Pattern Overlay -->
             <div class="absolute inset-0 islamic-pattern opacity-100 mix-blend-normal"></div>
         </div>
@@ -96,11 +96,24 @@
                     <span class="material-symbols-outlined text-primary text-6xl">account_circle</span>
                 </div>
             </div>
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="mb-4">
+                {% for category, message in messages %}
+                <div
+                    class="px-4 py-3 rounded-xl text-sm font-medium mb-2 {% if category == 'danger' %}bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400{% elif category == 'success' %}bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400{% else %}bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
             <!-- Headlines -->
             <div class="text-center mb-8">
-                <h1 class="text-white tracking-tight text-[28px] font-bold leading-tight mb-2">
+                <h1 class="text-white tracking-tight text-[32px] font-bold leading-tight mb-2">
                     Assalamu'alaikum</h1>
-                <p class="text-slate-900 text-sm font-normal leading-relaxed px-4">
+                <p class="text-white/90 text-sm font-normal leading-relaxed px-4">
                     Sistem Presensi Digital Madrasah Al-Hidayah.
                 </p>
             </div>
@@ -132,7 +145,7 @@
 
                     <!-- Login Form Section -->
                     <div class="w-full shrink-0 px-1">
-                        <form class="flex flex-col gap-5">
+                        <form action="{{ url_for('login') }}" method="POST" class="flex flex-col gap-5">
                             <!-- Username Input -->
                             <div class="flex flex-col gap-1.5">
                                 <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">ID Pengguna atau
@@ -140,9 +153,9 @@
                                 <div class="relative flex items-center">
                                     <span
                                         class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">badge</span>
-                                    <input
+                                    <input name="identifier"
                                         class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="alhidayah@madrasah.com" type="text" />
+                                        placeholder="alhidayah@madrasah.com" type="text" required />
                                 </div>
                             </div>
                             <!-- Password Input -->
@@ -151,9 +164,9 @@
                                 <div class="relative flex items-center">
                                     <span
                                         class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock</span>
-                                    <input id="password-login"
+                                    <input id="password-login" name="password"
                                         class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="••••••••" type="password" />
+                                        placeholder="••••••••" type="password" required />
                                     <button
                                         class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
                                         data-target="password-login" type="button">
@@ -168,18 +181,18 @@
                                 </div>
                             </div>
                             <!-- Submit Button -->
-                            <a href="{{ url_for('admin') }}"
+                            <button type="submit"
                                 class="mt-2 w-full h-12 bg-primary hover:bg-green-600 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-primary/30 transition-all duration-200 flex items-center justify-center gap-2 group">
                                 <span>Masuk Sekarang</span>
                                 <span
                                     class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                            </a>
+                            </button>
                         </form>
                     </div>
 
                     <!-- Register Form Section -->
                     <div class="w-full shrink-0 px-1">
-                        <form class="flex flex-col gap-4">
+                        <form action="{{ url_for('register') }}" method="POST" class="flex flex-col gap-4">
                             <!-- Nama Lengkap -->
                             <div class="flex flex-col gap-1.5">
                                 <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Nama
@@ -187,9 +200,9 @@
                                 <div class="relative flex items-center">
                                     <span
                                         class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">person</span>
-                                    <input
+                                    <input name="nama"
                                         class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="Nama Lengkap" type="text" />
+                                        placeholder="Nama Lengkap" type="text" required />
                                 </div>
                             </div>
 
@@ -199,9 +212,9 @@
                                 <div class="relative flex items-center">
                                     <span
                                         class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">mail</span>
-                                    <input
+                                    <input name="email"
                                         class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="email@contoh.com" type="email" />
+                                        placeholder="email@contoh.com" type="email" required />
                                 </div>
                             </div>
 
@@ -213,8 +226,9 @@
                                     <div class="relative flex items-center">
                                         <span
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">wc</span>
-                                        <select
-                                            class="w-full h-12 pl-11 pr-8 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none">
+                                        <select name="gender"
+                                            class="w-full h-12 pl-11 pr-8 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none"
+                                            required>
                                             <option value="" disabled selected>Pilih</option>
                                             <option value="L">Laki-laki</option>
                                             <option value="P">Perempuan</option>
@@ -229,8 +243,9 @@
                                     <div class="relative flex items-center">
                                         <span
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">school</span>
-                                        <select
-                                            class="w-full h-12 pl-11 pr-8 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none">
+                                        <select name="status_role"
+                                            class="w-full h-12 pl-11 pr-8 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none"
+                                            required>
                                             <option value="" disabled selected>Pilih</option>
                                             <option value="Guru">Guru</option>
                                             <option value="Ketua Murid">Ketua Murid</option>
@@ -248,9 +263,9 @@
                                 <div class="relative flex items-center">
                                     <span
                                         class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock</span>
-                                    <input id="password-reg"
+                                    <input id="password-reg" name="password"
                                         class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="Min. 8 karakter" type="password" />
+                                        placeholder="Min. 8 karakter" type="password" required />
                                     <button
                                         class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
                                         data-target="password-reg" type="button">
@@ -266,9 +281,9 @@
                                 <div class="relative flex items-center">
                                     <span
                                         class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock_reset</span>
-                                    <input id="password-confirm"
+                                    <input id="password-confirm" name="confirm_password"
                                         class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="Ulangi kata sandi" type="password" />
+                                        placeholder="Ulangi kata sandi" type="password" required />
                                     <button
                                         class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
                                         data-target="password-confirm" type="button">
@@ -278,12 +293,12 @@
                             </div>
 
                             <!-- Submit Button -->
-                            <a href="{{ url_for('admin') }}"
+                            <button type="submit"
                                 class="mt-2 w-full h-12 bg-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 group">
                                 <span>Daftar Akun</span>
                                 <span
                                     class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">person_add</span>
-                            </a>
+                            </button>
                         </form>
                     </div>
 
@@ -291,8 +306,7 @@
             </div>
 
         </div>
-    </div>
-    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 </body>
 
 </html>

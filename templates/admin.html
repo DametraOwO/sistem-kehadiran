@@ -58,6 +58,20 @@
     <div
         class="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark pb-24">
 
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-full max-w-xs px-4">
+            {% for category, message in messages %}
+            <div
+                class="px-4 py-3 rounded-xl text-sm font-medium mb-2 shadow-lg border {% if category == 'danger' %}bg-red-100 text-red-700 border-red-200{% elif category == 'success' %}bg-green-100 text-green-700 border-green-200{% else %}bg-blue-100 text-blue-700 border-blue-200{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
         <!-- Standard Green Header -->
         <div class="relative w-full islamic-pattern rounded-b-3xl shadow-lg pt-12 pb-8 px-5 group/header z-10">
             <!-- Pattern Overlay -->
@@ -78,7 +92,8 @@
                         </div>
                         <div class="flex flex-col">
                             <span class="text-xs text-white/80 font-medium tracking-wide">Selamat Datang</span>
-                            <h2 class="text-white text-base font-bold leading-none">Ustadz Ahmed</h2>
+                            <h2 class="text-white text-base font-bold leading-none">{{ session['admin_name'] if
+                                session['admin_name'] else 'Admin' }}</h2>
                         </div>
                     </div>
                     <button
@@ -376,10 +391,10 @@
                     <span class="material-symbols-outlined text-[26px]">assignment</span>
                     <span class="text-[10px] font-medium">Laporan</span>
                 </a>
-                <a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary dark:text-slate-500 dark:hover:text-primary transition-colors"
-                    href="{{ url_for('maintenance') }}">
-                    <span class="material-symbols-outlined text-[26px]">person</span>
-                    <span class="text-[10px] font-medium">Profil</span>
+                <a class="flex flex-col items-center gap-1 text-slate-400 hover:text-red-500 dark:text-slate-500 dark:hover:text-red-400 transition-colors"
+                    href="{{ url_for('logout') }}">
+                    <span class="material-symbols-outlined text-[26px]">logout</span>
+                    <span class="text-[10px] font-medium">Keluar</span>
                 </a>
             </div>
         </nav>
