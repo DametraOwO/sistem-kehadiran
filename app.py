@@ -18,5 +18,13 @@ def admin():
 def laporan():
     return render_template('laporan.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/maintenance')
+def maintenance():
+    return render_template('maintenance.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
