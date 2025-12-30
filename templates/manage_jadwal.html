@@ -11,6 +11,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -60,7 +62,7 @@
                 <button id="open-tambah-modal"
                     class="h-12 px-6 rounded-2xl bg-white text-primary font-bold shadow-xl shadow-black/10 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
                     <span class="material-symbols-outlined text-[20px]">calendar_add_on</span>
-                    <span class="hidden sm:inline">Tambah Jadwal</span>
+                    <span class="">Tambah Jadwal</span>
                 </button>
             </div>
         </div>
@@ -245,13 +247,17 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-1.5">
                                 <label class="text-[11px] font-bold text-slate-400 uppercase ml-1">Waktu Mulai</label>
-                                <input type="time" name="waktu_mulai" id="form-waktu-mulai" required
-                                    class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all">
+                                <input type="text" name="waktu_mulai" id="form-waktu-mulai" required placeholder="HH:MM"
+                                    pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+                                    class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all font-mono">
+                                <p class="text-[10px] text-slate-400 ml-1">Format 24 Jam (Contoh: 07:30)</p>
                             </div>
                             <div class="space-y-1.5">
                                 <label class="text-[11px] font-bold text-slate-400 uppercase ml-1">Waktu Selesai</label>
-                                <input type="time" name="waktu_selesai" id="form-waktu-selesai" required
-                                    class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all">
+                                <input type="text" name="waktu_selesai" id="form-waktu-selesai" required
+                                    placeholder="HH:MM" pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+                                    class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all font-mono">
+                                <p class="text-[10px] text-slate-400 ml-1">Format 24 Jam (Contoh: 15:00)</p>
                             </div>
                         </div>
 

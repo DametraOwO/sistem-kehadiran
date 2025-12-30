@@ -13,6 +13,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterHari = document.getElementById('filter-hari');
     const tableRows = document.querySelectorAll('#jadwal-table-body tr');
 
+    // Initialize Flatpickr safely
+    let fpMulai = null;
+    let fpSelesai = null;
+
+    try {
+        if (typeof flatpickr !== 'undefined') {
+            const fpConfig = {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+            };
+            fpMulai = flatpickr("#form-waktu-mulai", fpConfig);
+            fpSelesai = flatpickr("#form-waktu-selesai", fpConfig);
+        } else {
+            console.error("Flatpickr library not found");
+        }
+    } catch (e) {
+        console.error("Flatpickr init error:", e);
+    }
+
     const showModal = (mode = 'add', id = null, id_kelas = '', hari = '', mata_pelajaran = '', waktu_mulai = '', waktu_selesai = '', keterangan = '') => {
         modal.classList.remove('hidden');
         setTimeout(() => {
@@ -27,14 +48,23 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('form-id-kelas').value = id_kelas;
             document.getElementById('form-hari').value = hari;
             document.getElementById('form-mapel').value = mata_pelajaran;
-            document.getElementById('form-waktu-mulai').value = waktu_mulai;
-            document.getElementById('form-waktu-selesai').value = waktu_selesai;
+
+            // Safe update for Flatpickr
+            if (fpMulai) fpMulai.setDate(waktu_mulai, true);
+            else document.getElementById('form-waktu-mulai').value = waktu_mulai;
+
+            if (fpSelesai) fpSelesai.setDate(waktu_selesai, true);
+            else document.getElementById('form-waktu-selesai').value = waktu_selesai;
+
             document.getElementById('form-keterangan').value = keterangan || '';
         } else {
             modalTitle.textContent = 'Tambah Jadwal Baru';
             modalIcon.textContent = 'calendar_add_on';
             form.action = '/tambah_jadwal';
             form.reset();
+            // Safe clear for Flatpickr
+            if (fpMulai) fpMulai.clear();
+            if (fpSelesai) fpSelesai.clear();
         }
     };
 
@@ -52,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Global function for edit button
     window.editJadwal = (id, id_kelas, hari, mata_pelajaran, waktu_mulai, waktu_selesai, keterangan) => {
+        // Backend now returns HH:MM string, which works perfectly with type="text"
         showModal('edit', id, id_kelas, hari, mata_pelajaran, waktu_mulai, waktu_selesai, keterangan);
     };
 

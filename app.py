@@ -58,12 +58,21 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Disable caching to prevent back-button access after logout
+@app.after_request
+def add_header(response):
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
 @app.route('/')
 def index():
     db = get_db()
     berita_list = []
     attendance_pct = 0
     jadwal_hari_ini = []
+    active_jadwal = [] # Initialized early to prevent UnboundLocalError
     status_sekolah = "Tidak ada jadwal hari ini" # Default
     
     if db:
@@ -104,7 +113,10 @@ def index():
             
             # Fetch Today's Schedule
             cur.execute("""
-                SELECT j.*, k.nama_kelas 
+                SELECT j.id, j.id_kelas, j.hari, j.mata_pelajaran, j.keterangan, 
+                       TIME_FORMAT(j.waktu_mulai, '%%H:%%i') as waktu_mulai, 
+                       TIME_FORMAT(j.waktu_selesai, '%%H:%%i') as waktu_selesai, 
+                       k.nama_kelas 
                 FROM jadwal j
                 JOIN kelas k ON j.id_kelas = k.id
                 WHERE j.hari = %s
@@ -113,7 +125,7 @@ def index():
             jadwal_hari_ini = list(cur.fetchall())
             
             # Calculate School Status
-            active_jadwal = []
+            # active_jadwal = [] # Already initialized at function scope
             try:
                 # Debug Info
                 # print(f"DEBUG: Day={current_day_name}, Items={len(jadwal_hari_ini)}")
@@ -128,10 +140,12 @@ def index():
                         if isinstance(t, str):
                             # Handle string format if slightly different?
                             try:
-                                return datetime.strptime(t, "%H:%M:%S").time()
+                                return datetime.strptime(t, "%H:%M").time()
                             except:
-                                # Fallback or re-raise
-                                return datetime.strptime(str(t), "%H:%M:%S").time()
+                                try:
+                                    return datetime.strptime(t, "%H:%M:%S").time()
+                                except:
+                                    return datetime.strptime(str(t), "%H:%M").time()
                         
                         if isinstance(t, timedelta):
                             # Convert timedelta to time (duration from midnight)
@@ -247,7 +261,7 @@ def register():
 def logout():
     session.clear()
     flash('Anda telah keluar.', 'info')
-    return redirect(url_for('login'))
+    return redirect(url_for('index'))
 
 @app.route('/admin')
 @login_required
@@ -316,14 +330,38 @@ def admin():
             stats['total_kelas'] = total_kelas
             stats['kelas_terisi'] = kelas_terisi
             
+            # --- NEW: Fetch Class Cards Data ---
+            from datetime import datetime
+            today_iso = datetime.now().isoweekday()
+            days_map = {
+                1: 'Senin', 2: 'Selasa', 3: 'Rabu',
+                4: 'Kamis', 5: 'Jumat', 6: 'Sabtu', 7: 'Minggu'
+            }
+            current_day_name = days_map[today_iso]
+            
+            cur.execute("""
+                SELECT 
+                    k.nama_kelas, 
+                    TIME_FORMAT(MIN(j.waktu_mulai), '%%H:%%i') as waktu_mulai,
+                    GROUP_CONCAT(j.mata_pelajaran ORDER BY j.waktu_mulai ASC SEPARATOR ' - ') as mata_pelajaran,
+                    (SELECT COUNT(*) FROM santri s WHERE s.id_kelas = k.id) as kapasitas
+                FROM jadwal j
+                JOIN kelas k ON j.id_kelas = k.id
+                WHERE j.hari = %s
+                GROUP BY k.id, k.nama_kelas
+                ORDER BY waktu_mulai ASC
+            """, (current_day_name,))
+            class_cards = cur.fetchall()
+            
             cur.close()
             db.close()
         except Exception as e:
             if db: db.close()
             print(f"Error fetching data for admin dashboard: {e}")
             admin_data = None
+            class_cards = []
             
-    return render_template('admin.html', berita_list=berita_list, admin=admin_data, stats=stats)
+    return render_template('admin.html', berita_list=berita_list, admin=admin_data, stats=stats, class_cards=class_cards)
 
 @app.route('/laporan')
 @login_required
@@ -417,7 +455,7 @@ def simpan_absensi():
     try:
         from datetime import date, datetime
         today = date.today().strftime('%Y-%m-%d')
-        now_time = datetime.now().strftime('%H:%M:%S')
+        now_time = datetime.now().strftime('%H:%M')
         
         cur = db.cursor()
         for item in attendance:
@@ -867,8 +905,12 @@ def manage_jadwal():
         try:
             cur = db.cursor(MySQLdb.cursors.DictCursor)
             # Fetch Schedules
+            # Fetch Schedules
             cur.execute("""
-                SELECT j.*, k.nama_kelas 
+                SELECT j.id, j.id_kelas, j.hari, j.mata_pelajaran, j.keterangan, 
+                       TIME_FORMAT(j.waktu_mulai, '%H:%i') as waktu_mulai, 
+                       TIME_FORMAT(j.waktu_selesai, '%H:%i') as waktu_selesai, 
+                       k.nama_kelas 
                 FROM jadwal j 
                 JOIN kelas k ON j.id_kelas = k.id 
                 ORDER BY FIELD(hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'), waktu_mulai ASC
@@ -896,7 +938,10 @@ def api_jadwal():
             cur = db.cursor(MySQLdb.cursors.DictCursor)
             # Fetch Schedules with Class Names
             cur.execute("""
-                SELECT j.*, k.nama_kelas 
+                SELECT j.id, j.id_kelas, j.hari, j.mata_pelajaran, j.keterangan, 
+                       TIME_FORMAT(j.waktu_mulai, '%%H:%%i') as waktu_mulai, 
+                       TIME_FORMAT(j.waktu_selesai, '%%H:%%i') as waktu_selesai, 
+                       k.nama_kelas 
                 FROM jadwal j 
                 JOIN kelas k ON j.id_kelas = k.id 
                 ORDER BY j.waktu_mulai ASC
@@ -904,11 +949,18 @@ def api_jadwal():
             jadwal_list = cur.fetchall()
             
             # Convert time objects to string for JSON serialization
-            for jadwal in jadwal_list:
-                if 'waktu_mulai' in jadwal:
-                    jadwal['waktu_mulai'] = str(jadwal['waktu_mulai'])
-                if 'waktu_selesai' in jadwal:
-                    jadwal['waktu_selesai'] = str(jadwal['waktu_selesai'])
+            # TIME_FORMAT returns strings, so we might not need extra conversion relative to datetime.timedelta
+            # But let's keep the loop just in case or simpler:
+            # Actually TIME_FORMAT returns a string, so the JSON serializer will handle it fine.
+            # We can remove the manual conversion loop if it was only for timedelta/time objects.
+            # However, let's just leave the loop or remove it? Use caution.
+            # Previous loop:
+            # for jadwal in jadwal_list:
+            #     if 'waktu_mulai' in jadwal:
+            #         jadwal['waktu_mulai'] = str(jadwal['waktu_mulai'])
+            
+            # Since we return strings now, let's check if we need to do anything.
+            # If the DB returns strings, we are good.
             
             cur.close()
             db.close()
