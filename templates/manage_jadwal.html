@@ -37,6 +37,25 @@
                 linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.05) 75%, transparent 75%, transparent);
             background-size: 100% 100%, 100% 100%, 40px 40px;
         }
+
+        /* Custom Scrollbar for Table */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 5px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #14b88144;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #14b88188;
+        }
     </style>
 </head>
 
@@ -102,10 +121,10 @@
 
                 <!-- Jadwal Table -->
                 <div class="bg-white rounded-[24px] shadow-sm border border-slate-100 overflow-hidden">
-                    <div class="overflow-x-auto">
+                    <div class="max-h-[500px] overflow-auto custom-scrollbar relative">
                         <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-50/50">
+                            <thead class="sticky top-0 z-10 bg-slate-50">
+                                <tr>
                                     <th
                                         class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                                         Hari</th>

@@ -40,6 +40,7 @@
         /* Custom Scrollbar for Table */
         .custom-scrollbar::-webkit-scrollbar {
             height: 6px;
+            width: 5px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-track {
@@ -47,12 +48,12 @@
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
+            background: #14b88144;
             border-radius: 10px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #cbd5e1;
+            background: #14b88188;
         }
     </style>
     <script>
@@ -220,20 +221,26 @@
 
             <!-- Data Table -->
             <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-                <div class="overflow-x-auto custom-scrollbar">
+                <div class="max-h-[500px] overflow-auto custom-scrollbar relative">
                     <table class="w-full min-w-[700px] text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50/50 border-b border-slate-100">
-                                <th class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider">NIS
+                        <thead class="sticky top-0 z-10">
+                            <tr class="bg-slate-50 border-b border-slate-100">
+                                <th
+                                    class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">
+                                    NIS
                                 </th>
-                                <th class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama
+                                <th
+                                    class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">
+                                    Nama
                                     Lengkap</th>
-                                <th class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">
                                     Gender</th>
-                                <th class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">
                                     Kelas</th>
                                 <th
-                                    class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
+                                    class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider text-center bg-slate-50">
                                     Aksi</th>
                             </tr>
                         </thead>
