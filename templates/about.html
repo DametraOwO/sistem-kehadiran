@@ -68,10 +68,16 @@
 </head>
 
 <body
-    class="bg-background-light font-display text-slate-800 antialiased overflow-x-hidden pb-24 selection:bg-primary selection:text-white">
+    class="bg-background-light font-display text-slate-800 antialiased overflow-x-hidden {% if not is_logged_in %}pb-24{% else %}pb-10{% endif %} selection:bg-primary selection:text-white">
     <div class="relative w-full islamic-pattern rounded-b-3xl shadow-lg pt-12 pb-8 px-5 group/header">
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
+                {% if is_logged_in %}
+                <a href="{{ url_for('admin') }}"
+                    class="flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-xl transition-all duration-300 mr-1">
+                    <span class="material-symbols-outlined text-white">arrow_back</span>
+                </a>
+                {% endif %}
                 <div class="bg-white/20 backdrop-blur-sm p-2 rounded-xl border border-white/10">
                     <span class="material-symbols-outlined text-white" style="font-size: 28px;">mosque</span>
                 </div>
@@ -80,10 +86,6 @@
                     <p class="text-white text-lg font-bold leading-none tracking-tight">Al-Hidayah</p>
                 </div>
             </div>
-            <button
-                class="flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full transition-all duration-300">
-                <span class="material-symbols-outlined text-white text-sm">share</span>
-            </button>
         </div>
         <div class="flex flex-col gap-2 mt-4">
             <h1 class="text-white text-3xl font-bold leading-tight">Profil Madrasah</h1>
@@ -235,6 +237,7 @@
             </div>
         </section>
     </main>
+    {% if not is_logged_in %}
     <nav
         class="fixed bottom-0 w-full bg-surface-light/80 backdrop-blur-md border-t border-slate-200 pb-safe pt-2 px-6 flex justify-between items-center z-50 h-20">
         <a class="flex flex-col items-center gap-1 group w-16" href="{{ url_for('index') }}">
@@ -254,12 +257,9 @@
                 class="material-symbols-outlined text-primary text-[28px] group-hover:scale-110 transition-transform fill-current">info</span>
             <span class="text-[10px] font-medium text-primary">Tentang</span>
         </a>
-
     </nav>
+    {% endif %}
     <script src="{{ url_for('static', filename='js/about.js') }}"></script>
-</body>
-
-<script src="{{ url_for('static', filename='js/about.js') }}"></script>
 </body>
 
 </html>

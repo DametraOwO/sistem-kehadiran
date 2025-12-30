@@ -68,8 +68,7 @@
     class="bg-background-light font-display text-slate-800 antialiased overflow-x-hidden pb-24 selection:bg-primary selection:text-white">
 
     <!-- GREEN HEADER SECTION -->
-    <div class="relative w-full islamic-pattern pt-12 pb-20 px-5">
-
+    <div class="relative w-full islamic-pattern pt-12 pb-24 px-5">
         <div class="relative z-10">
             <!-- Top Bar -->
             <div class="flex items-center justify-between mb-8">
@@ -82,82 +81,117 @@
                         <p class="text-white text-lg font-bold leading-none tracking-tight">Al-Hidayah</p>
                     </div>
                 </div>
-                <button
-                    class="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm transition-colors relative">
-                    <span class="material-symbols-outlined text-white">notifications</span>
-                    <span
-                        class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-400 rounded-full border border-white/20"></span>
-                </button>
             </div>
 
             <!-- Title & Subtitle -->
-            <div class="flex flex-col gap-1 mb-6">
+            <div class="flex flex-col gap-1 mb-4">
                 <h1 class="text-white text-2xl font-bold tracking-tight">Kalender Akademik</h1>
-                <p class="text-white/90 text-sm font-medium opacity-90">Mei 2024 • Semester Genap</p>
-            </div>
-
-            <!-- Class Selection Dropdown -->
-            <div class="relative">
-                <div class="relative">
-                    <span
-                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/80 text-[20px] pointer-events-none">school</span>
-                    <select id="class-filter"
-                        class="w-full appearance-none bg-white/20 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-10 py-3 text-white font-bold text-sm cursor-pointer hover:bg-white/30 transition-colors focus:outline-none focus:ring-2 focus:ring-white/20 [&>option]:text-slate-800">
-                        <option value="">Kalender Umum</option>
-                        {% for k in kelas_list %}
-                        <option value="{{ k.nama_kelas }}">{{ k.nama_kelas }}</option>
-                        {% endfor %}
-                    </select>
-                    <span
-                        class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-white pointer-events-none">expand_more</span>
-                </div>
+                <p class="text-white/90 text-sm font-medium opacity-90">Jadwal kegiatan & libur nasional</p>
             </div>
         </div>
     </div>
 
     <!-- MAIN CARD CONTAINER (Overlapping) -->
-    <main class="relative z-20 -mt-10 px-0">
-        <div class="bg-white rounded-t-[32px] shadow-lg min-h-screen px-5 pt-2 pb-24">
+    <main class="relative z-20 -mt-16 px-5">
+        <div class="bg-white rounded-[32px] shadow-soft border border-slate-100 px-5 pt-2 pb-8">
+            <!-- Calendar Header & Filter -->
+            <div class="flex flex-col gap-4 py-6 border-b border-slate-50 mb-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-slate-900 text-lg font-bold">Pilih Jadwal</h3>
+                    <!-- Class Filter Dropdown -->
+                    <div class="relative w-40">
+                        <select id="class-filter"
+                            class="w-full appearance-none bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-10 py-2 text-slate-700 font-bold text-xs cursor-pointer hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20">
+                            <option value="">Kalender Umum</option>
+                            {% for k in kelas_list %}
+                            <option value="{{ k.nama_kelas }}">{{ k.nama_kelas }}</option>
+                            {% endfor %}
+                        </select>
+                        <span
+                            class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[18px]">expand_more</span>
+                    </div>
+                </div>
 
-            <!-- Month Navigation -->
-            <div class="flex items-center justify-between py-6">
-                <button id="prev-month-btn"
-                    class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-800 transition-colors">
-                    <span class="material-symbols-outlined">chevron_left</span>
-                </button>
-                <h2 id="month-display" class="text-xl font-bold text-slate-800 text-center">Loading...
-                </h2>
-                <button id="next-month-btn"
-                    class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-800 transition-colors">
-                    <span class="material-symbols-outlined">chevron_right</span>
-                </button>
+                <!-- Month Navigation -->
+                <div class="flex items-center justify-between bg-slate-50 rounded-2xl px-4 py-2">
+                    <button id="prev-month-btn"
+                        class="size-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <h2 id="month-display" class="text-sm font-bold text-slate-800 text-center">Loading...</h2>
+                    <button id="next-month-btn"
+                        class="size-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Calendar Grid -->
             <!-- Day Names -->
             <div class="grid grid-cols-7 gap-1 text-center mb-2">
-                <div class="text-xs font-bold text-red-500">Ahd</div>
-                <div class="text-xs font-bold text-slate-500">Sen</div>
-                <div class="text-xs font-bold text-slate-500">Sel</div>
-                <div class="text-xs font-bold text-slate-500">Rab</div>
-                <div class="text-xs font-bold text-slate-500">Kam</div>
-                <div class="text-xs font-bold text-slate-500">Jum</div>
-                <div class="text-xs font-bold text-slate-500">Sab</div>
+                <div class="text-[10px] font-bold text-red-500 uppercase">Ahd</div>
+                <div class="text-[10px] font-bold text-slate-400 uppercase">Sen</div>
+                <div class="text-[10px] font-bold text-slate-400 uppercase">Sel</div>
+                <div class="text-[10px] font-bold text-slate-400 uppercase">Rab</div>
+                <div class="text-[10px] font-bold text-slate-400 uppercase">Kam</div>
+                <div class="text-[10px] font-bold text-slate-400 uppercase">Jum</div>
+                <div class="text-[10px] font-bold text-slate-400 uppercase">Sab</div>
             </div>
 
             <!-- Days -->
             <div id="calendar-grid"
-                class="grid grid-cols-7 gap-y-6 gap-x-1 text-center text-sm font-medium text-slate-800 relative min-h-[400px]">
+                class="grid grid-cols-7 gap-y-2 gap-x-1 text-center text-xs font-medium text-slate-800 relative min-h-[300px]">
                 <!-- Grid Content will be injected by JS -->
-                <div class="col-span-7 flex items-center justify-center text-slate-400">Loading Calendar...</div>
+                <div class="col-span-7 flex items-center justify-center text-slate-400 h-64">Loading Calendar...</div>
             </div>
 
             <!-- Holiday List -->
-            <div id="holiday-list" class="mt-8 flex flex-col gap-2 px-1">
-                <!-- Holidays will be injected here -->
+            <div class="mt-8 border-t border-slate-50 pt-6">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-1">Daftar Libur Bulan Ini
+                </h4>
+                <div id="holiday-list" class="flex flex-col gap-2">
+                    <!-- Holidays will be injected here -->
+                </div>
             </div>
         </div>
     </main>
+
+    <!-- Agenda Detail Modal -->
+    <div id="agenda-modal" class="fixed inset-0 z-[60] hidden">
+        <!-- Backdrop -->
+        <div id="modal-backdrop" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity opacity-0">
+        </div>
+
+        <!-- Modal Content Container -->
+        <div class="absolute bottom-0 left-0 right-0 p-4 transition-transform translate-y-full" id="modal-container">
+            <div class="bg-white rounded-t-[32px] overflow-hidden max-h-[85vh] flex flex-col shadow-2xl">
+                <!-- Handle for swipe-down feel -->
+                <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto my-3"></div>
+
+                <div class="px-6 pb-8 overflow-y-auto no-scrollbar">
+                    <!-- Date Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 id="modal-masehi" class="text-xl font-bold text-slate-800 tracking-tight">31 Desember
+                                2025</h3>
+                            <p id="modal-hijri"
+                                class="text-xs font-medium text-slate-500 uppercase tracking-widest mt-0.5">7 Jumada
+                                al-Thani 1447 H</p>
+                        </div>
+                        <button id="close-modal-btn"
+                            class="size-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-400 hover:bg-slate-200 transition-colors">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+
+                    <!-- Layout for Agenda Items -->
+                    <div id="modal-agenda-body" class="space-y-4">
+                        <!-- Content will be injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bottom Navigation -->
     <nav

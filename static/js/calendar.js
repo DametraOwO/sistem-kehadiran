@@ -21,6 +21,28 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('class-filter').addEventListener('change', () => {
         renderCurrentView(currentDate);
     });
+
+    // Modal Interaction Listeners
+    const modal = document.getElementById('agenda-modal');
+    const backdrop = document.getElementById('modal-backdrop');
+    const closeBtn = document.getElementById('close-modal-btn');
+
+    const closeModal = () => {
+        const container = document.getElementById('modal-container');
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+        container.classList.remove('translate-y-0');
+        container.classList.add('translate-y-full');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    };
+
+    backdrop.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', closeModal);
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+    });
 });
 
 async function fetchAndRenderCalendar(date) {
@@ -134,13 +156,13 @@ function renderCalendarGrid(days, currentDate) {
 
     let hijriString = `${firstHijri.month.en} ${firstHijri.year} H`;
     if (firstHijri.month.number !== lastHijri.month.number) {
-        hijriString = `${firstHijri.month.en} ${firstHijri.year} H - ${lastHijri.month.en} ${lastHijri.year} H`;
+        hijriString = `${firstHijri.month.en} - ${lastHijri.month.en} ${lastHijri.year} H`;
     }
 
     header.innerHTML = `
         <div class="flex flex-col items-center leading-tight">
             <span>${masehiMonth} ${masehiYear}</span>
-            <span class="text-sm font-normal opacity-75">${hijriString}</span>
+            <span class="text-[10px] font-normal opacity-60">${hijriString}</span>
         </div>
     `;
 
@@ -150,7 +172,7 @@ function renderCalendarGrid(days, currentDate) {
 
     for (let i = 0; i < startOffset; i++) {
         const emptyCell = document.createElement('div');
-        emptyCell.className = "h-[100px] border-b border-r border-slate-100 bg-slate-50/50";
+        emptyCell.className = "h-16 border-b border-slate-50 bg-slate-50/30";
         grid.appendChild(emptyCell);
     }
 
@@ -161,14 +183,8 @@ function renderCalendarGrid(days, currentDate) {
 
         // Parse date
         const [d, m, y] = gDate.date.split('-');
-        // API returns DD-MM-YYYY
-
-        // Normalize Date for Comparison (YYYY-MM-DD or similar) to match API
-        // New API api-harilibur often returns YYYY-M-D or YYYY-MM-DD
-        // Safest is to create Date objects and compare timestamp/string
-
         const currentYear = parseInt(y);
-        const currentMonth = parseInt(m) - 1; // JS Month is 0-indexed
+        const currentMonth = parseInt(m) - 1;
         const currentDay = parseInt(d);
 
         // Holiday Check
@@ -177,7 +193,7 @@ function renderCalendarGrid(days, currentDate) {
             return hDate.getFullYear() === currentYear &&
                 hDate.getMonth() === currentMonth &&
                 hDate.getDate() === currentDay &&
-                h.is_national_holiday !== false; // Ensure it is a national holiday if property exists
+                h.is_national_holiday !== false;
         });
 
         // Get Holiday Name
@@ -189,95 +205,50 @@ function renderCalendarGrid(days, currentDate) {
         });
 
         if (isHoliday && holiday) {
-            // Check if already in currentMonthHolidays to avoid duplicates from multi-fetch/overlap
             if (!currentMonthHolidays.some(h => h.holiday_date === holiday.holiday_date)) {
                 currentMonthHolidays.push(holiday);
             }
         }
 
         const dateObj = new Date(currentYear, currentMonth, currentDay);
-        const today = new Date();
-        const isToday = isSameDay(today, dateObj);
+        const isToday = isSameDay(new Date(), dateObj);
         const isSunday = gDate.weekday.en === "Sunday";
-
         const dayNameIndo = dayMap[gDate.weekday.en];
 
         // FILTER LOGIC
-        // If filterClass is empty (""), return NO schedules (General View)
-        // If filterClass has value, return schedules for that class
         let todaysSchedule = [];
         if (filterClass !== "") {
-            todaysSchedule = window.globalScheduleData.filter(s => s.hari === dayNameIndo);
-            todaysSchedule = todaysSchedule.filter(s => s.nama_kelas === filterClass);
-        }
-
-        // HOLIDAY PRIORITY: If it is a holiday, DO NOT show schedules
-        if (isHoliday) {
-            todaysSchedule = [];
-            // We keep the holiday display logic below, but ensure no schedule items are added.
+            todaysSchedule = window.globalScheduleData.filter(s => s.hari === dayNameIndo && s.nama_kelas === filterClass);
         }
 
         // Styles
-        let baseClass = "min-h-[100px] border-b border-r border-slate-100 flex flex-col items-start justify-start p-2 gap-1 relative group transition-colors hover:bg-slate-50";
-
-        // Text Color Logic: Sunday OR Holiday -> Red
-        let textClass = (isSunday || isHoliday) ? "text-red-600 font-bold" : "text-slate-900";
+        let baseClass = "h-16 border-b border-slate-50 flex flex-col items-center justify-center relative group cursor-pointer hover:bg-slate-50 transition-colors";
+        let textClass = (isSunday || isHoliday) ? "text-red-500 font-bold" : "text-slate-700";
 
         if (isToday) {
-            baseClass += " bg-primary/5";
-            if (!isHoliday && !isSunday) { // Only force primary if not holiday/sunday, or maybe mix? 
-                // Let holiday red take precedence for date color? 
-                // textClass = "text-primary font-bold"; 
-                // User requirement: "indonesian national holiday with a red date" -> Red takes precedence.
-            }
+            baseClass += " bg-primary/5 ring-1 ring-inset ring-primary/20";
         }
 
         dateDiv.className = baseClass;
 
-        // Date Header inside cell
-        let dateHtml = `
-            <div class="w-full flex justify-between items-start mb-1">
-                <span class="text-sm font-bold ${textClass}">${gDate.day}</span>
-                <span class="text-[10px] text-slate-500 font-medium">${hDate.day}</span>
-            </div>
+        // Date Display
+        dateDiv.innerHTML = `
+            <span class="text-sm ${textClass}">${gDate.day}</span>
+            <span class="text-[8px] text-slate-400 font-medium">${hDate.day}</span>
+            ${todaysSchedule.length > 0 ? '<div class="absolute bottom-1.5 size-1 rounded-full bg-primary"></div>' : ''}
+            ${isHoliday ? '<div class="absolute bottom-1.5 size-1 rounded-full bg-red-400"></div>' : ''}
         `;
 
-        // Holiday Label
-        if (isHoliday && holiday) {
-            dateHtml += `
-                <div class="w-full mb-1">
-                    <span class="text-[9px] font-bold text-red-600 leading-tight block text-center bg-red-50 rounded px-1 py-0.5 border border-red-100">
-                        ${holiday.holiday_name}
-                    </span>
-                </div>
-            `;
-        }
+        // Add Click Listener to show Modal
+        dateDiv.addEventListener('click', () => {
+            showAgendaDetail(day, holiday, todaysSchedule, dayNameIndo);
+        });
 
-        // Schedule Items
-        let scheduleHtml = '';
-        if (todaysSchedule.length > 0) {
-            scheduleHtml = '<div class="w-full flex flex-col gap-1 overflow-y-auto max-h-[60px] no-scrollbar">';
-            todaysSchedule.forEach(sch => {
-                const startTime = sch.waktu_mulai.slice(0, 5);
-                scheduleHtml += `
-                    <div class="w-full bg-white border border-slate-200 rounded px-1.5 py-1 flex flex-col items-start shadow-sm">
-                        <span class="text-[10px] font-bold text-slate-800 leading-tight line-clamp-1">${sch.mata_pelajaran}</span>
-                        <div class="flex items-center gap-1 w-full">
-                            <span class="text-[9px] text-slate-600 font-medium leading-none">${startTime}</span>
-                        </div>
-                    </div>
-                `;
-            });
-            scheduleHtml += '</div>';
-        }
-
-        dateDiv.innerHTML = dateHtml + scheduleHtml;
         grid.appendChild(dateDiv);
     });
 
     // Render Holiday List below calendar
     if (currentMonthHolidays.length > 0) {
-        // Sort by date just in case
         currentMonthHolidays.sort((a, b) => new Date(a.holiday_date) - new Date(b.holiday_date));
 
         currentMonthHolidays.forEach(h => {
@@ -287,21 +258,21 @@ function renderCalendarGrid(days, currentDate) {
             const monthName = indoMonths[m];
 
             const item = document.createElement('div');
-            item.className = "flex items-start gap-3 p-3 rounded-2xl bg-red-50/50 border border-red-100/50";
+            item.className = "flex items-center gap-3 p-3 rounded-2xl bg-red-50/50 border border-red-100/50";
             item.innerHTML = `
-                <div class="flex flex-col items-center justify-center min-w-[45px] h-[45px] rounded-xl bg-red-500 text-white shadow-sm">
+                <div class="flex flex-col items-center justify-center min-w-[36px] h-[36px] rounded-lg bg-red-500 text-white">
                     <span class="text-xs font-bold leading-none">${d}</span>
-                    <span class="text-[9px] font-medium uppercase opacity-90">${monthName.slice(0, 3)}</span>
+                    <span class="text-[8px] font-medium uppercase opacity-90">${monthName.slice(0, 3)}</span>
                 </div>
-                <div class="flex flex-col py-0.5">
+                <div class="flex flex-col">
                     <span class="text-xs font-bold text-red-600 leading-tight">${h.holiday_name}</span>
-                    <span class="text-[10px] text-red-400 font-medium">Libur Nasional</span>
+                    <span class="text-[10px] text-red-400">Libur Nasional</span>
                 </div>
             `;
             holidayListContainer.appendChild(item);
         });
     } else {
-        holidayListContainer.innerHTML = '<p class="text-center text-xs text-slate-400 py-4 font-medium italic">Tidak ada hari libur bulan ini</p>';
+        holidayListContainer.innerHTML = '<p class="text-center text-[10px] text-slate-400 py-2 italic font-medium">Tidak ada hari libur bulan ini</p>';
     }
 }
 
@@ -309,4 +280,94 @@ function isSameDay(d1, d2) {
     return d1.getFullYear() === d2.getFullYear() &&
         d1.getMonth() === d2.getMonth() &&
         d1.getDate() === d2.getDate();
+}
+
+function showAgendaDetail(day, holiday, schedules, dayName) {
+    const modal = document.getElementById('agenda-modal');
+    const backdrop = document.getElementById('modal-backdrop');
+    const container = document.getElementById('modal-container');
+    const body = document.getElementById('modal-agenda-body');
+    const masehiText = document.getElementById('modal-masehi');
+    const hijriText = document.getElementById('modal-hijri');
+    const indoMonths = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+    // 1. Format Dates
+    const gDate = day.gregorian;
+    const hDate = day.hijri;
+    const mDateParts = gDate.date.split('-');
+    masehiText.textContent = `${dayName}, ${parseInt(mDateParts[0])} ${indoMonths[parseInt(mDateParts[1]) - 1]} ${mDateParts[2]}`;
+    hijriText.textContent = `${hDate.day} ${hDate.month.en} ${hDate.year} H`;
+
+    // 2. Clear Body
+    body.innerHTML = '';
+
+    // 3. Add Holiday if any
+    if (holiday) {
+        const hDiv = document.createElement('div');
+        hDiv.className = "p-4 rounded-2xl bg-red-50 border border-red-100 flex items-start gap-4";
+        hDiv.innerHTML = `
+            <div class="size-11 rounded-xl bg-red-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-red-200">
+                <span class="material-symbols-outlined text-[24px]">event_busy</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-xs font-bold text-red-400 uppercase tracking-widest leading-none mb-1">Hari Libur</span>
+                <span class="font-bold text-red-600 tracking-tight">${holiday.holiday_name}</span>
+            </div>
+        `;
+        body.appendChild(hDiv);
+    }
+
+    // 4. Add Schedules
+    if (schedules.length > 0) {
+        // Sort schedules by time
+        schedules.sort((a, b) => a.waktu_mulai.localeCompare(b.waktu_mulai));
+
+        const schHeader = document.createElement('p');
+        schHeader.className = "text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1 mt-6 mb-2";
+        schHeader.textContent = "Agenda Mata Pelajaran";
+        body.appendChild(schHeader);
+
+        schedules.forEach(sch => {
+            const row = document.createElement('div');
+            row.className = "p-4 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-between group hover:border-primary/30 transition-all";
+            row.innerHTML = `
+                <div class="flex items-center gap-4">
+                    <div class="size-11 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[24px]">book</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">${sch.nama_kelas}</span>
+                        <span class="font-bold text-slate-800 tracking-tight leading-tight">${sch.mata_pelajaran}</span>
+                    </div>
+                </div>
+                <div class="text-right flex flex-col items-end">
+                    <span class="text-xs font-extrabold text-primary leading-none">${sch.waktu_mulai.slice(0, 5)}</span>
+                    <span class="text-[10px] font-medium text-slate-400 mt-1">${sch.waktu_selesai.slice(0, 5)}</span>
+                </div>
+            `;
+            body.appendChild(row);
+        });
+    }
+
+    // 5. Empty State
+    if (!holiday && schedules.length === 0) {
+        body.innerHTML = `
+            <div class="py-12 flex flex-col items-center text-center">
+                <div class="size-20 rounded-full bg-slate-50 flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-slate-200 text-5xl">event_upcoming</span>
+                </div>
+                <p class="text-slate-400 font-medium italic">Tidak ada agenda kegiatan <br> pada hari ini.</p>
+            </div>
+        `;
+    }
+
+    // 6. Show Modal with Animation
+    modal.classList.remove('hidden');
+    // Force reflow for animation
+    void container.offsetHeight;
+
+    backdrop.classList.add('opacity-100');
+    backdrop.classList.remove('opacity-0');
+    container.classList.remove('translate-y-full');
+    container.classList.add('translate-y-0');
 }

@@ -122,6 +122,24 @@ function updatePrayerUI(timings) {
 fetchPrayerTimes();
 
 
+// Digital Clock Logic
+function updateClock() {
+    const clockElement = document.getElementById('digital-clock');
+    if (!clockElement) return;
+
+    const now = new Date();
+    // Use Indonesian Locale and force Bandung time (UTC+7)
+    // Actually just use browser time since it's local context, but formatted
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
 // Announcement Slider Logic
 document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('announcement-container');

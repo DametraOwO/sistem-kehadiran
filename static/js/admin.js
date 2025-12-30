@@ -1,6 +1,63 @@
 document.addEventListener('DOMContentLoaded', async function () {
     await fetchDateData();
+
+    // Calendar Initialization
+    let calendarDate = new Date();
+    window.globalScheduleData = [];
+    window.globalHolidays = [];
+    fetchAndRenderCalendar(calendarDate);
+
+    // Calendar Navigation
+    document.getElementById('prev-month-btn').addEventListener('click', () => {
+        calendarDate.setMonth(calendarDate.getMonth() - 1);
+        fetchAndRenderCalendar(calendarDate);
+    });
+
+    document.getElementById('next-month-btn').addEventListener('click', () => {
+        calendarDate.setMonth(calendarDate.getMonth() + 1);
+        fetchAndRenderCalendar(calendarDate);
+    });
+
+    // Calendar Filter
+    document.getElementById('class-filter').addEventListener('change', () => {
+        renderCurrentView(calendarDate);
+    });
+
+    // Agenda Modal Listeners (Unique IDs for Admin Dashboard)
+    const agendaModal = document.getElementById('agenda-modal');
+    const agendaBackdrop = document.getElementById('agenda-modal-backdrop');
+    const agendaCloseBtn = document.getElementById('close-agenda-modal-btn');
+
+    const closeAgendaModal = () => {
+        const container = document.getElementById('agenda-modal-container');
+        agendaBackdrop.classList.remove('opacity-100');
+        agendaBackdrop.classList.add('opacity-0');
+        container.classList.remove('translate-y-0');
+        container.classList.add('translate-y-full');
+        setTimeout(() => {
+            agendaModal.classList.add('hidden');
+        }, 300);
+    };
+
+    if (agendaBackdrop) agendaBackdrop.addEventListener('click', closeAgendaModal);
+    if (agendaCloseBtn) agendaCloseBtn.addEventListener('click', closeAgendaModal);
+
+    // Digital Clock Logic
+    updateClock();
+    setInterval(updateClock, 1000);
 });
+
+function updateClock() {
+    const clockElement = document.getElementById('digital-clock');
+    if (!clockElement) return;
+
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+}
 
 async function fetchDateData() {
     try {
@@ -367,3 +424,220 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// --- CALENDAR FUNCTIONS (Copied from calendar.js) ---
+
+async function fetchAndRenderCalendar(date) {
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    const grid = document.getElementById('calendar-grid');
+    const header = document.getElementById('month-display');
+
+    if (header) header.textContent = "Loading...";
+    if (grid) grid.innerHTML = '<div class="col-span-7 flex items-center justify-center text-slate-400 h-64">Loading...</div>';
+
+    try {
+        const [calendarResponse, scheduleResponse, holidayResponse] = await Promise.all([
+            fetch(`https://api.aladhan.com/v1/gToHCalendar/${month}/${year}?latitude=-6.9175&longitude=107.6191&method=20`),
+            fetch('/api/jadwal'),
+            fetch(`https://api-harilibur.vercel.app/api?year=${year}`)
+        ]);
+
+        if (calendarResponse.ok) {
+            const calendarJson = await calendarResponse.json();
+            window.currentCalendarDays = calendarJson.data;
+        }
+
+        if (scheduleResponse.ok) {
+            const scheduleJson = await scheduleResponse.json();
+            if (scheduleJson.success) window.globalScheduleData = scheduleJson.data;
+        }
+
+        if (holidayResponse.ok) {
+            window.globalHolidays = await holidayResponse.json();
+        }
+
+        renderCalendarGrid(window.currentCalendarDays, date);
+    } catch (error) {
+        console.error("Error fetching calendar data:", error);
+    }
+}
+
+async function renderCurrentView(date) {
+    if (window.currentCalendarDays && window.currentCalendarDate &&
+        window.currentCalendarDate.getMonth() === date.getMonth() &&
+        window.currentCalendarDate.getFullYear() === date.getFullYear()) {
+        renderCalendarGrid(window.currentCalendarDays, date);
+    } else {
+        fetchAndRenderCalendar(date);
+    }
+}
+
+function renderCalendarGrid(days, currentDate) {
+    if (!days) return;
+    window.currentCalendarDays = days;
+    window.currentCalendarDate = currentDate;
+
+    const grid = document.getElementById('calendar-grid');
+    const header = document.getElementById('month-display');
+    const holidayListContainer = document.getElementById('holiday-list');
+    const filterClass = document.getElementById('class-filter').value;
+
+    const indoMonths = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    const dayMap = { "Sunday": "Minggu", "Monday": "Senin", "Tuesday": "Selasa", "Wednesday": "Rabu", "Thursday": "Kamis", "Friday": "Jumat", "Saturday": "Sabtu" };
+    const weekdayMap = { "Sunday": 0, "Monday": 1, "Tuesday": 2, "Wednesday": 3, "Thursday": 4, "Friday": 5, "Saturday": 6 };
+
+    if (grid) grid.innerHTML = '';
+    if (holidayListContainer) holidayListContainer.innerHTML = '';
+    const currentMonthHolidays = [];
+
+    // Header Display
+    const firstHijri = days[0].hijri;
+    const lastHijri = days[days.length - 1].hijri;
+    let hijriString = `${firstHijri.month.en} ${firstHijri.year} H`;
+    if (firstHijri.month.number !== lastHijri.month.number) {
+        hijriString = `${firstHijri.month.en} - ${lastHijri.month.en} ${lastHijri.year} H`;
+    }
+    if (header) {
+        header.innerHTML = `
+            <div class="flex flex-col items-center leading-tight">
+                <span>${indoMonths[currentDate.getMonth()]} ${currentDate.getFullYear()}</span>
+                <span class="text-[10px] font-normal opacity-60">${hijriString}</span>
+            </div>
+        `;
+    }
+
+    // Offset
+    const startOffset = weekdayMap[days[0].gregorian.weekday.en];
+    for (let i = 0; i < startOffset; i++) {
+        const empty = document.createElement('div');
+        empty.className = "h-16 border-b border-slate-50 bg-slate-50/30";
+        grid.appendChild(empty);
+    }
+
+    days.forEach(day => {
+        const dateDiv = document.createElement('div');
+        const gDate = day.gregorian;
+        const [d, m, y] = gDate.date.split('-');
+        const cYear = parseInt(y), cMonth = parseInt(m) - 1, cDay = parseInt(d);
+
+        const isHoliday = window.globalHolidays.some(h => {
+            const hD = new Date(h.holiday_date);
+            return hD.getFullYear() === cYear && hD.getMonth() === cMonth && hD.getDate() === cDay;
+        });
+        const holiday = window.globalHolidays.find(h => {
+            const hD = new Date(h.holiday_date);
+            return hD.getFullYear() === cYear && hD.getMonth() === cMonth && hD.getDate() === cDay;
+        });
+
+        if (isHoliday && holiday) {
+            if (!currentMonthHolidays.some(h => h.holiday_date === holiday.holiday_date)) currentMonthHolidays.push(holiday);
+        }
+
+        const isToday = isSameDay(new Date(), new Date(cYear, cMonth, cDay));
+        const isSunday = gDate.weekday.en === "Sunday";
+        const dayIndo = dayMap[gDate.weekday.en];
+
+        let todaysSchedule = [];
+        if (filterClass !== "") {
+            todaysSchedule = window.globalScheduleData.filter(s => s.hari === dayIndo && s.nama_kelas === filterClass);
+        }
+
+        let baseClass = "h-16 border-b border-slate-50 flex flex-col items-center justify-center relative group cursor-pointer hover:bg-slate-50 transition-colors";
+        let textClass = (isSunday || isHoliday) ? "text-red-500 font-bold" : "text-slate-700";
+        if (isToday) baseClass += " bg-primary/5 ring-1 ring-inset ring-primary/20";
+
+        dateDiv.className = baseClass;
+        dateDiv.innerHTML = `
+            <span class="text-sm ${textClass}">${gDate.day}</span>
+            <span class="text-[8px] text-slate-400 font-medium">${day.hijri.day}</span>
+            ${todaysSchedule.length > 0 ? '<div class="absolute bottom-1 size-1.5 rounded-full bg-primary mb-1"></div>' : ''}
+            ${isHoliday ? '<div class="absolute bottom-1 size-1.5 rounded-full bg-red-400 mb-1"></div>' : ''}
+        `;
+
+        dateDiv.addEventListener('click', () => showAgendaDetail(day, holiday, todaysSchedule, dayIndo));
+        grid.appendChild(dateDiv);
+    });
+
+    // Render Holiday List
+    if (holidayListContainer) {
+        if (currentMonthHolidays.length > 0) {
+            currentMonthHolidays.sort((a, b) => new Date(a.holiday_date) - new Date(b.holiday_date));
+            currentMonthHolidays.forEach(h => {
+                const hD = new Date(h.holiday_date);
+                const item = document.createElement('div');
+                item.className = "flex items-center gap-3 p-3 rounded-2xl bg-red-50/50 border border-red-100/50";
+                item.innerHTML = `
+                    <div class="flex flex-col items-center justify-center min-w-[36px] h-[36px] rounded-lg bg-red-500 text-white">
+                        <span class="text-xs font-bold leading-none">${hD.getDate()}</span>
+                        <span class="text-[8px] font-medium uppercase">${indoMonths[hD.getMonth()].slice(0, 3)}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-red-600 leading-tight">${h.holiday_name}</span>
+                        <span class="text-[10px] text-red-400">Libur Nasional</span>
+                    </div>
+                `;
+                holidayListContainer.appendChild(item);
+            });
+        } else {
+            holidayListContainer.innerHTML = '<p class="text-center text-[10px] text-slate-400 py-2 italic">Tidak ada hari libur bulan ini</p>';
+        }
+    }
+}
+
+function isSameDay(d1, d2) {
+    return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+}
+
+function showAgendaDetail(day, holiday, schedules, dayName) {
+    const modal = document.getElementById('agenda-modal');
+    const backdrop = document.getElementById('agenda-modal-backdrop');
+    const container = document.getElementById('agenda-modal-container');
+    const body = document.getElementById('modal-agenda-body');
+    const masehiText = document.getElementById('modal-masehi');
+    const hijriText = document.getElementById('modal-hijri');
+    const indoMonths = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+    const gDate = day.gregorian;
+    const mParts = gDate.date.split('-');
+    if (masehiText) masehiText.textContent = `${dayName}, ${parseInt(mParts[0])} ${indoMonths[parseInt(mParts[1]) - 1]} ${mParts[2]}`;
+    if (hijriText) hijriText.textContent = `${day.hijri.day} ${day.hijri.month.en} ${day.hijri.year} H`;
+
+    if (body) {
+        body.innerHTML = '';
+        if (holiday) {
+            const hDiv = document.createElement('div');
+            hDiv.className = "p-4 rounded-2xl bg-red-50 border border-red-100 flex items-start gap-4";
+            hDiv.innerHTML = `<div class="size-11 rounded-xl bg-red-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-red-200"><span class="material-symbols-outlined text-[24px]">event_busy</span></div><div class="flex flex-col"><span class="text-xs font-bold text-red-400 uppercase tracking-widest leading-none mb-1">Hari Libur</span><span class="font-bold text-red-600 tracking-tight">${holiday.holiday_name}</span></div>`;
+            body.appendChild(hDiv);
+        }
+
+        if (schedules.length > 0) {
+            schedules.sort((a, b) => a.waktu_mulai.localeCompare(b.waktu_mulai));
+            const h = document.createElement('p');
+            h.className = "text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1 mt-6 mb-2";
+            h.textContent = "Agenda Mata Pelajaran";
+            body.appendChild(h);
+
+            schedules.forEach(sch => {
+                const row = document.createElement('div');
+                row.className = "p-4 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-between group hover:border-primary/30 transition-all";
+                row.innerHTML = `<div class="flex items-center gap-4"><div class="size-11 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[24px]">book</span></div><div class="flex flex-col"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">${sch.nama_kelas}</span><span class="font-bold text-slate-800 tracking-tight leading-tight">${sch.mata_pelajaran}</span></div></div><div class="text-right flex flex-col items-end"><span class="text-xs font-extrabold text-primary leading-none">${sch.waktu_mulai.slice(0, 5)}</span><span class="text-[10px] font-medium text-slate-400 mt-1">${sch.waktu_selesai.slice(0, 5)}</span></div>`;
+                body.appendChild(row);
+            });
+        }
+
+        if (!holiday && schedules.length === 0) {
+            body.innerHTML = `<div class="py-12 flex flex-col items-center text-center"><div class="size-20 rounded-full bg-slate-50 flex items-center justify-center mb-4"><span class="material-symbols-outlined text-slate-200 text-5xl">event_upcoming</span></div><p class="text-slate-400 font-medium italic">Tidak ada agenda kegiatan <br> pada hari ini.</p></div>`;
+        }
+    }
+
+    if (modal) {
+        modal.classList.remove('hidden');
+        void container.offsetHeight;
+        backdrop.classList.add('opacity-100');
+        backdrop.classList.remove('opacity-0');
+        container.classList.remove('translate-y-full');
+        container.classList.add('translate-y-0');
+    }
+}

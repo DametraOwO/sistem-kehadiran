@@ -377,6 +377,10 @@ def admin():
             """)
             recent_logs = cur.fetchall()
             
+            # Fetch Class List for Calendar Filter
+            cur.execute("SELECT * FROM kelas ORDER BY nama_kelas ASC")
+            kelas_list = cur.fetchall()
+            
             cur.close()
             db.close()
         except Exception as e:
@@ -385,8 +389,9 @@ def admin():
             admin_data = None
             class_cards = []
             recent_logs = []
+            kelas_list = []
             
-    return render_template('admin.html', berita_list=berita_list, admin=admin_data, stats=stats, class_cards=class_cards, recent_logs=recent_logs)
+    return render_template('admin.html', berita_list=berita_list, admin=admin_data, stats=stats, class_cards=class_cards, recent_logs=recent_logs, kelas_list=kelas_list)
 
 @app.route('/laporan')
 @login_required
@@ -1084,7 +1089,8 @@ def update_profil():
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    is_logged_in = 'admin_id' in session
+    return render_template('about.html', is_logged_in=is_logged_in)
 
 @app.route('/calendar')
 def calendar():
