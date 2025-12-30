@@ -81,9 +81,10 @@
                         </button>
                     </div>
                     <div class="flex flex-col">
-                        <h3 class="text-white text-xl font-bold leading-none mb-1">{{ session['admin_name'] if
-                            session['admin_name'] else 'Admin' }}</h3>
-                        <p class="text-white/80 text-xs font-medium tracking-wide uppercase">Administrator Madrasah</p>
+                        <h3 class="text-white text-xl font-bold leading-none mb-1">{{ admin.nama_lengkap if admin else
+                            (session['admin_name'] if session['admin_name'] else 'Admin') }}</h3>
+                        <p class="text-white/80 text-xs font-medium tracking-wide uppercase">{{ admin.status_role if
+                            admin else (session['admin_role'] if session['admin_role'] else 'Administrator') }}</p>
                     </div>
                 </div>
             </div>
@@ -184,9 +185,12 @@
                             </div>
                         </button>
                         <div class="flex flex-col">
-                            <span class="text-xs text-white/80 font-medium tracking-wide">Selamat Datang</span>
-                            <h2 class="text-white text-base font-bold leading-none">{{ session['admin_name'] if
-                                session['admin_name'] else 'Admin' }}</h2>
+                            <span class="text-xs text-white/80 font-medium tracking-wide">Selamat Datang,</span>
+                            <h2 class="text-white text-xl font-extrabold leading-tight mb-0.5">{{ admin.nama_lengkap if
+                                admin else (session['admin_name'] if session['admin_name'] else 'Admin') }}</h2>
+                            <p class="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em]">{{
+                                admin.status_role if admin else (session['admin_role'] if session['admin_role'] else
+                                'Administrator') }}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
@@ -201,8 +205,7 @@
 
                 <!-- Headline & Date -->
                 <div class="mb-2">
-                    <h3 class="text-white tracking-tight text-3xl font-bold leading-tight mb-2">
-                        Assalamu'alaikum</h3>
+
                     <p class="text-white/90 font-medium text-sm flex items-center gap-2" id="realtime-date">
                         <span class="material-symbols-outlined text-[18px]">calendar_month</span>
                         --

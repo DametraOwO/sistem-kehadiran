@@ -66,6 +66,19 @@ def add_header(response):
     response.headers['Expires'] = '0'
     return response
 
+def record_log(admin_id, kategori, pesan):
+    db = get_db()
+    if db:
+        try:
+            cur = db.cursor()
+            # Mapping based on actual schema: id, admin_id, aksi (pesan), tabel_terkait (kategori), data_id, waktu
+            cur.execute("INSERT INTO log_aktivitas (admin_id, aksi, tabel_terkait) VALUES (%s, %s, %s)", 
+                        (admin_id, pesan, kategori))
+            db.commit()
+            db.close()
+        except Exception as e:
+            print(f"Log Error: {e}")
+
 @app.route('/')
 def index():
     db = get_db()
@@ -203,7 +216,7 @@ def login():
             
         try:
             cur = db.cursor()
-            cur.execute("SELECT id, password_hash, nama_lengkap FROM admins WHERE email = %s OR id = %s", (identifier, identifier))
+            cur.execute("SELECT id, password_hash, nama_lengkap, status_role FROM admins WHERE email = %s OR id = %s", (identifier, identifier))
             user = cur.fetchone()
             cur.close()
             db.close()
@@ -212,6 +225,7 @@ def login():
                 session['logged_in'] = True
                 session['admin_id'] = user[0]
                 session['admin_name'] = user[2]
+                session['admin_role'] = user[3]
                 flash(f'Selamat datang kembali, {user[2]}!', 'success')
                 return redirect(url_for('admin'))
             else:
@@ -473,9 +487,14 @@ def simpan_absensi():
             """, (student_id, full_status, today, now_time, full_status, now_time))
             
         db.commit()
+        
+        # Record Log
+        admin_name = session.get('nama_lengkap', 'Seseorang')
+        record_log(session.get('admin_id'), 'Kehadiran', f"<b>{admin_name}</b> telah melakukan rekap kehadiran")
+        
         cur.close()
         db.close()
-        return jsonify({'success': True, 'message': 'Absensi berhasil disimpan!'})
+        return jsonify({'success': True, 'message': 'Presensi berhasil disimpan!'})
     except Exception as e:
         if db:
             try:
@@ -884,6 +903,11 @@ def tambah_berita():
             cur.execute("INSERT INTO berita (judul, konten, gambar, penulis_id, kategori) VALUES (%s, %s, %s, %s, %s)", 
                         (judul, konten, filename, penulis_id, kategori))
             db.commit()
+            
+            # Record Log
+            admin_name = session.get('nama_lengkap', 'Seseorang')
+            record_log(session.get('admin_id'), 'Berita', f"<b>{admin_name}</b> telah memposting <b>{kategori}</b>")
+            
             cur.close()
             db.close()
             flash('Berita berhasil ditambahkan!', 'success')

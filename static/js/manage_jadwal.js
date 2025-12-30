@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Search and Filter
     const searchInput = document.getElementById('jadwal-search');
     const filterHari = document.getElementById('filter-hari');
+    const filterKelas = document.getElementById('filter-kelas');
     const tableRows = document.querySelectorAll('#jadwal-table-body tr');
 
     // Initialize Flatpickr safely
@@ -86,21 +87,26 @@ document.addEventListener('DOMContentLoaded', () => {
         showModal('edit', id, id_kelas, hari, mata_pelajaran, waktu_mulai, waktu_selesai, keterangan);
     };
 
+
+
     // Filter Logic
     const filterTable = () => {
         const searchTerm = searchInput.value.toLowerCase();
         const hariTerm = filterHari.value;
+        const kelasTerm = filterKelas.value;
 
         tableRows.forEach(row => {
             if (row.querySelector('td[colspan]')) return; // Skip empty state
 
-            const mapel = row.querySelector('td:nth-child(3) .text-sm').textContent.toLowerCase();
-            const hari = row.querySelector('td:nth-child(1) span').textContent.trim();
+            const mapel = row.cells[2].querySelector('span.text-sm').textContent.toLowerCase();
+            const hari = row.cells[0].textContent.trim();
+            const kelas = row.cells[3].textContent.trim();
 
             const matchesSearch = mapel.includes(searchTerm);
             const matchesHari = hariTerm === "" || hari === hariTerm;
+            const matchesKelas = kelasTerm === "" || kelas === kelasTerm;
 
-            if (matchesSearch && matchesHari) {
+            if (matchesSearch && matchesHari && matchesKelas) {
                 row.classList.remove('hidden');
             } else {
                 row.classList.add('hidden');
@@ -110,4 +116,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchInput.addEventListener('input', filterTable);
     filterHari.addEventListener('change', filterTable);
+    filterKelas.addEventListener('change', filterTable);
 });

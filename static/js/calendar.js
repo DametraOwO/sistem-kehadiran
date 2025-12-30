@@ -122,13 +122,20 @@ function renderCalendarGrid(days, currentDate) {
         "Saturday": "Sabtu"
     };
 
+    const holidayListContainer = document.getElementById('holiday-list');
     grid.innerHTML = '';
+    holidayListContainer.innerHTML = '';
+    const currentMonthHolidays = [];
 
-    const middleDayIndex = Math.floor(days.length / 2);
-    const middleHijri = days[middleDayIndex].hijri;
+    const firstHijri = days[0].hijri;
+    const lastHijri = days[days.length - 1].hijri;
     const masehiMonth = indoMonths[currentDate.getMonth()];
     const masehiYear = currentDate.getFullYear();
-    const hijriString = `${middleHijri.month.en} ${middleHijri.year} H`;
+
+    let hijriString = `${firstHijri.month.en} ${firstHijri.year} H`;
+    if (firstHijri.month.number !== lastHijri.month.number) {
+        hijriString = `${firstHijri.month.en} ${firstHijri.year} H - ${lastHijri.month.en} ${lastHijri.year} H`;
+    }
 
     header.innerHTML = `
         <div class="flex flex-col items-center leading-tight">
@@ -180,6 +187,13 @@ function renderCalendarGrid(days, currentDate) {
                 hDate.getMonth() === currentMonth &&
                 hDate.getDate() === currentDay;
         });
+
+        if (isHoliday && holiday) {
+            // Check if already in currentMonthHolidays to avoid duplicates from multi-fetch/overlap
+            if (!currentMonthHolidays.some(h => h.holiday_date === holiday.holiday_date)) {
+                currentMonthHolidays.push(holiday);
+            }
+        }
 
         const dateObj = new Date(currentYear, currentMonth, currentDay);
         const today = new Date();
@@ -260,6 +274,35 @@ function renderCalendarGrid(days, currentDate) {
         dateDiv.innerHTML = dateHtml + scheduleHtml;
         grid.appendChild(dateDiv);
     });
+
+    // Render Holiday List below calendar
+    if (currentMonthHolidays.length > 0) {
+        // Sort by date just in case
+        currentMonthHolidays.sort((a, b) => new Date(a.holiday_date) - new Date(b.holiday_date));
+
+        currentMonthHolidays.forEach(h => {
+            const hDate = new Date(h.holiday_date);
+            const d = hDate.getDate();
+            const m = hDate.getMonth();
+            const monthName = indoMonths[m];
+
+            const item = document.createElement('div');
+            item.className = "flex items-start gap-3 p-3 rounded-2xl bg-red-50/50 dark:bg-red-900/10 border border-red-100/50 dark:border-red-900/20";
+            item.innerHTML = `
+                <div class="flex flex-col items-center justify-center min-w-[45px] h-[45px] rounded-xl bg-red-500 text-white shadow-sm">
+                    <span class="text-xs font-bold leading-none">${d}</span>
+                    <span class="text-[9px] font-medium uppercase opacity-90">${monthName.slice(0, 3)}</span>
+                </div>
+                <div class="flex flex-col py-0.5">
+                    <span class="text-xs font-bold text-red-600 dark:text-red-400 leading-tight">${h.holiday_name}</span>
+                    <span class="text-[10px] text-red-400 dark:text-red-500/70 font-medium">Libur Nasional</span>
+                </div>
+            `;
+            holidayListContainer.appendChild(item);
+        });
+    } else {
+        holidayListContainer.innerHTML = '<p class="text-center text-xs text-slate-400 py-4 font-medium italic">Tidak ada hari libur bulan ini</p>';
+    }
 }
 
 function isSameDay(d1, d2) {
