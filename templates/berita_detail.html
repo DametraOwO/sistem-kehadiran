@@ -15,9 +15,7 @@
             --primary: #14b881;
             --primary-dark: #0f9669;
             --surface-light: #ffffff;
-            --surface-dark: #0f172a;
             --background-light: #f8fafc;
-            --background-dark: #020617;
         }
 
         body {
@@ -36,11 +34,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .dark .glass-card {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -52,7 +45,6 @@
     </style>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -60,11 +52,9 @@
                         'primary-dark': '#0f9669',
                         surface: {
                             light: '#ffffff',
-                            dark: '#0f172a'
                         },
                         background: {
                             light: '#f8fafc',
-                            dark: '#020617'
                         }
                     }
                 }
@@ -73,24 +63,23 @@
     </script>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark transition-colors duration-300">
-    <div class="min-h-screen relative flex flex-col bg-background-light dark:bg-background-dark">
+<body class="bg-background-light transition-colors duration-300">
+    <div class="min-h-screen relative flex flex-col bg-background-light">
         <!-- Header / Back Navigation -->
-        <header class="sticky top-0 z-50 glass-card border-b border-slate-100 dark:border-white/5">
+        <header class="sticky top-0 z-50 glass-card border-b border-slate-100">
             <div class="max-w-5xl mx-auto flex items-center gap-4 px-5 h-16">
                 <a href="{{ url_for('index') }}"
-                    class="size-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400">
+                    class="size-10 flex items-center justify-center rounded-full bg-slate-100 text-slate-600">
                     <span class="material-symbols-outlined">arrow_back</span>
                 </a>
-                <h2 class="text-lg font-bold text-slate-900 dark:text-white truncate">Berita Selengkapnya</h2>
+                <h2 class="text-lg font-bold text-slate-900 truncate">Berita Selengkapnya</h2>
             </div>
         </header>
 
         <!-- Main Content -->
         <main class="flex-1 pb-10 w-full max-w-4xl mx-auto">
             <!-- Article Image -->
-            <div
-                class="w-full aspect-video md:aspect-[21/9] bg-slate-200 dark:bg-white/5 md:rounded-3xl overflow-hidden relative">
+            <div class="w-full aspect-video md:aspect-[21/9] bg-slate-200 md:rounded-3xl overflow-hidden relative">
                 {% if berita.gambar %}
                 <img src="{{ url_for('static', filename='uploads/berita/' + berita.gambar) }}" alt="{{ berita.judul }}"
                     class="w-full h-full object-cover">
@@ -103,8 +92,7 @@
 
             <!-- Article Body -->
             <div class="px-6 -mt-8 relative z-10">
-                <div
-                    class="bg-surface-light dark:bg-surface-dark rounded-3xl p-6 shadow-xl border border-slate-100 dark:border-white/5">
+                <div class="bg-surface-light rounded-3xl p-6 shadow-xl border border-slate-100">
                     <!-- Category & Date -->
                     <div class="flex items-center gap-3 mb-4">
                         <span
@@ -118,12 +106,12 @@
                     </div>
 
                     <!-- Title -->
-                    <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white leading-tight mb-4">
+                    <h1 class="text-2xl font-extrabold text-slate-900 leading-tight mb-4">
                         {{ berita.judul }}
                     </h1>
 
                     <!-- Author -->
-                    <div class="flex items-center gap-3 mb-8 p-3 bg-slate-50 dark:bg-white/5 rounded-2xl">
+                    <div class="flex items-center gap-3 mb-8 p-3 bg-slate-50 rounded-2xl">
                         <div
                             class="size-10 rounded-full islamic-pattern flex items-center justify-center text-white font-bold text-sm">
                             {{ berita.penulis[0] | upper }}
@@ -132,14 +120,14 @@
                             <span
                                 class="text-xs text-slate-500 uppercase tracking-tighter font-medium leading-none mb-1">Dipublikasikan
                                 Oleh</span>
-                            <span class="text-sm font-bold text-slate-900 dark:text-white leading-none">{{
+                            <span class="text-sm font-bold text-slate-900 leading-none">{{
                                 berita.penulis }}</span>
                         </div>
                     </div>
 
                     <!-- Content -->
-                    <div class="prose dark:prose-invert max-w-none">
-                        <p class="text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line text-base">
+                    <div class="prose max-w-none">
+                        <p class="text-slate-600 leading-relaxed whitespace-pre-line text-base">
                             {{ berita.konten }}
                         </p>
                     </div>
@@ -164,19 +152,10 @@
         </main>
 
         <!-- Footer -->
-        <footer class="p-8 text-center bg-slate-50 dark:bg-black/20">
+        <footer class="p-8 text-center bg-slate-50">
             <p class="text-xs text-slate-400 font-medium">© 2025 Madrasah Digital - Sistem Kehadiran Santri</p>
         </footer>
     </div>
-
-    <!-- Dark Mode Script (Simplified from index) -->
-    <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
 </body>
 
 </html>

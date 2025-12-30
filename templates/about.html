@@ -15,16 +15,13 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
                         "primary": "#14b881",
                         "primary-dark": "#0f8c61",
                         "background-light": "#f6f8f7",
-                        "background-dark": "#11211c",
                         "surface-light": "#ffffff",
-                        "surface-dark": "#1a2c26",
                     },
                     fontFamily: {
                         "display": ["Lexend", "sans-serif"]
@@ -71,7 +68,7 @@
 </head>
 
 <body
-    class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-100 antialiased overflow-x-hidden pb-24 selection:bg-primary selection:text-white">
+    class="bg-background-light font-display text-slate-800 antialiased overflow-x-hidden pb-24 selection:bg-primary selection:text-white">
     <div class="relative w-full islamic-pattern rounded-b-3xl shadow-lg pt-12 pb-8 px-5 group/header">
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
@@ -96,8 +93,7 @@
         </div>
     </div>
     <main class="flex flex-col gap-5 -mt-6 px-4 relative z-10">
-        <section
-            class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 shadow-soft border border-slate-100 dark:border-slate-800">
+        <section class="bg-surface-light rounded-2xl p-5 shadow-soft border border-slate-100">
             <div class="relative h-48 w-full rounded-xl bg-slate-200 mb-5 overflow-hidden group">
                 <img alt="Modern islamic school building with green garden"
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -111,11 +107,11 @@
                 </div>
             </div>
             <div class="flex items-center gap-2 mb-3">
-                <h2 class="text-xl font-bold text-slate-800 dark:text-white">Tentang Kami</h2>
-                <div class="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                <h2 class="text-xl font-bold text-slate-800">Tentang Kami</h2>
+                <div class="h-1 w-1 rounded-full bg-slate-300"></div>
                 <span class="text-primary text-sm font-medium">Sejak 2004</span>
             </div>
-            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed text-justify">
+            <p class="text-slate-600 text-sm leading-relaxed text-justify">
                 Madrasah Al-Hidayah adalah lembaga pendidikan yang berkomitmen mencetak generasi Qur'ani yang cerdas,
                 berakhlak mulia, dan berwawasan global. Kami memadukan kurikulum nasional dengan nilai-nilai keislaman
                 yang kuat untuk membentuk karakter santri yang unggul.
@@ -139,58 +135,56 @@
                     </p>
                 </div>
             </div>
-            <div
-                class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 shadow-soft border border-slate-100 dark:border-slate-800">
-                <div class="flex items-center gap-3 mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
+            <div class="bg-surface-light rounded-2xl p-5 shadow-soft border border-slate-100">
+                <div class="flex items-center gap-3 mb-4 border-b border-slate-100 pb-3">
                     <div class="bg-orange-500/10 p-2 rounded-lg text-orange-600">
                         <span class="material-symbols-outlined text-xl">target</span>
                     </div>
-                    <h3 class="font-bold text-lg text-slate-800 dark:text-white">Misi Utama</h3>
+                    <h3 class="font-bold text-lg text-slate-800">Misi Utama</h3>
                 </div>
                 <ul class="space-y-4">
                     <li class="flex gap-3 items-start">
                         <div
-                            class="bg-primary/10 text-primary rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ring-2 ring-white dark:ring-surface-dark">
+                            class="bg-primary/10 text-primary rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ring-2 ring-white">
                             1</div>
-                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-snug">Menanamkan nilai-nilai tauhid
+                        <p class="text-slate-600 text-sm leading-snug">Menanamkan nilai-nilai tauhid
                             dan akhlakul karimah dalam setiap aspek pembelajaran.</p>
                     </li>
                     <li class="flex gap-3 items-start">
                         <div
-                            class="bg-primary/10 text-primary rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ring-2 ring-white dark:ring-surface-dark">
+                            class="bg-primary/10 text-primary rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ring-2 ring-white">
                             2</div>
-                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-snug">Menyelenggarakan pendidikan
+                        <p class="text-slate-600 text-sm leading-snug">Menyelenggarakan pendidikan
                             berkualitas berbasis teknologi modern.</p>
                     </li>
                     <li class="flex gap-3 items-start">
                         <div
-                            class="bg-primary/10 text-primary rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ring-2 ring-white dark:ring-surface-dark">
+                            class="bg-primary/10 text-primary rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ring-2 ring-white">
                             3</div>
-                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-snug">Mengembangkan potensi bakat
+                        <p class="text-slate-600 text-sm leading-snug">Mengembangkan potensi bakat
                             dan minat santri melalui ekstrakurikuler.</p>
                     </li>
                 </ul>
             </div>
         </section>
-        <section
-            class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 shadow-soft border border-slate-100 dark:border-slate-800 mb-8">
+        <section class="bg-surface-light rounded-2xl p-5 shadow-soft border border-slate-100 mb-8">
             <div class="flex items-center justify-between mb-5">
-                <h3 class="font-bold text-lg text-slate-800 dark:text-white">Hubungi Kami</h3>
+                <h3 class="font-bold text-lg text-slate-800">Hubungi Kami</h3>
                 <span id="business-status"
                     class="text-xs px-2 py-1 rounded-md font-medium transition-colors duration-300">
                     Buka • 07:00 - 18:00
                 </span>
             </div>
             <div class="space-y-4 relative">
-                <div class="absolute left-[19px] top-4 bottom-4 w-0.5 bg-slate-100 dark:bg-slate-800 -z-10"></div>
+                <div class="absolute left-[19px] top-4 bottom-4 w-0.5 bg-slate-100 -z-10"></div>
                 <div class="flex items-center gap-4 group">
                     <div
-                        class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform">
+                        class="w-10 h-10 rounded-full bg-white border border-slate-100 flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined text-xl">call</span>
                     </div>
                     <div class="flex-1">
                         <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Telepon</p>
-                        <p class="text-sm font-semibold text-slate-800 dark:text-white">0812-2016-5944</p>
+                        <p class="text-sm font-semibold text-slate-800">0812-2016-5944</p>
                     </div>
                     <a class="p-2 text-slate-400 hover:text-primary transition-colors"
                         href="{{ url_for('maintenance') }}">
@@ -199,51 +193,50 @@
                 </div>
                 <div class="flex items-center gap-4 group">
                     <div
-                        class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform">
+                        class="w-10 h-10 rounded-full bg-white border border-slate-100 flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined text-xl">mail</span>
                     </div>
                     <div class="flex-1">
                         <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Email</p>
-                        <p class="text-sm font-semibold text-slate-800 dark:text-white">-</p>
+                        <p class="text-sm font-semibold text-slate-800">-</p>
                     </div>
                 </div>
                 <div class="flex items-start gap-4 group">
                     <div
-                        class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-primary shadow-sm shrink-0 group-hover:scale-110 transition-transform">
+                        class="w-10 h-10 rounded-full bg-white border border-slate-100 flex items-center justify-center text-primary shadow-sm shrink-0 group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined text-xl">location_on</span>
                     </div>
                     <div>
                         <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-0.5">Alamat</p>
-                        <p class="text-sm font-semibold text-slate-800 dark:text-white leading-snug">
+                        <p class="text-sm font-semibold text-slate-800 leading-snug">
                             KP.Babakan Tarogong RT 01 / RW 03 Desa Ciparay. Kec. Ciparay. Kab. Bandung. 40381.
                         </p>
                     </div>
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
-                <a class="flex flex-col items-center gap-2 p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 transition-colors group"
+            <div class="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-slate-100">
+                <a class="flex flex-col items-center gap-2 p-3 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors group"
                     href="{{ url_for('maintenance') }}">
-                    <span
-                        class="text-blue-600 dark:text-blue-400 font-bold text-lg group-hover:scale-110 transition-transform">f</span>
-                    <span class="text-[10px] font-medium text-slate-500 dark:text-slate-400">Facebook</span>
+                    <span class="text-blue-600 font-bold text-lg group-hover:scale-110 transition-transform">f</span>
+                    <span class="text-[10px] font-medium text-slate-500">Facebook</span>
                 </a>
-                <a class="flex flex-col items-center gap-2 p-3 rounded-xl bg-pink-50 dark:bg-pink-900/20 hover:bg-pink-100 transition-colors group"
+                <a class="flex flex-col items-center gap-2 p-3 rounded-xl bg-pink-50 hover:bg-pink-100 transition-colors group"
                     href="{{ url_for('maintenance') }}">
                     <span
-                        class="material-symbols-outlined text-pink-600 dark:text-pink-400 text-xl group-hover:scale-110 transition-transform">photo_camera</span>
-                    <span class="text-[10px] font-medium text-slate-500 dark:text-slate-400">Instagram</span>
+                        class="material-symbols-outlined text-pink-600 text-xl group-hover:scale-110 transition-transform">photo_camera</span>
+                    <span class="text-[10px] font-medium text-slate-500">Instagram</span>
                 </a>
-                <a class="flex flex-col items-center gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-900/20 hover:bg-red-100 transition-colors group"
+                <a class="flex flex-col items-center gap-2 p-3 rounded-xl bg-red-50 hover:bg-red-100 transition-colors group"
                     href="{{ url_for('maintenance') }}">
                     <span
-                        class="material-symbols-outlined text-red-600 dark:text-red-400 text-xl group-hover:scale-110 transition-transform">play_arrow</span>
-                    <span class="text-[10px] font-medium text-slate-500 dark:text-slate-400">Youtube</span>
+                        class="material-symbols-outlined text-red-600 text-xl group-hover:scale-110 transition-transform">play_arrow</span>
+                    <span class="text-[10px] font-medium text-slate-500">Youtube</span>
                 </a>
             </div>
         </section>
     </main>
     <nav
-        class="fixed bottom-0 w-full bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 pb-safe pt-2 px-6 flex justify-between items-center z-50 h-20">
+        class="fixed bottom-0 w-full bg-surface-light/80 backdrop-blur-md border-t border-slate-200 pb-safe pt-2 px-6 flex justify-between items-center z-50 h-20">
         <a class="flex flex-col items-center gap-1 group w-16" href="{{ url_for('index') }}">
             <span
                 class="material-symbols-outlined text-slate-400 text-[28px] group-hover:text-primary transition-colors">home</span>
@@ -263,8 +256,10 @@
         </a>
 
     </nav>
-
     <script src="{{ url_for('static', filename='js/about.js') }}"></script>
+</body>
+
+<script src="{{ url_for('static', filename='js/about.js') }}"></script>
 </body>
 
 </html>

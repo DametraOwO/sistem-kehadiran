@@ -17,21 +17,23 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
                         "primary": "#14b881",
                         "primary-dark": "#0f8c61",
                         "background-light": "#f6f8f7",
-                        "background-dark": "#11211c",
                         "surface-light": "#ffffff",
-                        "surface-dark": "#1a2c26",
                     },
                     fontFamily: {
                         "display": ["Lexend", "sans-serif"]
                     },
                     borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                    boxShadow: {
+                        "soft": "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
+                        "card": "0 2px 8px -2px rgba(20, 184, 129, 0.1)",
+                        "glow": "0 0 15px rgba(20, 184, 129, 0.3)"
+                    }
                 },
             },
         }
@@ -53,10 +55,8 @@
     </style>
 </head>
 
-<body
-    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-50 transition-colors duration-300">
-    <div
-        class="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark">
+<body class="bg-background-light font-display text-slate-900 transition-colors duration-300">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light">
 
         <!-- Sidebar Navigation Overlay -->
         <div id="sidebar-overlay"
@@ -65,7 +65,7 @@
 
         <!-- Sidebar Navigation Content -->
         <div id="sidebar-menu"
-            class="fixed top-0 left-0 bottom-0 w-72 bg-white dark:bg-surface-dark z-[101] flex flex-col shadow-2xl transition-transform duration-300 -translate-x-full border-r border-slate-100 dark:border-white/5">
+            class="fixed top-0 left-0 bottom-0 w-72 bg-white z-[101] flex flex-col shadow-2xl transition-transform duration-300 -translate-x-full border-r border-slate-100">
             <!-- Sidebar Header -->
             <div class="p-6 islamic-pattern rounded-br-3xl shadow-lg relative">
                 <div class="absolute inset-0 islamic-pattern opacity-100 mix-blend-normal rounded-br-3xl"></div>
@@ -98,42 +98,42 @@
                         <span class="text-sm">Dashboard Admin</span>
                     </a>
                     <a href="{{ url_for('santri') }}"
-                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 hover:bg-slate-50 font-semibold transition-all group">
                         <span class="material-symbols-outlined group-hover:text-primary transition-colors">group</span>
                         <span class="text-sm">Data Santri</span>
                     </a>
                     <a href="{{ url_for('absensi') }}"
-                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 hover:bg-slate-50 font-semibold transition-all group">
                         <span
                             class="material-symbols-outlined group-hover:text-primary transition-colors">how_to_reg</span>
                         <span class="text-sm">Catat Kehadiran</span>
                     </a>
                     <a href="{{ url_for('semua_berita') }}"
-                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 hover:bg-slate-50 font-semibold transition-all group">
                         <span
                             class="material-symbols-outlined group-hover:text-primary transition-colors">newspaper</span>
                         <span class="text-sm">Berita & Pengumuman</span>
                     </a>
                     <a href="{{ url_for('manage_jadwal') }}"
-                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 hover:bg-slate-50 font-semibold transition-all group">
                         <span
                             class="material-symbols-outlined group-hover:text-primary transition-colors">calendar_today</span>
                         <span class="text-sm">Jadwal</span>
                     </a>
                     <a href="{{ url_for('laporan') }}"
-                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 hover:bg-slate-50 font-semibold transition-all group">
                         <span
                             class="material-symbols-outlined group-hover:text-primary transition-colors">description</span>
                         <span class="text-sm">Laporan</span>
                     </a>
-                    <div class="h-px bg-slate-100 dark:bg-white/5 my-4 mx-4"></div>
+                    <div class="h-px bg-slate-100 my-4 mx-4"></div>
                     <a href="{{ url_for('about') }}"
-                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 hover:bg-slate-50 font-semibold transition-all group">
                         <span class="material-symbols-outlined group-hover:text-primary transition-colors">info</span>
                         <span class="text-sm">Tentang</span>
                     </a>
                     <a href="{{ url_for('profil') }}"
-                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 hover:bg-slate-50 font-semibold transition-all group">
                         <span class="material-symbols-outlined group-hover:text-primary transition-colors">person</span>
                         <span class="text-sm">Profil</span>
                     </a>
@@ -143,7 +143,7 @@
             <!-- Sidebar Footer (Logout) -->
             <div class="p-4 mt-auto">
                 <a href="{{ url_for('logout') }}"
-                    class="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 font-bold hover:bg-red-100 dark:hover:bg-red-500/20 transition-all group">
+                    class="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-red-50 text-red-600 font-bold hover:bg-red-100 transition-all group">
                     <span
                         class="material-symbols-outlined transition-transform group-hover:-translate-x-1">logout</span>
                     <span class="text-sm">Keluar Sekarang</span>
@@ -176,7 +176,7 @@
                     <div class="flex items-center gap-3">
                         <button id="sidebar-trigger" class="relative group">
                             <div
-                                class="rounded-full size-12 ring-2 ring-white/30 group-hover:ring-white/50 transition-all overflow-hidden bg-slate-100 dark:bg-white/5">
+                                class="rounded-full size-12 ring-2 ring-white/30 group-hover:ring-white/50 transition-all overflow-hidden bg-slate-100">
                                 <img src="{{ url_for('static', filename='uploads/profil/' + admin.foto_profil) if admin and admin.foto_profil else 'https://ui-avatars.com/api/?name=' + session['admin_name'] + '&background=14b881&color=fff' }}"
                                     class="w-full h-full object-cover" alt="Profile">
                             </div>
@@ -218,67 +218,62 @@
             <div class="grid grid-cols-2 gap-3">
                 <!-- Hadir -->
                 <div
-                    class="flex flex-col gap-1 rounded-2xl p-4 bg-white dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-white/5">
+                    class="flex flex-col gap-1 rounded-2xl p-4 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100">
                     <div class="flex justify-between items-start">
-                        <div class="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-green-600 dark:text-green-400">
+                        <div class="p-2 bg-green-50 rounded-lg text-green-600">
                             <span class="material-symbols-outlined text-[24px]">check_circle</span>
                         </div>
-                        <span
-                            class="text-xs font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">{{
+                        <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">{{
                             stats.hadir_pct }}%</span>
                     </div>
                     <div class="mt-2">
-                        <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Hadir</p>
-                        <p class="text-slate-900 dark:text-white text-2xl font-bold">{{ stats.hadir }}</p>
+                        <p class="text-slate-500 text-sm font-medium">Hadir</p>
+                        <p class="text-slate-900 text-2xl font-bold">{{ stats.hadir }}</p>
                     </div>
                 </div>
                 <!-- Sakit -->
                 <div
-                    class="flex flex-col gap-1 rounded-2xl p-4 bg-white dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-white/5">
+                    class="flex flex-col gap-1 rounded-2xl p-4 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100">
                     <div class="flex justify-between items-start">
-                        <div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
+                        <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
                             <span class="material-symbols-outlined text-[24px]">sick</span>
                         </div>
-                        <span
-                            class="text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-full">{{
+                        <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">{{
                             stats.sakit_pct }}%</span>
                     </div>
                     <div class="mt-2">
-                        <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Sakit</p>
-                        <p class="text-slate-900 dark:text-white text-2xl font-bold">{{ stats.sakit }}</p>
+                        <p class="text-slate-500 text-sm font-medium">Sakit</p>
+                        <p class="text-slate-900 text-2xl font-bold">{{ stats.sakit }}</p>
                     </div>
                 </div>
                 <!-- Izin -->
                 <div
-                    class="flex flex-col gap-1 rounded-2xl p-4 bg-white dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-white/5">
+                    class="flex flex-col gap-1 rounded-2xl p-4 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100">
                     <div class="flex justify-between items-start">
-                        <div
-                            class="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg text-yellow-600 dark:text-yellow-400">
+                        <div class="p-2 bg-yellow-50 rounded-lg text-yellow-600">
                             <span class="material-symbols-outlined text-[24px]">mail</span>
                         </div>
-                        <span
-                            class="text-xs font-bold text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-full">{{
+                        <span class="text-xs font-bold text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">{{
                             stats.izin_pct }}%</span>
                     </div>
                     <div class="mt-2">
-                        <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Izin</p>
-                        <p class="text-slate-900 dark:text-white text-2xl font-bold">{{ stats.izin }}</p>
+                        <p class="text-slate-500 text-sm font-medium">Izin</p>
+                        <p class="text-slate-900 text-2xl font-bold">{{ stats.izin }}</p>
                     </div>
                 </div>
                 <!-- Alpha -->
                 <div
-                    class="flex flex-col gap-1 rounded-2xl p-4 bg-white dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-white/5">
+                    class="flex flex-col gap-1 rounded-2xl p-4 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100">
                     <div class="flex justify-between items-start">
-                        <div class="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg text-red-600 dark:text-red-400">
+                        <div class="p-2 bg-red-50 rounded-lg text-red-600">
                             <span class="material-symbols-outlined text-[24px]">close</span>
                         </div>
-                        <span
-                            class="text-xs font-bold text-red-600 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-full">{{
+                        <span class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-full">{{
                             stats.alpha_pct }}%</span>
                     </div>
                     <div class="mt-2">
-                        <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Alpha</p>
-                        <p class="text-slate-900 dark:text-white text-2xl font-bold">{{ stats.alpha }}</p>
+                        <p class="text-slate-500 text-sm font-medium">Alpha</p>
+                        <p class="text-slate-900 text-2xl font-bold">{{ stats.alpha }}</p>
                     </div>
                 </div>
             </div>
@@ -286,65 +281,64 @@
 
         <!-- Prayer Times (Jadwal Sholat) -->
         <div class="px-5 pt-5">
-            <section
-                class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 shadow-soft border border-slate-100 dark:border-slate-800">
+            <section class="bg-surface-light rounded-2xl p-5 shadow-soft border border-slate-100">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-slate-800 dark:text-white text-lg font-bold">Jadwal Sholat</h3>
+                    <h3 class="text-slate-800 text-lg font-bold">Jadwal Sholat</h3>
                     <span class="text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded-full">Bandung,
                         ID</span>
                 </div>
                 <div class="flex items-center justify-between relative" id="prayer-times-container">
                     <!-- Decorative Line -->
-                    <div class="absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 dark:bg-slate-700 -z-10"></div>
+                    <div class="absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 -z-10"></div>
 
                     <!-- Subuh -->
                     <div id="subuh-card"
                         class="flex flex-col items-center gap-1 group transition-transform duration-300">
                         <div
-                            class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 mb-2 group-hover:bg-primary transition-colors indicator-dot">
+                            class="w-2 h-2 rounded-full bg-slate-300 mb-2 group-hover:bg-primary transition-colors indicator-dot">
                         </div>
                         <span class="text-xs text-slate-500 font-medium label">Subuh</span>
-                        <span id="subuh-time" class="text-xs text-slate-800 dark:text-white font-bold">--:--</span>
+                        <span id="subuh-time" class="text-xs text-slate-800 font-bold">--:--</span>
                     </div>
 
                     <!-- Dzuhur -->
                     <div id="dzuhur-card"
                         class="flex flex-col items-center gap-1 group transition-transform duration-300">
                         <div
-                            class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 mb-2 group-hover:bg-primary transition-colors indicator-dot">
+                            class="w-2 h-2 rounded-full bg-slate-300 mb-2 group-hover:bg-primary transition-colors indicator-dot">
                         </div>
                         <span class="text-xs text-slate-500 font-medium label">Dzuhur</span>
-                        <span id="dzuhur-time" class="text-xs text-slate-800 dark:text-white font-bold">--:--</span>
+                        <span id="dzuhur-time" class="text-xs text-slate-800 font-bold">--:--</span>
                     </div>
 
                     <!-- Ashar -->
                     <div id="ashar-card"
                         class="flex flex-col items-center gap-1 group transition-transform duration-300">
                         <div
-                            class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 mb-2 group-hover:bg-primary transition-colors indicator-dot">
+                            class="w-2 h-2 rounded-full bg-slate-300 mb-2 group-hover:bg-primary transition-colors indicator-dot">
                         </div>
                         <span class="text-xs text-slate-500 font-medium label">Ashar</span>
-                        <span id="ashar-time" class="text-xs text-slate-800 dark:text-white font-bold">--:--</span>
+                        <span id="ashar-time" class="text-xs text-slate-800 font-bold">--:--</span>
                     </div>
 
                     <!-- Maghrib -->
                     <div id="maghrib-card"
                         class="flex flex-col items-center gap-1 group transition-transform duration-300">
                         <div
-                            class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 mb-2 group-hover:bg-primary transition-colors indicator-dot">
+                            class="w-2 h-2 rounded-full bg-slate-300 mb-2 group-hover:bg-primary transition-colors indicator-dot">
                         </div>
                         <span class="text-xs text-slate-500 font-medium label">Maghrib</span>
-                        <span id="maghrib-time" class="text-xs text-slate-800 dark:text-white font-bold">--:--</span>
+                        <span id="maghrib-time" class="text-xs text-slate-800 font-bold">--:--</span>
                     </div>
 
                     <!-- Isya -->
                     <div id="isya-card"
                         class="flex flex-col items-center gap-1 group transition-transform duration-300">
                         <div
-                            class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 mb-2 group-hover:bg-primary transition-colors indicator-dot">
+                            class="w-2 h-2 rounded-full bg-slate-300 mb-2 group-hover:bg-primary transition-colors indicator-dot">
                         </div>
                         <span class="text-xs text-slate-500 font-medium label">Isya</span>
-                        <span id="isya-time" class="text-xs text-slate-800 dark:text-white font-bold">--:--</span>
+                        <span id="isya-time" class="text-xs text-slate-800 font-bold">--:--</span>
                     </div>
                 </div>
             </section>
@@ -352,87 +346,87 @@
 
         <!-- Announcements Section (Dynamic News) -->
         <div class="px-5 pt-5">
-            <div class="flex items-center justify-between mb-3 px-1">
-                <h3 class="text-slate-900 dark:text-white text-lg font-bold">Pengumuman & Berita</h3>
-                <a class="text-primary text-sm font-semibold hover:underline" href="{{ url_for('semua_berita') }}">Lihat
+            <div class="flex items-center justify-between px-1 mb-3">
+                <h3 class="text-slate-800 text-lg font-bold">Pengumuman</h3>
+                <a class="text-primary text-sm font-medium hover:underline" href="{{ url_for('semua_berita') }}">Lihat
                     Semua</a>
             </div>
+            <!-- Horizontal Scroll Container -->
             <div class="relative group">
-                <!-- Navigation Buttons -->
                 <button id="admin-prev-slide"
-                    class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-surface-dark/90 p-2 rounded-full shadow-lg text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 hidden md:flex hover:scale-105 active:scale-95 border border-slate-100 dark:border-slate-700">
+                    class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 p-2 rounded-full shadow-lg text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 hidden md:flex hover:scale-105 active:scale-95 border border-slate-100">
                     <span class="material-symbols-outlined">chevron_left</span>
                 </button>
-
                 <div id="admin-announcement-container"
-                    class="flex overflow-x-auto gap-4 pb-4 no-scrollbar snap-x snap-mandatory -mx-5 px-5 scroll-smooth">
+                    class="flex overflow-x-auto gap-4 pb-4 no-scrollbar snap-x snap-mandatory -mx-4 px-4 scroll-smooth">
                     {% if berita_list %}
                     {% for berita in berita_list %}
-                    <a href="{{ url_for('berita_detail', id=berita.id) }}"
-                        class="snap-center shrink-0 w-[280px] bg-white dark:bg-surface-dark rounded-2xl shadow-sm border border-slate-100 dark:border-white/5 flex flex-col overflow-hidden group/card">
-                        <div class="h-32 bg-slate-200 relative overflow-hidden">
-                            {% if berita.gambar %}
-                            <img alt="{{ berita.judul }}"
-                                class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500"
-                                src="{{ url_for('static', filename='uploads/berita/' + berita.gambar) }}" />
-                            {% else %}
-                            <div
-                                class="w-full h-full flex items-center justify-center bg-primary/5 group-hover/card:scale-110 transition-transform duration-500">
-                                <span class="material-symbols-outlined text-primary/40 text-[48px]">campaign</span>
-                            </div>
-                            {% endif %}
-                            <div
-                                class="absolute top-2 left-2 bg-white/90 dark:bg-black/80 backdrop-blur px-2 py-1 rounded-md">
-                                <p class="text-[10px] font-bold text-slate-800 dark:text-white">{{ berita.penulis }}</p>
-                            </div>
-                            <!-- Action Buttons (Author only) -->
-                            {% if session.get('admin_id') == berita.penulis_id %}
-                            <div class="absolute top-2 right-2 flex gap-2 z-10">
-                                <button
-                                    class="edit-news-btn size-8 bg-white/90 dark:bg-black/80 backdrop-blur rounded-lg flex items-center justify-center text-primary hover:text-primary-dark transition-colors shadow-sm"
-                                    data-id="{{ berita.id }}" data-judul="{{ berita.judul }}"
-                                    data-konten="{{ berita.konten }}" data-kategori="{{ berita.kategori }}"
-                                    title="Edit Postingan">
-                                    <span class="material-symbols-outlined text-[18px]">edit</span>
-                                </button>
-                                <button
-                                    class="delete-news-btn size-8 bg-white/90 dark:bg-black/80 backdrop-blur rounded-lg flex items-center justify-center text-red-500 hover:text-red-600 transition-colors shadow-sm"
-                                    data-id="{{ berita.id }}" data-judul="{{ berita.judul }}" title="Hapus Postingan">
-                                    <span class="material-symbols-outlined text-[18px]">delete</span>
-                                </button>
-                            </div>
-                            {% endif %}
+                    <div
+                        class="snap-center shrink-0 w-[280px] bg-surface-light rounded-2xl shadow-card overflow-hidden border border-slate-100 flex flex-col group/card relative">
+                        <!-- Admin Action Buttons (Overlay) -->
+                        {% if session.get('admin_id') == berita.penulis_id %}
+                        <div class="absolute top-2 right-2 flex gap-2 z-20">
+                            <button
+                                class="edit-news-btn size-8 bg-white/90 backdrop-blur rounded-lg flex items-center justify-center text-primary hover:text-primary-dark transition-colors shadow-sm"
+                                data-id="{{ berita.id }}" data-judul="{{ berita.judul }}"
+                                data-konten="{{ berita.konten }}" data-kategori="{{ berita.kategori }}"
+                                title="Edit Postingan">
+                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                            </button>
+                            <button
+                                class="delete-news-btn size-8 bg-white/90 backdrop-blur rounded-lg flex items-center justify-center text-red-500 hover:text-red-600 transition-colors shadow-sm"
+                                data-id="{{ berita.id }}" data-judul="{{ berita.judul }}" title="Hapus Postingan">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
                         </div>
-                        <div class="p-4 flex flex-col gap-1.5">
-                            <p class="text-xs text-slate-500 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[14px]">event</span> {{
-                                berita.created_at.strftime('%d %b %Y') if berita.created_at else '--' }}
-                                <span class="mx-1.5 size-1 rounded-full bg-slate-300 dark:bg-slate-700"></span>
-                                <span class="text-primary font-bold uppercase tracking-widest text-[10px]">{{
-                                    berita.kategori }}</span>
-                            </p>
-                            <h4
-                                class="text-slate-900 dark:text-white font-bold text-sm line-clamp-2 leading-snug group-hover/card:text-primary transition-colors">
-                                {{
-                                berita.judul }}</h4>
-                            <p class="text-slate-500 text-[12px] line-clamp-2 leading-relaxed">
-                                {{ berita.konten }}
-                            </p>
-                        </div>
-                    </a>
+                        {% endif %}
+
+                        <a href="{{ url_for('berita_detail', id=berita.id) }}" class="flex flex-col h-full">
+                            <div class="h-32 bg-slate-200 relative overflow-hidden">
+                                {% if berita.gambar %}
+                                <img alt="{{ berita.judul }}"
+                                    class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500"
+                                    src="{{ url_for('static', filename='uploads/berita/' + berita.gambar) }}" />
+                                {% else %}
+                                <div
+                                    class="w-full h-full flex items-center justify-center bg-primary/5 group-hover/card:scale-110 transition-transform duration-500">
+                                    <span class="material-symbols-outlined text-primary/40 text-[48px]">campaign</span>
+                                </div>
+                                {% endif %}
+                                <div class="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-1 rounded-md">
+                                    <p class="text-[10px] font-bold text-slate-800">{{ berita.penulis }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="p-4 flex flex-col gap-2">
+                                <p class="text-xs text-slate-500 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">event</span> {{
+                                    berita.created_at.strftime('%d %b %Y') if berita.created_at else '--' }}
+                                    <span class="mx-1.5 size-1 rounded-full bg-slate-200"></span>
+                                    <span class="text-primary font-bold uppercase tracking-widest text-[9px]">{{
+                                        berita.kategori }}</span>
+                                </p>
+                                <h4
+                                    class="text-slate-800 font-bold text-base line-clamp-2 group-hover/card:text-primary transition-colors">
+                                    {{ berita.judul }}
+                                </h4>
+                                <p class="text-slate-500 text-sm line-clamp-2 mt-1">
+                                    {{ berita.konten }}
+                                </p>
+                            </div>
+                        </a>
+                    </div>
                     {% endfor %}
                     {% else %}
                     <!-- Empty State -->
-                    <div
-                        class="w-full py-8 flex flex-col items-center justify-center text-slate-400 bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-white/5">
-                        <span class="material-symbols-outlined text-[40px] mb-2 opacity-20">news</span>
-                        <p class="text-xs font-medium">Belum ada pengumuman terbaru.</p>
+                    <div class="w-full py-10 flex flex-col items-center justify-center text-slate-400">
+                        <span class="material-symbols-outlined text-[48px] mb-2 opacity-20">news</span>
+                        <p class="text-sm">Belum ada pengumuman terbaru.</p>
                     </div>
                     {% endif %}
                 </div>
-
                 <button id="admin-next-slide"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-surface-dark/90 p-2 rounded-full shadow-lg text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 hidden md:flex hover:scale-105 active:scale-95 border border-slate-100 dark:border-slate-700">
+                    class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 p-2 rounded-full shadow-lg text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 hidden md:flex hover:scale-105 active:scale-95 border border-slate-100">
                     <span class="material-symbols-outlined">chevron_right</span>
                 </button>
             </div>
@@ -441,7 +435,7 @@
         <!-- Action Card -->
         <div class="p-5">
             <a href="{{ url_for('absensi') }}"
-                class="flex flex-col overflow-hidden rounded-[24px] shadow-sm bg-surface-light dark:bg-surface-dark border border-slate-100 dark:border-white/5 hover:border-primary/50 transition-all group active:scale-[0.98]">
+                class="flex flex-col overflow-hidden rounded-[24px] shadow-sm bg-surface-light border border-slate-100 hover:border-primary/50 transition-all group active:scale-[0.98]">
                 <div class="relative h-36 w-full overflow-hidden">
                     <!-- Background Pattern -->
                     <div class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-overlay"
@@ -487,7 +481,7 @@
         <!-- Class Schedule -->
         <div class="px-5 pb-2">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-slate-900 dark:text-white text-lg font-bold">Jadwal Hari Ini</h3>
+                <h3 class="text-slate-900 text-lg font-bold">Jadwal Hari Ini</h3>
                 <a class="text-primary text-sm font-semibold hover:underline"
                     href="{{ url_for('manage_jadwal') }}">Lihat
                     Semua</a>
@@ -497,17 +491,17 @@
                 {% for card in class_cards %}
                 <!-- Class Card -->
                 <div
-                    class="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-100 dark:border-white/5 shadow-sm hover:shadow-md transition-shadow">
+                    class="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
                     <div
-                        class="flex flex-col items-center justify-center min-w-[3.5rem] h-[3.5rem] rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30">
+                        class="flex flex-col items-center justify-center min-w-[3.5rem] h-[3.5rem] rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
                         <span class="text-xs font-bold">{{ card.waktu_mulai }}</span>
                         <span class="text-[10px] font-medium opacity-80">WIB</span>
                     </div>
                     <div class="flex-1">
-                        <h4 class="text-slate-900 dark:text-white font-bold text-base">{{ card.nama_kelas }} - {{
+                        <h4 class="text-slate-900 font-bold text-base">{{ card.nama_kelas }} - {{
                             card.mata_pelajaran }}</h4>
                         <div class="flex items-center gap-2 mt-1">
-                            <span class="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                            <span class="flex items-center gap-1 text-xs text-slate-500">
                                 <span class="material-symbols-outlined text-[14px]">group</span>
                                 {{ card.kapasitas }} Santri
                             </span>
@@ -516,8 +510,7 @@
                 </div>
                 {% endfor %}
                 {% else %}
-                <div
-                    class="p-8 text-center text-slate-400 dark:text-slate-600 bg-white dark:bg-surface-dark rounded-xl border border-slate-100 dark:border-white/5">
+                <div class="p-8 text-center text-slate-400 bg-white rounded-xl border border-slate-100">
                     <span class="material-symbols-outlined text-4xl mb-2 opacity-50">event_busy</span>
                     <p class="text-sm font-medium">Tidak ada jadwal KBM untuk hari ini.</p>
                 </div>
@@ -526,37 +519,26 @@
         </div>
 
 
-        <!-- Recent Activity / Empty State Placeholder -->
+        <!-- Recent Activity -->
         <div class="p-5">
-            <h3 class="text-slate-900 dark:text-white text-lg font-bold mb-4">Aktivitas Terbaru</h3>
-            <div class="flex flex-col gap-0 border-l-2 border-slate-200 dark:border-slate-700 ml-2 pl-6 py-1 relative">
-                <!-- Timeline Item 1 -->
-                <div class="mb-6 relative">
-                    <div
-                        class="absolute -left-[31px] top-1 size-3 rounded-full bg-primary ring-4 ring-white dark:ring-background-dark">
+            <h3 class="text-slate-900 text-lg font-bold mb-4">Aktivitas Terbaru</h3>
+            <div class="flex flex-col gap-0 border-l-2 border-slate-200 ml-2 pl-6 py-1 relative">
+                {% if recent_logs %}
+                {% for log in recent_logs %}
+                <div class="mb-6 relative last:mb-0">
+                    <div class="absolute -left-[31px] top-1 size-3 rounded-full bg-primary ring-4 ring-white">
                     </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">07:45 WIB</p>
-                    <p class="text-sm text-slate-800 dark:text-slate-200"><span class="font-bold">Ahmad Faisal</span>
-                        (7A) telah melakukan absensi.</p>
+                    <p class="text-xs text-slate-500 mb-1">{{ log.waktu_formatted }} WIB</p>
+                    <p class="text-sm text-slate-800">
+                        {{ log.aksi | safe }}
+                    </p>
                 </div>
-                <!-- Timeline Item 2 -->
-                <div class="mb-6 relative">
-                    <div
-                        class="absolute -left-[31px] top-1 size-3 rounded-full bg-slate-300 dark:bg-slate-600 ring-4 ring-white dark:ring-background-dark">
-                    </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">07:42 WIB</p>
-                    <p class="text-sm text-slate-800 dark:text-slate-200"><span class="font-bold">Siti Aminah</span>
-                        (7A) mengirim surat sakit.</p>
+                {% endfor %}
+                {% else %}
+                <div class="py-4 text-center text-slate-400">
+                    <p class="text-sm">Belum ada aktivitas tercatat.</p>
                 </div>
-                <!-- Timeline Item 3 -->
-                <div class="relative">
-                    <div
-                        class="absolute -left-[31px] top-1 size-3 rounded-full bg-primary ring-4 ring-white dark:ring-background-dark">
-                    </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">07:40 WIB</p>
-                    <p class="text-sm text-slate-800 dark:text-slate-200"><span class="font-bold">Rizky Ramadhan</span>
-                        (7A) telah melakukan absensi.</p>
-                </div>
+                {% endif %}
             </div>
         </div>
 
@@ -569,18 +551,18 @@
 
             <!-- Modal Content -->
             <div id="modal-content"
-                class="relative w-full max-w-lg bg-surface-light dark:bg-surface-dark rounded-t-3xl sm:rounded-2xl shadow-2xl transform translate-y-full transition-transform duration-300 ease-out overflow-hidden border border-white/10">
+                class="relative w-full max-w-lg bg-surface-light rounded-t-3xl sm:rounded-2xl shadow-2xl transform translate-y-full transition-transform duration-300 ease-out overflow-hidden border border-white/10">
                 <!-- Header -->
-                <div class="flex items-center justify-between p-6 border-b border-slate-100 dark:border-white/5">
+                <div class="flex items-center justify-between p-6 border-b border-slate-100">
                     <div class="flex items-center gap-3">
                         <div class="p-2 bg-primary/10 rounded-xl text-primary">
                             <span class="material-symbols-outlined" id="modal-icon">edit_square</span>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none" id="modal-title">Buat
+                        <h3 class="text-xl font-bold text-slate-900 leading-none" id="modal-title">Buat
                             Posting Baru</h3>
                     </div>
                     <button id="close-news-modal"
-                        class="size-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/5 text-slate-500 hover:text-red-500 transition-colors">
+                        class="size-10 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:text-red-500 transition-colors">
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 </div>
@@ -591,35 +573,34 @@
                         id="news-form" class="flex flex-col gap-5">
                         <input type="hidden" name="berita_id" id="modal-berita-id">
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold text-wrap">Judul
+                            <label class="text-slate-700 text-sm font-semibold text-wrap">Judul
                                 Postingan</label>
                             <input type="text" name="judul" id="modal-judul" required
                                 placeholder="Tulis judul berita yang menarik..."
-                                class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+                                class="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
                         </div>
                         <div class="flex flex-col gap-1.5">
-                            <label
-                                class="text-slate-700 dark:text-slate-300 text-sm font-semibold text-wrap">Kategori</label>
+                            <label class="text-slate-700 text-sm font-semibold text-wrap">Kategori</label>
                             <select name="kategori" id="modal-kategori" required
-                                class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+                                class="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
                                 <option value="Berita Madrasah">Berita Madrasah</option>
                                 <option value="Pengumuman">Pengumuman</option>
                                 <option value="Kegiatan">Kegiatan</option>
                             </select>
                         </div>
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold text-wrap">Deskripsi
+                            <label class="text-slate-700 text-sm font-semibold text-wrap">Deskripsi
                                 / Konten</label>
                             <textarea name="konten" id="modal-konten" required rows="4"
                                 placeholder="Detail pengumuman atau berita..."
-                                class="w-full p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"></textarea>
+                                class="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"></textarea>
                         </div>
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Gambar Unggulan
+                            <label class="text-slate-700 text-sm font-semibold">Gambar Unggulan
                                 (Opsional)</label>
                             <div class="relative group">
                                 <label
-                                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 dark:border-white/10 border-dashed rounded-xl cursor-pointer bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/50 transition-all duration-300">
+                                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 hover:border-primary/50 transition-all duration-300">
                                     <div class="flex flex-col items-center justify-center pt-5 pb-6">
                                         <span
                                             class="material-symbols-outlined text-slate-400 mb-2 group-hover:scale-110 transition-transform">add_photo_alternate</span>
@@ -664,20 +645,20 @@
                 <!-- Add Attendance Button -->
                 <div class="flex items-center gap-3 group">
                     <span
-                        class="px-3 py-1.5 rounded-xl bg-white dark:bg-surface-dark shadow-lg border border-slate-100 dark:border-white/5 text-xs font-bold text-slate-700 dark:text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Catat
+                        class="px-3 py-1.5 rounded-xl bg-white shadow-lg border border-slate-100 text-xs font-bold text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Catat
                         Kehadiran</span>
                     <a href="{{ url_for('absensi') }}"
-                        class="size-12 rounded-full bg-white dark:bg-surface-dark text-primary shadow-xl border border-slate-100 dark:border-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
+                        class="size-12 rounded-full bg-white text-primary shadow-xl border border-slate-100 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
                         <span class="material-symbols-outlined">how_to_reg</span>
                     </a>
                 </div>
                 <!-- Add News Button -->
                 <div class="flex items-center gap-3 group">
                     <span
-                        class="px-3 py-1.5 rounded-xl bg-white dark:bg-surface-dark shadow-lg border border-slate-100 dark:border-white/5 text-xs font-bold text-slate-700 dark:text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Tambah
+                        class="px-3 py-1.5 rounded-xl bg-white shadow-lg border border-slate-100 text-xs font-bold text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Tambah
                         Postingan</span>
                     <button id="open-news-modal"
-                        class="size-12 rounded-full bg-white dark:bg-surface-dark text-primary shadow-xl border border-slate-100 dark:border-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
+                        class="size-12 rounded-full bg-white text-primary shadow-xl border border-slate-100 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
                         <span class="material-symbols-outlined">newspaper</span>
                     </button>
                 </div>

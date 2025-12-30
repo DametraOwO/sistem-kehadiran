@@ -52,13 +52,12 @@
     </style>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         primary: '#14b881',
-                        surface: { light: '#ffffff', dark: '#12211c' },
-                        background: { light: '#f6f8f7', dark: '#0f1715' }
+                        surface: { light: '#ffffff' },
+                        background: { light: '#f6f8f7' }
                     }
                 }
             }
@@ -66,8 +65,7 @@
     </script>
 </head>
 
-<body
-    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-50 transition-colors duration-300">
+<body class="bg-background-light text-slate-900 transition-colors duration-300">
     <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
 
         <!-- Standard Green Header -->
@@ -99,25 +97,25 @@
 
                 {% for s in santri_list %}
                 <div
-                    class="flex items-center justify-between p-4 bg-white dark:bg-surface-dark rounded-[24px] border border-slate-100 dark:border-white/5 shadow-sm">
+                    class="flex items-center justify-between p-4 bg-white rounded-[24px] border border-slate-100 shadow-sm">
                     <div class="flex flex-col">
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ s.nis }}</span>
-                        <h3 class="font-bold text-slate-800 dark:text-white leading-tight">{{ s.nama_lengkap }}</h3>
+                        <h3 class="font-bold text-slate-800 leading-tight">{{ s.nama_lengkap }}</h3>
                     </div>
 
                     <!-- Attendance Buttons -->
                     <div class="flex gap-2">
                         <button
-                            class="status-btn size-10 rounded-xl border-2 border-slate-100 dark:border-white/5 text-slate-400 font-black text-sm flex items-center justify-center transition-all hover:bg-slate-50 dark:hover:bg-white/5"
+                            class="status-btn size-10 rounded-xl border-2 border-slate-100 text-slate-400 font-black text-sm flex items-center justify-center transition-all hover:bg-slate-50"
                             data-student-id="{{ s.id }}" data-status="H">H</button>
                         <button
-                            class="status-btn size-10 rounded-xl border-2 border-slate-100 dark:border-white/5 text-slate-400 font-black text-sm flex items-center justify-center transition-all hover:bg-slate-50 dark:hover:bg-white/5"
+                            class="status-btn size-10 rounded-xl border-2 border-slate-100 text-slate-400 font-black text-sm flex items-center justify-center transition-all hover:bg-slate-50"
                             data-student-id="{{ s.id }}" data-status="I">I</button>
                         <button
-                            class="status-btn size-10 rounded-xl border-2 border-slate-100 dark:border-white/5 text-slate-400 font-black text-sm flex items-center justify-center transition-all hover:bg-slate-50 dark:hover:bg-white/5"
+                            class="status-btn size-10 rounded-xl border-2 border-slate-100 text-slate-400 font-black text-sm flex items-center justify-center transition-all hover:bg-slate-50"
                             data-student-id="{{ s.id }}" data-status="S">S</button>
                         <button
-                            class="status-btn size-10 rounded-xl border-2 border-slate-100 dark:border-white/5 text-slate-400 font-black text-sm flex items-center justify-center transition-all hover:bg-slate-50 dark:hover:bg-white/5"
+                            class="status-btn size-10 rounded-xl border-2 border-slate-100 text-slate-400 font-black text-sm flex items-center justify-center transition-all hover:bg-slate-50"
                             data-student-id="{{ s.id }}" data-status="A">A</button>
                     </div>
                 </div>
@@ -228,12 +226,6 @@
                 });
             }
         });
-
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
     </script>
 </body>
 

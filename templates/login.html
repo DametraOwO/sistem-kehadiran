@@ -22,16 +22,13 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
                         "primary": "#14b881",
                         "primary-dark": "#0f8c61",
                         "background-light": "#f6f8f7",
-                        "background-dark": "#11211c",
                         "surface-light": "#ffffff",
-                        "surface-dark": "#1a2c26",
                     },
                     fontFamily: {
                         "display": ["Lexend", "sans-serif"]
@@ -69,11 +66,9 @@
     </style>
 </head>
 
-<body
-    class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col items-center justify-center">
+<body class="bg-background-light font-display min-h-screen flex flex-col items-center justify-center">
     <!-- Mobile Container -->
-    <div
-        class="relative flex h-full min-h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark">
+    <div class="relative flex h-full min-h-screen w-full flex-col overflow-hidden bg-background-light">
         <!-- Header Section (Flexible & Smaller) -->
         <div class="relative w-full h-[14rem] z-20 shrink-0">
             <!-- Decorative Background Pattern -->
@@ -85,7 +80,7 @@
             <!-- Top Bar -->
             <div class="relative z-30 flex items-center justify-between p-6">
                 <a href="{{ url_for('index') }}"
-                    class="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/60 dark:bg-black/20 backdrop-blur-md text-gray-800 dark:text-white hover:bg-white dark:hover:bg-black/40 transition-colors">
+                    class="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/60 backdrop-blur-md text-gray-800 hover:bg-white transition-colors">
                     <span class="material-symbols-outlined">arrow_back</span>
                 </a>
             </div>
@@ -95,7 +90,7 @@
                 <!-- Logo -->
                 <div class="self-center mb-3 relative">
                     <div
-                        class="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl shadow-lg flex items-center justify-center overflow-hidden relative">
+                        class="w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center overflow-hidden relative">
                         <div class="absolute inset-0 bg-primary/5"></div>
                         <span class="material-symbols-outlined text-primary text-4xl">account_circle</span>
                     </div>
@@ -137,21 +132,20 @@
                 <!-- Segmented Control (Tabs) -->
                 <!-- Segmented Control (Tabs) -->
                 <div class="mb-8 relative z-20">
-                    <div
-                        class="flex h-12 w-full items-center justify-center rounded-xl bg-gray-200/50 dark:bg-gray-800 p-1">
+                    <div class="flex h-12 w-full items-center justify-center rounded-xl bg-gray-200/50 p-1">
                         <label
-                            class="group flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm transition-all duration-200">
+                            class="group flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white has-[:checked]:shadow-sm transition-all duration-200">
                             <input checked="" class="peer invisible w-0 absolute" name="auth-mode" type="radio"
                                 value="Masuk" id="tab-login" />
                             <span
-                                class="text-gray-500 dark:text-gray-400 group-has-[:checked]:text-primary font-semibold text-sm truncate transition-colors">Masuk</span>
+                                class="text-gray-500 group-has-[:checked]:text-primary font-semibold text-sm truncate transition-colors">Masuk</span>
                         </label>
                         <label
-                            class="group flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm transition-all duration-200">
+                            class="group flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white has-[:checked]:shadow-sm transition-all duration-200">
                             <input class="peer invisible w-0 absolute" name="auth-mode" type="radio" value="Daftar"
                                 id="tab-register" />
                             <span
-                                class="text-gray-500 dark:text-gray-400 group-has-[:checked]:text-primary font-semibold text-sm truncate transition-colors">Daftar</span>
+                                class="text-gray-500 group-has-[:checked]:text-primary font-semibold text-sm truncate transition-colors">Daftar</span>
                         </label>
                     </div>
                 </div>
@@ -165,26 +159,26 @@
                             <form action="{{ url_for('login') }}" method="POST" class="flex flex-col gap-5">
                                 <!-- Username Input -->
                                 <div class="flex flex-col gap-1.5">
-                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">ID Pengguna
+                                    <label class="text-gray-900 text-sm font-medium ml-1">ID Pengguna
                                         atau
                                         Email</label>
                                     <div class="relative flex items-center">
                                         <span
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">badge</span>
                                         <input name="identifier"
-                                            class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            class="w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                                             placeholder="alhidayah@madrasah.com" type="text" required />
                                     </div>
                                 </div>
                                 <!-- Password Input -->
                                 <div class="flex flex-col gap-1.5">
-                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Kata
+                                    <label class="text-gray-900 text-sm font-medium ml-1">Kata
                                         Sandi</label>
                                     <div class="relative flex items-center">
                                         <span
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock</span>
                                         <input id="password-login" name="password"
-                                            class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            class="w-full h-12 pl-11 pr-12 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                                             placeholder="••••••••" type="password" required />
                                         <button
                                             class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
@@ -214,25 +208,25 @@
                             <form action="{{ url_for('register') }}" method="POST" class="flex flex-col gap-4">
                                 <!-- Nama Lengkap -->
                                 <div class="flex flex-col gap-1.5">
-                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Nama
+                                    <label class="text-gray-900 text-sm font-medium ml-1">Nama
                                         Lengkap</label>
                                     <div class="relative flex items-center">
                                         <span
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">person</span>
                                         <input name="nama"
-                                            class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            class="w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                                             placeholder="Nama Lengkap" type="text" required />
                                     </div>
                                 </div>
 
                                 <!-- Email -->
                                 <div class="flex flex-col gap-1.5">
-                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Email</label>
+                                    <label class="text-gray-900 text-sm font-medium ml-1">Email</label>
                                     <div class="relative flex items-center">
                                         <span
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">mail</span>
                                         <input name="email"
-                                            class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            class="w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                                             placeholder="email@contoh.com" type="email" required />
                                     </div>
                                 </div>
@@ -241,13 +235,12 @@
                                 <div class="flex gap-4">
                                     <!-- Gender -->
                                     <div class="flex flex-col gap-1.5 w-1/2">
-                                        <label
-                                            class="text-gray-900 dark:text-white text-sm font-medium ml-1">Gender</label>
+                                        <label class="text-gray-900 text-sm font-medium ml-1">Gender</label>
                                         <div class="relative flex items-center">
                                             <span
                                                 class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">wc</span>
                                             <select name="gender"
-                                                class="w-full h-12 pl-11 pr-8 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none"
+                                                class="w-full h-12 pl-11 pr-8 rounded-xl bg-white border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none"
                                                 required>
                                                 <option value="" disabled selected>Pilih</option>
                                                 <option value="L">Laki-laki</option>
@@ -259,13 +252,12 @@
                                     </div>
                                     <!-- Status -->
                                     <div class="flex flex-col gap-1.5 w-1/2">
-                                        <label
-                                            class="text-gray-900 dark:text-white text-sm font-medium ml-1">Status</label>
+                                        <label class="text-gray-900 text-sm font-medium ml-1">Status</label>
                                         <div class="relative flex items-center">
                                             <span
                                                 class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">school</span>
                                             <select name="status_role"
-                                                class="w-full h-12 pl-11 pr-8 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none"
+                                                class="w-full h-12 pl-11 pr-8 rounded-xl bg-white border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none"
                                                 required>
                                                 <option value="" disabled selected>Pilih</option>
                                                 <option value="Guru">Guru</option>
@@ -280,13 +272,13 @@
 
                                 <!-- Password Input -->
                                 <div class="flex flex-col gap-1.5">
-                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Kata
+                                    <label class="text-gray-900 text-sm font-medium ml-1">Kata
                                         Sandi</label>
                                     <div class="relative flex items-center">
                                         <span
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock</span>
                                         <input id="password-reg" name="password"
-                                            class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            class="w-full h-12 pl-11 pr-12 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                                             placeholder="Min. 8 karakter" type="password" required />
                                         <button
                                             class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
@@ -298,13 +290,13 @@
 
                                 <!-- Confirm Password Input -->
                                 <div class="flex flex-col gap-1.5">
-                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Konfirmasi
+                                    <label class="text-gray-900 text-sm font-medium ml-1">Konfirmasi
                                         Sandi</label>
                                     <div class="relative flex items-center">
                                         <span
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock_reset</span>
                                         <input id="password-confirm" name="confirm_password"
-                                            class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            class="w-full h-12 pl-11 pr-12 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                                             placeholder="Ulangi kata sandi" type="password" required />
                                         <button
                                             class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
@@ -316,7 +308,7 @@
 
                                 <!-- Submit Button -->
                                 <button type="submit"
-                                    class="mt-2 w-full h-12 bg-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 group">
+                                    class="mt-2 w-full h-12 bg-white border border-gray-200 hover:bg-gray-50 text-gray-900 font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 group">
                                     <span>Daftar Akun</span>
                                     <span
                                         class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">person_add</span>

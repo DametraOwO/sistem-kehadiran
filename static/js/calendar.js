@@ -150,7 +150,7 @@ function renderCalendarGrid(days, currentDate) {
 
     for (let i = 0; i < startOffset; i++) {
         const emptyCell = document.createElement('div');
-        emptyCell.className = "h-32 border-b border-r border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/20";
+        emptyCell.className = "h-[100px] border-b border-r border-slate-100 bg-slate-50/50";
         grid.appendChild(emptyCell);
     }
 
@@ -218,10 +218,10 @@ function renderCalendarGrid(days, currentDate) {
         }
 
         // Styles
-        let baseClass = "min-h-[128px] border-b border-r border-slate-100 dark:border-slate-800 flex flex-col items-start justify-start p-2 gap-1 relative group transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50";
+        let baseClass = "min-h-[100px] border-b border-r border-slate-100 flex flex-col items-start justify-start p-2 gap-1 relative group transition-colors hover:bg-slate-50";
 
         // Text Color Logic: Sunday OR Holiday -> Red
-        let textClass = (isSunday || isHoliday) ? "text-red-500 font-bold" : "text-slate-800 dark:text-white";
+        let textClass = (isSunday || isHoliday) ? "text-red-600 font-bold" : "text-slate-900";
 
         if (isToday) {
             baseClass += " bg-primary/5";
@@ -237,8 +237,8 @@ function renderCalendarGrid(days, currentDate) {
         // Date Header inside cell
         let dateHtml = `
             <div class="w-full flex justify-between items-start mb-1">
-                <span class="text-sm font-medium ${textClass}">${gDate.day}</span>
-                <span class="text-[10px] text-slate-400 opacity-75">${hDate.day}</span>
+                <span class="text-sm font-bold ${textClass}">${gDate.day}</span>
+                <span class="text-[10px] text-slate-500 font-medium">${hDate.day}</span>
             </div>
         `;
 
@@ -246,7 +246,7 @@ function renderCalendarGrid(days, currentDate) {
         if (isHoliday && holiday) {
             dateHtml += `
                 <div class="w-full mb-1">
-                    <span class="text-[10px] font-bold text-red-500 leading-tight block text-center bg-red-50 dark:bg-red-900/20 rounded px-1 py-0.5 border border-red-100 dark:border-red-900/30">
+                    <span class="text-[9px] font-bold text-red-600 leading-tight block text-center bg-red-50 rounded px-1 py-0.5 border border-red-100">
                         ${holiday.holiday_name}
                     </span>
                 </div>
@@ -256,14 +256,14 @@ function renderCalendarGrid(days, currentDate) {
         // Schedule Items
         let scheduleHtml = '';
         if (todaysSchedule.length > 0) {
-            scheduleHtml = '<div class="w-full flex flex-col gap-1 overflow-y-auto max-h-[80px] no-scrollbar">';
+            scheduleHtml = '<div class="w-full flex flex-col gap-1 overflow-y-auto max-h-[60px] no-scrollbar">';
             todaysSchedule.forEach(sch => {
                 const startTime = sch.waktu_mulai.slice(0, 5);
                 scheduleHtml += `
-                    <div class="w-full bg-white dark:bg-white/10 border border-slate-100 dark:border-white/5 rounded px-1.5 py-1 flex flex-col items-start shadow-sm">
-                        <span class="text-[10px] font-bold text-slate-700 dark:text-slate-200 leading-tight line-clamp-1">${sch.mata_pelajaran}</span>
+                    <div class="w-full bg-white border border-slate-200 rounded px-1.5 py-1 flex flex-col items-start shadow-sm">
+                        <span class="text-[10px] font-bold text-slate-800 leading-tight line-clamp-1">${sch.mata_pelajaran}</span>
                         <div class="flex items-center gap-1 w-full">
-                            <span class="text-[9px] text-slate-500 dark:text-slate-400 leading-none">${startTime}</span>
+                            <span class="text-[9px] text-slate-600 font-medium leading-none">${startTime}</span>
                         </div>
                     </div>
                 `;
@@ -287,15 +287,15 @@ function renderCalendarGrid(days, currentDate) {
             const monthName = indoMonths[m];
 
             const item = document.createElement('div');
-            item.className = "flex items-start gap-3 p-3 rounded-2xl bg-red-50/50 dark:bg-red-900/10 border border-red-100/50 dark:border-red-900/20";
+            item.className = "flex items-start gap-3 p-3 rounded-2xl bg-red-50/50 border border-red-100/50";
             item.innerHTML = `
                 <div class="flex flex-col items-center justify-center min-w-[45px] h-[45px] rounded-xl bg-red-500 text-white shadow-sm">
                     <span class="text-xs font-bold leading-none">${d}</span>
                     <span class="text-[9px] font-medium uppercase opacity-90">${monthName.slice(0, 3)}</span>
                 </div>
                 <div class="flex flex-col py-0.5">
-                    <span class="text-xs font-bold text-red-600 dark:text-red-400 leading-tight">${h.holiday_name}</span>
-                    <span class="text-[10px] text-red-400 dark:text-red-500/70 font-medium">Libur Nasional</span>
+                    <span class="text-xs font-bold text-red-600 leading-tight">${h.holiday_name}</span>
+                    <span class="text-[10px] text-red-400 font-medium">Libur Nasional</span>
                 </div>
             `;
             holidayListContainer.appendChild(item);

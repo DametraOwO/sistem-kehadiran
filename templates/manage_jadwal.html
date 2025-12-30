@@ -15,16 +15,13 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
                         "primary": "#14b881",
                         "primary-dark": "#0f8c61",
                         "background-light": "#f6f8f7",
-                        "background-dark": "#11211c",
                         "surface-light": "#ffffff",
-                        "surface-dark": "#1a2c26",
                     },
                     fontFamily: { "sans": ["Plus Jakarta Sans", "sans-serif"] }
                 }
@@ -43,8 +40,8 @@
     </style>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark font-sans antialiased">
-    <div class="flex flex-col min-h-screen bg-slate-50 dark:bg-background-dark">
+<body class="bg-background-light font-sans antialiased">
+    <div class="flex flex-col min-h-screen bg-slate-50">
         <!-- Header Section -->
         <div class="relative w-full islamic-pattern pt-8 pb-16 px-6 overflow-hidden">
             <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -71,17 +68,16 @@
         <main class="relative z-20 -mt-8 px-6 pb-24">
             <div class="max-w-6xl mx-auto">
                 <!-- Filter Card -->
-                <div
-                    class="bg-white dark:bg-surface-dark rounded-[24px] shadow-sm border border-slate-100 dark:border-white/5 p-4 mb-6">
+                <div class="bg-white rounded-[24px] shadow-sm border border-slate-100 p-4 mb-6">
                     <div class="flex flex-col md:flex-row gap-4">
                         <div class="relative flex-1 group">
                             <span
                                 class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">search</span>
                             <input type="text" id="jadwal-search" placeholder="Cari mata pelajaran..."
-                                class="w-full h-12 pl-12 pr-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 outline-none focus:ring-2 focus:ring-primary/50 transition-all">
+                                class="w-full h-12 pl-12 pr-4 rounded-xl bg-slate-50 border border-slate-100 outline-none focus:ring-2 focus:ring-primary/50 transition-all">
                         </div>
                         <select id="filter-hari"
-                            class="h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 outline-none focus:ring-2 focus:ring-primary/50 text-sm font-semibold">
+                            class="h-12 px-4 rounded-xl bg-slate-50 border border-slate-100 outline-none focus:ring-2 focus:ring-primary/50 text-sm font-semibold">
                             <option value="">Semua Hari</option>
                             <option value="Senin">Senin</option>
                             <option value="Selasa">Selasa</option>
@@ -92,7 +88,7 @@
                             <option value="Minggu">Minggu</option>
                         </select>
                         <select id="filter-kelas"
-                            class="h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 outline-none focus:ring-2 focus:ring-primary/50 text-sm font-semibold">
+                            class="h-12 px-4 rounded-xl bg-slate-50 border border-slate-100 outline-none focus:ring-2 focus:ring-primary/50 text-sm font-semibold">
                             <option value="">Semua Kelas</option>
                             <option value="Kelas 1">Kelas 1</option>
                             <option value="Kelas 2">Kelas 2</option>
@@ -105,12 +101,11 @@
                 </div>
 
                 <!-- Jadwal Table -->
-                <div
-                    class="bg-white dark:bg-surface-dark rounded-[24px] shadow-sm border border-slate-100 dark:border-white/5 overflow-hidden">
+                <div class="bg-white rounded-[24px] shadow-sm border border-slate-100 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="bg-slate-50/50 dark:bg-white/5">
+                                <tr class="bg-slate-50/50">
                                     <th
                                         class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                                         Hari</th>
@@ -128,31 +123,30 @@
                                         Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="jadwal-table-body" class="divide-y divide-slate-50 dark:divide-white/5">
+                            <tbody id="jadwal-table-body" class="divide-y divide-slate-50">
                                 {% for j in jadwal_list %}
-                                <tr class="hover:bg-slate-50/80 dark:hover:bg-white/5 transition-colors group">
+                                <tr class="hover:bg-slate-50/80 transition-colors group">
                                     <td class="px-6 py-4">
-                                        <span
-                                            class="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider 
-                                        {% if j.hari == 'Senin' %}bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400
-                                        {% elif j.hari == 'Selasa' %}bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400
-                                        {% elif j.hari == 'Rabu' %}bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400
-                                        {% elif j.hari == 'Kamis' %}bg-teal-100 text-teal-600 dark:bg-teal-900/30 dark:text-teal-400
-                                        {% elif j.hari == 'Jumat' %}bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400
-                                        {% elif j.hari == 'Sabtu' %}bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400
-                                        {% else %}bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400{% endif %}">
+                                        <span class="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider 
+                                        {% if j.hari == 'Senin' %}bg-blue-100 text-blue-600
+                                        {% elif j.hari == 'Selasa' %}bg-purple-100 text-purple-600
+                                        {% elif j.hari == 'Rabu' %}bg-orange-100 text-orange-600
+                                        {% elif j.hari == 'Kamis' %}bg-teal-100 text-teal-600
+                                        {% elif j.hari == 'Jumat' %}bg-emerald-100 text-emerald-600
+                                        {% elif j.hari == 'Sabtu' %}bg-indigo-100 text-indigo-600
+                                        {% else %}bg-red-100 text-red-600{% endif %}">
                                             {{ j.hari }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm font-semibold text-slate-600 dark:text-slate-300">
+                                    <td class="px-6 py-4 text-sm font-semibold text-slate-600">
                                         {{ j.waktu_mulai }} - {{ j.waktu_selesai }}
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex flex-col">
-                                            <span class="text-sm font-bold text-slate-900 dark:text-white">{{
+                                            <span class="text-sm font-bold text-slate-900">{{
                                                 j.mata_pelajaran }}</span>
                                             {% if j.keterangan %}
-                                            <span class="text-[11px] text-slate-500 dark:text-slate-400">{{ j.keterangan
+                                            <span class="text-[11px] text-slate-500">{{ j.keterangan
                                                 }}</span>
                                             {% endif %}
                                         </div>
@@ -164,12 +158,12 @@
                                         <div class="flex items-center justify-end gap-2">
                                             <button
                                                 onclick="editJadwal({{ j.id }}, {{ j.id_kelas }}, '{{ j.hari }}', '{{ j.mata_pelajaran }}', '{{ j.waktu_mulai }}', '{{ j.waktu_selesai }}', '{{ j.keterangan or '' }}')"
-                                                class="h-9 w-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all">
+                                                class="h-9 w-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-primary/10 hover:text-primary transition-all">
                                                 <span class="material-symbols-outlined text-[18px]">edit</span>
                                             </button>
                                             <a href="{{ url_for('hapus_jadwal', id=j.id) }}"
                                                 onclick="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?')"
-                                                class="h-9 w-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-red-500/10 hover:text-red-500 transition-all">
+                                                class="h-9 w-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-red-500/10 hover:text-red-500 transition-all">
                                                 <span class="material-symbols-outlined text-[18px]">delete</span>
                                             </a>
                                         </div>
@@ -180,9 +174,9 @@
                                     <td colspan="5" class="px-6 py-20 text-center">
                                         <div class="flex flex-col items-center">
                                             <div
-                                                class="w-16 h-16 rounded-3xl bg-slate-50 dark:bg-white/5 flex items-center justify-center mb-4">
+                                                class="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center mb-4">
                                                 <span
-                                                    class="material-symbols-outlined text-slate-300 dark:text-slate-600 text-[40px]">calendar_view_day</span>
+                                                    class="material-symbols-outlined text-slate-300 text-[40px]">calendar_view_day</span>
                                             </div>
                                             <p class="text-slate-500 text-sm font-medium">Belum ada data jadwal.</p>
                                         </div>
@@ -201,17 +195,17 @@
     <div id="modal-jadwal" class="fixed inset-0 z-[60] hidden">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" id="modal-overlay"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4">
-            <div class="bg-white dark:bg-surface-dark w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden scale-95 opacity-0 transition-all duration-300"
+            <div class="bg-white w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden scale-95 opacity-0 transition-all duration-300"
                 id="modal-content">
                 <!-- Modal Header -->
                 <div class="relative h-24 w-full overflow-hidden">
-                    <div class="absolute inset-0 bg-primary/10 dark:bg-primary/20"></div>
+                    <div class="absolute inset-0 bg-primary/10"></div>
                     <div class="absolute inset-0 p-6 flex items-center gap-4">
                         <div class="h-12 w-12 rounded-2xl bg-primary text-white flex items-center justify-center">
                             <span id="modal-icon" class="material-symbols-outlined text-[32px]">calendar_add_on</span>
                         </div>
                         <div>
-                            <h3 id="modal-title" class="text-xl font-bold dark:text-white">Tambah Jadwal Baru</h3>
+                            <h3 id="modal-title" class="text-xl font-bold">Tambah Jadwal Baru</h3>
                             <p class="text-xs text-slate-500 font-medium">Lengkapi detail jadwal dengan benar</p>
                         </div>
                     </div>
@@ -226,7 +220,7 @@
                             <div class="space-y-1.5">
                                 <label class="text-[11px] font-bold text-slate-400 uppercase ml-1">Hari</label>
                                 <select name="hari" id="form-hari" required
-                                    class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-sm font-semibold outline-none focus:ring-2 focus:ring-primary/50 transition-all">
+                                    class="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-100 text-sm font-semibold outline-none focus:ring-2 focus:ring-primary/50 transition-all">
                                     <option value="Senin">Senin</option>
                                     <option value="Selasa">Selasa</option>
                                     <option value="Rabu">Rabu</option>
@@ -239,7 +233,7 @@
                             <div class="space-y-1.5">
                                 <label class="text-[11px] font-bold text-slate-400 uppercase ml-1">Kelas</label>
                                 <select name="id_kelas" id="form-id-kelas" required
-                                    class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-sm font-semibold outline-none focus:ring-2 focus:ring-primary/50 transition-all">
+                                    class="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-100 text-sm font-semibold outline-none focus:ring-2 focus:ring-primary/50 transition-all">
                                     {% for k in kelas_list %}
                                     <option value="{{ k.id }}">{{ k.nama_kelas }}</option>
                                     {% endfor %}
@@ -251,7 +245,7 @@
                             <label class="text-[11px] font-bold text-slate-400 uppercase ml-1">Mata Pelajaran</label>
                             <input type="text" name="mata_pelajaran" id="form-mapel" required
                                 placeholder="Contoh: Tahfidz Qur'an"
-                                class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all">
+                                class="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-100 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all">
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
@@ -259,14 +253,14 @@
                                 <label class="text-[11px] font-bold text-slate-400 uppercase ml-1">Waktu Mulai</label>
                                 <input type="text" name="waktu_mulai" id="form-waktu-mulai" required placeholder="HH:MM"
                                     pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
-                                    class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all font-mono">
+                                    class="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-100 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all font-mono">
                                 <p class="text-[10px] text-slate-400 ml-1">Format 24 Jam (Contoh: 07:30)</p>
                             </div>
                             <div class="space-y-1.5">
                                 <label class="text-[11px] font-bold text-slate-400 uppercase ml-1">Waktu Selesai</label>
                                 <input type="text" name="waktu_selesai" id="form-waktu-selesai" required
                                     placeholder="HH:MM" pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
-                                    class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all font-mono">
+                                    class="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-100 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all font-mono">
                                 <p class="text-[10px] text-slate-400 ml-1">Format 24 Jam (Contoh: 15:00)</p>
                             </div>
                         </div>
@@ -275,12 +269,12 @@
                             <label class="text-[11px] font-bold text-slate-400 uppercase ml-1">Keterangan
                                 (Opsional)</label>
                             <textarea name="keterangan" id="form-keterangan" rows="2" placeholder="Detail tambahan..."
-                                class="w-full p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all"></textarea>
+                                class="w-full p-4 rounded-xl bg-slate-50 border border-slate-100 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all"></textarea>
                         </div>
 
                         <div class="pt-4 flex gap-3">
                             <button type="button" id="close-modal"
-                                class="flex-1 h-12 rounded-xl border border-slate-100 dark:border-white/10 text-slate-500 font-bold text-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-all">Batal</button>
+                                class="flex-1 h-12 rounded-xl border border-slate-100 text-slate-500 font-bold text-sm hover:bg-slate-50 transition-all">Batal</button>
                             <button type="submit"
                                 class="flex-1 h-12 rounded-xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all">Simpan</button>
                         </div>

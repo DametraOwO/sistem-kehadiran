@@ -15,9 +15,7 @@
             --primary: #14b881;
             --primary-dark: #0f9669;
             --surface-light: #ffffff;
-            --surface-dark: #0f172a;
             --background-light: #f8fafc;
-            --background-dark: #020617;
         }
 
         body {
@@ -36,11 +34,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .dark .glass-card {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -53,7 +46,6 @@
     </style>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -61,11 +53,9 @@
                         'primary-dark': '#0f9669',
                         surface: {
                             light: '#ffffff',
-                            dark: '#0f172a'
                         },
                         background: {
                             light: '#f8fafc',
-                            dark: '#020617'
                         }
                     }
                 }
@@ -74,16 +64,16 @@
     </script>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark transition-colors duration-300">
-    <div class="min-h-screen relative flex flex-col bg-background-light dark:bg-background-dark">
+<body class="bg-background-light transition-colors duration-300">
+    <div class="min-h-screen relative flex flex-col bg-background-light">
         <!-- Header -->
-        <header class="sticky top-0 z-50 glass-card border-b border-slate-100 dark:border-white/5">
+        <header class="sticky top-0 z-50 glass-card border-b border-slate-100">
             <div class="max-w-5xl mx-auto flex items-center gap-4 px-5 h-16">
                 <button onclick="window.history.back()"
-                    class="size-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400">
+                    class="size-10 flex items-center justify-center rounded-full bg-slate-100 text-slate-600">
                     <span class="material-symbols-outlined">arrow_back</span>
                 </button>
-                <h2 class="text-lg font-bold text-slate-900 dark:text-white truncate">Semua Berita</h2>
+                <h2 class="text-lg font-bold text-slate-900 truncate">Semua Berita</h2>
             </div>
         </header>
 
@@ -92,16 +82,16 @@
             <!-- Filter Categories -->
             <div class="flex flex-wrap justify-center gap-2 mb-6 py-2">
                 <button
-                    class="filter-btn active shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400"
+                    class="filter-btn active shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 text-slate-600"
                     data-filter="all">Semua</button>
                 <button
-                    class="filter-btn shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400"
+                    class="filter-btn shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 text-slate-600"
                     data-filter="Berita Madrasah">Berita</button>
                 <button
-                    class="filter-btn shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400"
+                    class="filter-btn shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 text-slate-600"
                     data-filter="Pengumuman">Pengumuman</button>
                 <button
-                    class="filter-btn shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400"
+                    class="filter-btn shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 text-slate-600"
                     data-filter="Kegiatan">Kegiatan</button>
             </div>
 
@@ -110,10 +100,9 @@
                 {% if berita_list %}
                 {% for berita in berita_list %}
                 <a href="{{ url_for('berita_detail', id=berita.id) }}"
-                    class="news-card group/card bg-surface-light dark:bg-surface-dark rounded-3xl p-4 shadow-soft border border-slate-100 dark:border-white/5 flex flex-col gap-4 transition-all duration-300 hover:shadow-card active:scale-[0.98]"
+                    class="news-card group/card bg-surface-light rounded-3xl p-4 shadow-soft border border-slate-100 flex flex-col gap-4 transition-all duration-300 hover:shadow-card active:scale-[0.98]"
                     data-category="{{ berita.kategori }}">
-                    <div
-                        class="w-full aspect-[16/10] shrink-0 rounded-2xl bg-slate-100 dark:bg-white/5 overflow-hidden">
+                    <div class="w-full aspect-[16/10] shrink-0 rounded-2xl bg-slate-100 overflow-hidden">
                         {% if berita.gambar %}
                         <img src="{{ url_for('static', filename='uploads/berita/' + berita.gambar) }}"
                             alt="{{ berita.judul }}"
@@ -136,7 +125,7 @@
                             </span>
                         </div>
                         <h4
-                            class="text-slate-900 dark:text-white font-bold text-base line-clamp-2 leading-tight mb-2 group-hover/card:text-primary transition-colors">
+                            class="text-slate-900 font-bold text-base line-clamp-2 leading-tight mb-2 group-hover/card:text-primary transition-colors">
                             {{ berita.judul }}
                         </h4>
                         <p class="text-sm text-slate-500 line-clamp-2 leading-relaxed">
@@ -155,7 +144,7 @@
         </main>
 
         <!-- Footer -->
-        <footer class="p-8 text-center bg-slate-50 dark:bg-black/20 mt-auto">
+        <footer class="p-8 text-center bg-slate-50 mt-auto">
             <p class="text-xs text-slate-400 font-medium">© 2025 Madrasah Digital - Sistem Kehadiran Santri</p>
         </footer>
         {% if session.get('admin_id') %}
@@ -167,7 +156,7 @@
 
                 <!-- Tooltip Label -->
                 <span
-                    class="absolute right-full mr-4 px-3 py-1.5 rounded-xl bg-white dark:bg-surface-dark shadow-xl border border-slate-100 dark:border-white/5 text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                    class="absolute right-full mr-4 px-3 py-1.5 rounded-xl bg-white shadow-xl border border-slate-100 text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                     Buat Postingan Baru
                 </span>
             </button>
@@ -182,9 +171,9 @@
 
             <!-- Modal Content -->
             <div id="modal-content"
-                class="relative w-full max-w-lg bg-surface-light dark:bg-surface-dark rounded-t-3xl sm:rounded-2xl shadow-2xl transform translate-y-full transition-transform duration-300 ease-out overflow-hidden border border-white/10 text-slate-900 dark:text-white">
+                class="relative w-full max-w-lg bg-surface-light rounded-t-3xl sm:rounded-2xl shadow-2xl transform translate-y-full transition-transform duration-300 ease-out overflow-hidden border border-white/10 text-slate-900">
                 <!-- Header -->
-                <div class="flex items-center justify-between p-6 border-b border-slate-100 dark:border-white/5">
+                <div class="flex items-center justify-between p-6 border-b border-slate-100">
                     <div class="flex items-center gap-3">
                         <div class="p-2 bg-primary/10 rounded-xl text-primary">
                             <span class="material-symbols-outlined" id="modal-icon">edit_square</span>
@@ -192,7 +181,7 @@
                         <h3 class="text-xl font-bold leading-none" id="modal-title">Buat Posting Baru</h3>
                     </div>
                     <button id="close-news-modal"
-                        class="size-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/5 text-slate-500 hover:text-red-500 transition-colors">
+                        class="size-10 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:text-red-500 transition-colors">
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 </div>
@@ -203,34 +192,34 @@
                         id="news-form" class="flex flex-col gap-5">
                         <input type="hidden" name="berita_id" id="modal-berita-id">
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Judul
+                            <label class="text-slate-700 text-sm font-semibold">Judul
                                 Postingan</label>
                             <input type="text" name="judul" id="modal-judul" required
                                 placeholder="Tulis judul berita yang menarik..."
-                                class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+                                class="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
                         </div>
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Kategori</label>
+                            <label class="text-slate-700 text-sm font-semibold">Kategori</label>
                             <select name="kategori" id="modal-kategori" required
-                                class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+                                class="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
                                 <option value="Berita Madrasah">Berita Madrasah</option>
                                 <option value="Pengumuman">Pengumuman</option>
                                 <option value="Kegiatan">Kegiatan</option>
                             </select>
                         </div>
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Deskripsi /
+                            <label class="text-slate-700 text-sm font-semibold">Deskripsi /
                                 Konten</label>
                             <textarea name="konten" id="modal-konten" required rows="4"
                                 placeholder="Detail pengumuman atau berita..."
-                                class="w-full p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"></textarea>
+                                class="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"></textarea>
                         </div>
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Gambar Unggulan
+                            <label class="text-slate-700 text-sm font-semibold">Gambar Unggulan
                                 (Opsional)</label>
                             <div class="relative group">
                                 <label
-                                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 dark:border-white/10 border-dashed rounded-xl cursor-pointer bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/50 transition-all duration-300">
+                                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 hover:border-primary/50 transition-all duration-300">
                                     <div class="flex flex-col items-center justify-center pt-5 pb-6">
                                         <span
                                             class="material-symbols-outlined text-slate-400 mb-2 group-hover:scale-110 transition-transform">add_photo_alternate</span>
@@ -264,14 +253,6 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/semua_berita.js') }}"></script>
-    <!-- Dark Mode Script -->
-    <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
 </body>
 
 </html>

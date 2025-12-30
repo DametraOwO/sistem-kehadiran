@@ -15,9 +15,7 @@
             --primary: #14b881;
             --primary-dark: #0f9669;
             --surface-light: #ffffff;
-            --surface-dark: #12211c;
             --background-light: #f6f8f7;
-            --background-dark: #0f1715;
         }
 
         body {
@@ -53,21 +51,12 @@
             border-radius: 10px;
         }
 
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #1e293b;
-        }
-
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #cbd5e1;
-        }
-
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #334155;
         }
     </style>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -75,11 +64,9 @@
                         'primary-dark': '#0f9669',
                         surface: {
                             light: '#ffffff',
-                            dark: '#12211c'
                         },
                         background: {
                             light: '#f6f8f7',
-                            dark: '#0f1715'
                         }
                     }
                 }
@@ -88,8 +75,7 @@
     </script>
 </head>
 
-<body
-    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-50 transition-colors duration-300">
+<body class="bg-background-light text-slate-900 transition-colors duration-300">
     <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
 
         <!-- Standard Green Header -->
@@ -143,13 +129,12 @@
                             <span
                                 class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">search</span>
                             <input type="text" id="student-search" placeholder="Cari nama atau NIS santri..."
-                                class="w-full h-14 pl-12 pr-4 rounded-[20px] bg-white dark:bg-surface-dark border border-slate-100 dark:border-white/5 shadow-sm focus:ring-2 focus:ring-primary/50 text-sm outline-none transition-all placeholder:text-slate-400">
+                                class="w-full h-14 pl-12 pr-4 rounded-[20px] bg-white border border-slate-100 shadow-sm focus:ring-2 focus:ring-primary/50 text-sm outline-none transition-all placeholder:text-slate-400">
                         </div>
 
                         <div class="flex flex-wrap sm:flex-nowrap gap-3">
                             <!-- Gender Filter -->
-                            <div
-                                class="flex p-1.5 bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-white/5 shadow-sm">
+                            <div class="flex p-1.5 bg-white rounded-2xl border border-slate-100 shadow-sm">
                                 <button
                                     class="gender-filter active px-4 py-2 rounded-xl text-[10px] font-extrabold transition-all text-slate-400 uppercase tracking-tighter"
                                     data-gender="all">SEMUA</button>
@@ -165,10 +150,10 @@
                             <div class="relative group/sort flex-1 sm:flex-none h-14 min-w-[200px]">
                                 <!-- Styling Layer -->
                                 <div
-                                    class="absolute inset-0 flex items-center px-5 bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-white/5 shadow-sm group-hover/sort:border-primary/50 transition-colors pointer-events-none">
+                                    class="absolute inset-0 flex items-center px-5 bg-white rounded-2xl border border-slate-100 shadow-sm group-hover/sort:border-primary/50 transition-colors pointer-events-none">
                                     <span class="material-symbols-outlined text-slate-400 mr-3 text-[20px]">sort</span>
                                     <span id="sort-label"
-                                        class="text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider flex-1">NIS
+                                        class="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex-1">NIS
                                         TERKECIL</span>
                                     <span
                                         class="material-symbols-outlined text-slate-400 text-[18px] ml-2">expand_more</span>
@@ -191,17 +176,17 @@
                     <div class="flex items-center gap-2 py-1">
                         <!-- Static 'All' Button -->
                         <button
-                            class="class-pill active shrink-0 px-5 py-2.5 rounded-xl bg-white dark:bg-surface-dark border border-slate-100 dark:border-white/5 shadow-sm text-[10px] font-extrabold text-slate-400 transition-all uppercase tracking-wider hover:border-primary/50"
+                            class="class-pill active shrink-0 px-5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-sm text-[10px] font-extrabold text-slate-400 transition-all uppercase tracking-wider hover:border-primary/50"
                             data-class="all">SEMUA</button>
 
                         <!-- Separator Vertical Line (Optional but looks good) -->
-                        <div class="h-6 w-px bg-slate-200 dark:bg-white/10 mx-1"></div>
+                        <div class="h-6 w-px bg-slate-200 mx-1"></div>
 
                         <!-- Scrollable Class Specific Buttons -->
                         <div class="flex-1 flex items-center gap-2 overflow-x-auto no-scrollbar">
                             {% for k in kelas_list %}
                             <button
-                                class="class-pill shrink-0 px-5 py-2.5 rounded-xl bg-white dark:bg-surface-dark border border-slate-100 dark:border-white/5 shadow-sm text-[10px] font-extrabold text-slate-400 transition-all uppercase tracking-wider hover:border-primary/50"
+                                class="class-pill shrink-0 px-5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-sm text-[10px] font-extrabold text-slate-400 transition-all uppercase tracking-wider hover:border-primary/50"
                                 data-class="{{ k.id }}">KELAS {{ k.nama_kelas|replace('Kelas ', '') }}</button>
                             {% endfor %}
                         </div>
@@ -234,12 +219,11 @@
             </div>
 
             <!-- Data Table -->
-            <div
-                class="bg-white dark:bg-surface-dark rounded-[32px] shadow-sm border border-slate-100 dark:border-white/5 overflow-hidden">
+            <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
                 <div class="overflow-x-auto custom-scrollbar">
                     <table class="w-full min-w-[700px] text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+                            <tr class="bg-slate-50/50 border-b border-slate-100">
                                 <th class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider">NIS
                                 </th>
                                 <th class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama
@@ -253,10 +237,10 @@
                                     Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="student-table-body" class="divide-y divide-slate-100 dark:divide-white/5">
+                        <tbody id="student-table-body" class="divide-y divide-slate-100">
                             {% if santri_list %}
                             {% for s in santri_list %}
-                            <tr class="hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors group student-row"
+                            <tr class="hover:bg-slate-50/50 transition-colors group student-row"
                                 data-kelas-id="{{ s.id_kelas }}" data-gender="{{ s.gender }}">
                                 <td class="px-6 py-4">
                                     <span class="text-sm font-bold text-primary tabular-nums">{{ s.nis }}</span>
@@ -264,10 +248,10 @@
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <div
-                                            class="size-9 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold group-hover:bg-primary/20 group-hover:text-primary transition-all">
+                                            class="size-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-bold group-hover:bg-primary/20 group-hover:text-primary transition-all">
                                             {{ s.nama_lengkap[:1] }}
                                         </div>
-                                        <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">{{
+                                        <span class="text-sm font-semibold text-slate-700">{{
                                             s.nama_lengkap }}</span>
                                     </div>
                                 </td>
@@ -279,13 +263,13 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{
+                                    <span class="text-sm font-medium text-slate-600">{{
                                         s.nama_kelas if s.nama_kelas else 'Tanpa Kelas' }}</span>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center justify-center gap-2">
                                         <button
-                                            class="edit-btn size-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-white/5 text-slate-500 hover:bg-amber-100 hover:text-amber-600 transition-all"
+                                            class="edit-btn size-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-amber-100 hover:text-amber-600 transition-all"
                                             data-id="{{ s.id }}" data-nis="{{ s.nis }}" data-nama="{{ s.nama_lengkap }}"
                                             data-gender="{{ s.gender }}"
                                             data-kelas="{{ s.id_kelas if s.id_kelas else '' }}">
@@ -293,7 +277,7 @@
                                         </button>
                                         <a href="{{ url_for('hapus_santri', id=s.id) }}"
                                             onclick="return confirm('Apakah Anda yakin ingin menghapus data {{ s.nama_lengkap }}?')"
-                                            class="size-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-white/5 text-slate-500 hover:bg-red-100 hover:text-red-600 transition-all">
+                                            class="size-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-600 transition-all">
                                             <span class="material-symbols-outlined text-[18px]">delete</span>
                                         </a>
                                     </div>
@@ -304,10 +288,9 @@
                             <tr>
                                 <td colspan="5" class="px-6 py-20 text-center">
                                     <div class="flex flex-col items-center gap-3">
-                                        <div
-                                            class="size-20 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center">
+                                        <div class="size-20 rounded-full bg-slate-50 flex items-center justify-center">
                                             <span
-                                                class="material-symbols-outlined text-slate-300 dark:text-slate-700 text-[40px]">group_off</span>
+                                                class="material-symbols-outlined text-slate-300 text-[40px]">group_off</span>
                                         </div>
                                         <p class="text-slate-500 text-sm font-medium">Belum ada data santri.</p>
                                     </div>
@@ -330,7 +313,7 @@
 
         <!-- Modal Content -->
         <div id="modal-content"
-            class="relative w-full max-w-lg bg-white dark:bg-surface-dark rounded-t-[40px] sm:rounded-[40px] shadow-2xl transition-transform translate-y-full duration-300 overflow-hidden">
+            class="relative w-full max-w-lg bg-white rounded-t-[40px] sm:rounded-[40px] shadow-2xl transition-transform translate-y-full duration-300 overflow-hidden">
             <!-- Modal Header -->
             <div class="p-8 pb-4 flex items-center justify-between">
                 <div class="flex items-center gap-4">
@@ -338,12 +321,12 @@
                         <span id="modal-icon" class="material-symbols-outlined text-[32px]">person_add</span>
                     </div>
                     <div>
-                        <h3 id="modal-title" class="text-xl font-bold dark:text-white">Tambah Santri Baru</h3>
+                        <h3 id="modal-title" class="text-xl font-bold">Tambah Santri Baru</h3>
                         <p class="text-xs text-slate-500 font-medium">Lengkapi data santri dengan benar</p>
                     </div>
                 </div>
                 <button id="close-modal"
-                    class="size-10 flex items-center justify-center rounded-full bg-slate-50 dark:bg-white/5 text-slate-400 hover:text-red-500 transition-colors">
+                    class="size-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:text-red-500 transition-colors">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
@@ -356,19 +339,19 @@
                             <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nomor Induk Santri
                                 (NIS)</label>
                             <input type="text" name="nis" id="form-nis" required placeholder="Contoh: 2023001"
-                                class="w-full h-14 px-5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 outline-none transition-all">
+                                class="w-full h-14 px-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all">
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nama Lengkap</label>
                             <input type="text" name="nama_lengkap" id="form-nama" required
                                 placeholder="Masukkan nama lengkap santri..."
-                                class="w-full h-14 px-5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 outline-none transition-all">
+                                class="w-full h-14 px-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all">
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-1.5">
                                 <label class="text-xs font-bold text-slate-500 uppercase ml-1">Jenis Kelamin</label>
                                 <select name="gender" id="form-gender" required
-                                    class="w-full h-14 px-5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 outline-none transition-all cursor-pointer">
+                                    class="w-full h-14 px-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all cursor-pointer">
                                     <option value="L">Laki-laki</option>
                                     <option value="P">Perempuan</option>
                                 </select>
@@ -376,7 +359,7 @@
                             <div class="space-y-1.5">
                                 <label class="text-xs font-bold text-slate-500 uppercase ml-1">Kelas</label>
                                 <select name="id_kelas" id="form-kelas"
-                                    class="w-full h-14 px-5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 outline-none transition-all cursor-pointer">
+                                    class="w-full h-14 px-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all cursor-pointer">
                                     <option value="">Pilih Kelas</option>
                                     {% for k in kelas_list %}
                                     <option value="{{ k.id }}">{{ k.nama_kelas }}</option>
@@ -399,14 +382,6 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/santri.js') }}"></script>
-    <script>
-        // Theme Sync
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
 </body>
 
 </html>

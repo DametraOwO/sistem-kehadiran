@@ -367,6 +367,15 @@ def admin():
             """, (current_day_name,))
             class_cards = cur.fetchall()
             
+            # --- NEW: Fetch Recent Activity Logs ---
+            cur.execute("""
+                SELECT aksi, TIME_FORMAT(waktu, '%H:%i') as waktu_formatted 
+                FROM log_aktivitas 
+                ORDER BY waktu DESC 
+                LIMIT 10
+            """)
+            recent_logs = cur.fetchall()
+            
             cur.close()
             db.close()
         except Exception as e:
@@ -374,8 +383,9 @@ def admin():
             print(f"Error fetching data for admin dashboard: {e}")
             admin_data = None
             class_cards = []
+            recent_logs = []
             
-    return render_template('admin.html', berita_list=berita_list, admin=admin_data, stats=stats, class_cards=class_cards)
+    return render_template('admin.html', berita_list=berita_list, admin=admin_data, stats=stats, class_cards=class_cards, recent_logs=recent_logs)
 
 @app.route('/laporan')
 @login_required
@@ -489,7 +499,7 @@ def simpan_absensi():
         db.commit()
         
         # Record Log
-        admin_name = session.get('nama_lengkap', 'Seseorang')
+        admin_name = session.get('admin_name', 'Seseorang')
         record_log(session.get('admin_id'), 'Kehadiran', f"<b>{admin_name}</b> telah melakukan rekap kehadiran")
         
         cur.close()
@@ -905,7 +915,7 @@ def tambah_berita():
             db.commit()
             
             # Record Log
-            admin_name = session.get('nama_lengkap', 'Seseorang')
+            admin_name = session.get('admin_name', 'Seseorang')
             record_log(session.get('admin_id'), 'Berita', f"<b>{admin_name}</b> telah memposting <b>{kategori}</b>")
             
             cur.close()

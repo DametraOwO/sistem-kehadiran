@@ -15,7 +15,6 @@
             --primary: #14b881;
             --primary-dark: #0f9669;
             --surface-light: #ffffff;
-            --surface-dark: #0f172a;
         }
 
         body {
@@ -29,7 +28,6 @@
     </style>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -37,7 +35,6 @@
                         'primary-dark': '#0f9669',
                         surface: {
                             light: '#ffffff',
-                            dark: '#0f172a'
                         }
                     }
                 }
@@ -46,18 +43,17 @@
     </script>
 </head>
 
-<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+<body class="bg-slate-50 transition-colors duration-300">
     <div class="min-h-screen flex flex-col">
         <!-- Header -->
-        <header
-            class="sticky top-0 z-50 bg-white/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-slate-100 dark:border-white/5">
+        <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
             <div class="max-w-3xl mx-auto flex items-center justify-between px-5 h-16">
                 <div class="flex items-center gap-4">
                     <a href="{{ url_for('admin') }}"
-                        class="size-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400">
+                        class="size-10 flex items-center justify-center rounded-full bg-slate-100 text-slate-600">
                         <span class="material-symbols-outlined">arrow_back</span>
                     </a>
-                    <h2 class="text-lg font-bold text-slate-900 dark:text-white">Pengaturan Profil</h2>
+                    <h2 class="text-lg font-bold text-slate-900">Pengaturan Profil</h2>
                 </div>
             </div>
         </header>
@@ -81,14 +77,12 @@
                 <form action="{{ url_for('update_profil') }}" method="POST" enctype="multipart/form-data"
                     class="space-y-6">
                     <!-- Profile Picture Section -->
-                    <div
-                        class="bg-white dark:bg-surface-dark rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/5 flex flex-col items-center">
+                    <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col items-center">
                         <div class="relative group">
                             <div class="size-32 rounded-full overflow-hidden border-4 border-primary/20 p-1">
                                 <img id="profile-preview"
                                     src="{{ url_for('static', filename='uploads/profil/' + admin.foto_profil) if admin.foto_profil else 'https://ui-avatars.com/api/?name=' + admin.nama_lengkap + '&background=14b881&color=fff' }}"
-                                    class="w-full h-full object-cover rounded-full bg-slate-100 dark:bg-slate-800"
-                                    alt="Profile">
+                                    class="w-full h-full object-cover rounded-full bg-slate-100" alt="Profile">
                             </div>
                             <label for="foto_profil"
                                 class="absolute bottom-0 right-0 size-10 bg-primary hover:bg-primary-dark text-white rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-all scale-100 active:scale-90">
@@ -96,74 +90,70 @@
                                 <input type="file" name="foto_profil" id="foto_profil" class="hidden" accept="image/*">
                             </label>
                         </div>
-                        <h3 class="mt-4 text-lg font-bold text-slate-900 dark:text-white">{{ admin.nama_lengkap }}</h3>
+                        <h3 class="mt-4 text-lg font-bold text-slate-900">{{ admin.nama_lengkap }}</h3>
                         <p class="text-sm text-slate-500 uppercase tracking-widest font-medium">{{ admin.status_role }}
                         </p>
                     </div>
 
                     <!-- Personal Information -->
-                    <div
-                        class="bg-white dark:bg-surface-dark rounded-3xl p-6 lg:p-8 shadow-sm border border-slate-100 dark:border-white/5 space-y-5">
+                    <div class="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-slate-100 space-y-5">
                         <div class="flex items-center gap-3 mb-2">
                             <div class="p-2 bg-primary/10 rounded-xl text-primary">
                                 <span class="material-symbols-outlined">person</span>
                             </div>
-                            <h4 class="font-bold text-slate-900 dark:text-white">Informasi Pribadi</h4>
+                            <h4 class="font-bold text-slate-900">Informasi Pribadi</h4>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="space-y-2">
-                                <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">Nama
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nama
                                     Lengkap</label>
                                 <input type="text" name="nama_lengkap" value="{{ admin.nama_lengkap }}" required
-                                    class="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                                    class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                             </div>
                             <div class="space-y-2">
-                                <label
-                                    class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">Email</label>
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Email</label>
                                 <input type="email" name="email" value="{{ admin.email }}" required
-                                    class="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                                    class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                             </div>
                             <div class="space-y-2">
-                                <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">Jenis
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Jenis
                                     Kelamin</label>
                                 <select name="gender"
-                                    class="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all cursor-pointer">
+                                    class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all cursor-pointer">
                                     <option value="L" {{ 'selected' if admin.gender=='L' }}>Laki-laki</option>
                                     <option value="P" {{ 'selected' if admin.gender=='P' }}>Perempuan</option>
                                 </select>
                             </div>
                             <div class="space-y-2 opacity-60">
-                                <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">Role
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Role
                                     Status</label>
                                 <input type="text" value="{{ admin.status_role }}" readonly
-                                    class="w-full px-4 py-3 rounded-2xl bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-400 outline-none cursor-not-allowed">
+                                    class="w-full px-4 py-3 rounded-2xl bg-slate-100 border border-slate-200 text-slate-500 outline-none cursor-not-allowed">
                             </div>
                         </div>
                     </div>
 
                     <!-- Security Section -->
-                    <div
-                        class="bg-white dark:bg-surface-dark rounded-3xl p-6 lg:p-8 shadow-sm border border-slate-100 dark:border-white/5 space-y-5">
+                    <div class="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-slate-100 space-y-5">
                         <div class="flex items-center gap-3 mb-2">
-                            <div class="p-2 bg-amber-100 dark:bg-amber-900/20 rounded-xl text-amber-600">
+                            <div class="p-2 bg-amber-100 rounded-xl text-amber-600">
                                 <span class="material-symbols-outlined">lock</span>
                             </div>
-                            <h4 class="font-bold text-slate-900 dark:text-white">Keamanan</h4>
+                            <h4 class="font-bold text-slate-900">Keamanan</h4>
                         </div>
 
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">Kata
+                            <label class="text-xs font-bold text-slate-500 uppercase ml-1">Kata
                                 Sandi Baru (Kosongkan jika tidak ingin diubah)</label>
                             <input type="password" name="new_password" id="new_password" placeholder="••••••••"
-                                class="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                                class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                         </div>
                         <div class="space-y-2">
-                            <label
-                                class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">Konfirmasi
+                            <label class="text-xs font-bold text-slate-500 uppercase ml-1">Konfirmasi
                                 Kata Sandi Baru</label>
                             <input type="password" id="confirm_password" placeholder="••••••••"
-                                class="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                                class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                             <p id="password-error" class="text-[10px] text-red-500 font-bold hidden px-1">Kata sandi
                                 tidak cocok!</p>
                         </div>
@@ -181,13 +171,6 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/profil.js') }}"></script>
-    <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
 </body>
 
 </html>

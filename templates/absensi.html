@@ -15,7 +15,6 @@
             --primary: #14b881;
             --primary-dark: #0f9669;
             --background-light: #f8fafc;
-            --background-dark: #0f172a;
         }
 
         body {
@@ -38,7 +37,6 @@
     </style>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -46,11 +44,9 @@
                         'primary-dark': '#0f9669',
                         surface: {
                             light: '#ffffff',
-                            dark: '#12211c'
                         },
                         background: {
                             light: '#f6f8f7',
-                            dark: '#0f1715'
                         }
                     }
                 }
@@ -59,8 +55,7 @@
     </script>
 </head>
 
-<body
-    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-50 transition-colors duration-300">
+<body class="bg-background-light text-slate-900 transition-colors duration-300">
     <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
 
         <!-- Standard Green Header -->
@@ -89,7 +84,7 @@
                 <div class="space-y-3">
                     {% for k in kelas_list %}
                     <a href="{{ url_for('catat_kehadiran', kelas_id=k.id) }}"
-                        class="flex items-center justify-between p-5 bg-white dark:bg-surface-dark rounded-[24px] border border-slate-100 dark:border-white/5 shadow-sm hover:border-primary/50 hover:shadow-md transition-all group active:scale-[0.98]">
+                        class="flex items-center justify-between p-5 bg-white rounded-[24px] border border-slate-100 shadow-sm hover:border-primary/50 hover:shadow-md transition-all group active:scale-[0.98]">
                         <div class="flex items-center gap-4">
                             <!-- Class Icon/Initial -->
                             <div
@@ -99,10 +94,10 @@
 
                             <!-- Class Info -->
                             <div>
-                                <h3 class="font-bold text-slate-800 dark:text-white">{{ k.nama_kelas }}</h3>
+                                <h3 class="font-bold text-slate-800">{{ k.nama_kelas }}</h3>
                                 <div class="flex items-center gap-2">
                                     <div
-                                        class="size-1.5 rounded-full {% if k.rekap_count > 0 %}bg-primary animate-pulse{% else %}bg-slate-200 dark:bg-white/10{% endif %}">
+                                        class="size-1.5 rounded-full {% if k.rekap_count > 0 %}bg-primary animate-pulse{% else %}bg-slate-200{% endif %}">
                                     </div>
                                     <span
                                         class="text-[11px] font-bold {% if k.rekap_count > 0 %}text-primary{% else %}text-slate-400{% endif %} uppercase tracking-wider">
@@ -114,7 +109,7 @@
 
                         <!-- Action Arrow -->
                         <div
-                            class="size-10 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-white/5 text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all">
+                            class="size-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all">
                             <span class="material-symbols-outlined text-[20px]">chevron_right</span>
                         </div>
                     </a>
@@ -140,14 +135,6 @@
             </div>
         </main>
     </div>
-
-    <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
 </body>
 
 </html>
