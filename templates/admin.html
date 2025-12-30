@@ -58,6 +58,92 @@
     <div
         class="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark pb-24">
 
+        <!-- Sidebar Navigation Overlay -->
+        <div id="sidebar-overlay"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] transition-opacity duration-300 opacity-0 pointer-events-none">
+        </div>
+
+        <!-- Sidebar Navigation Content -->
+        <div id="sidebar-menu"
+            class="fixed top-0 left-0 bottom-0 w-72 bg-white dark:bg-surface-dark z-[101] flex flex-col shadow-2xl transition-transform duration-300 -translate-x-full border-r border-slate-100 dark:border-white/5">
+            <!-- Sidebar Header -->
+            <div class="p-6 islamic-pattern rounded-br-3xl shadow-lg relative">
+                <div class="absolute inset-0 islamic-pattern opacity-100 mix-blend-normal rounded-br-3xl"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="size-16 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 p-1">
+                            <img src="{{ url_for('static', filename='uploads/profil/' + admin.foto_profil) if admin and admin.foto_profil else 'https://ui-avatars.com/api/?name=' + session['admin_name'] + '&background=14b881&color=fff' }}"
+                                class="w-full h-full rounded-xl object-cover" alt="Profile">
+                        </div>
+                        <button id="sidebar-close"
+                            class="size-10 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <div class="flex flex-col">
+                        <h3 class="text-white text-xl font-bold leading-none mb-1">{{ session['admin_name'] if
+                            session['admin_name'] else 'Admin' }}</h3>
+                        <p class="text-white/80 text-xs font-medium tracking-wide uppercase">Administrator Madrasah</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Links -->
+            <div class="flex-1 overflow-y-auto py-6 px-4 no-scrollbar">
+                <nav class="flex flex-col gap-1">
+                    <a href="{{ url_for('admin') }}"
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-primary/10 text-primary font-bold transition-all border border-primary/10">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span class="text-sm">Dashboard Admin</span>
+                    </a>
+                    <a href="{{ url_for('maintenance') }}"
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        <span class="material-symbols-outlined group-hover:text-primary transition-colors">group</span>
+                        <span class="text-sm">Data Siswa</span>
+                    </a>
+                    <a href="{{ url_for('semua_berita') }}"
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        <span
+                            class="material-symbols-outlined group-hover:text-primary transition-colors">newspaper</span>
+                        <span class="text-sm">Berita & Pengumuman</span>
+                    </a>
+                    <a href="{{ url_for('calendar') }}"
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        <span
+                            class="material-symbols-outlined group-hover:text-primary transition-colors">calendar_today</span>
+                        <span class="text-sm">Jadwal</span>
+                    </a>
+                    <a href="{{ url_for('laporan') }}"
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        <span
+                            class="material-symbols-outlined group-hover:text-primary transition-colors">description</span>
+                        <span class="text-sm">Laporan</span>
+                    </a>
+                    <div class="h-px bg-slate-100 dark:bg-white/5 my-4 mx-4"></div>
+                    <a href="{{ url_for('about') }}"
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        <span class="material-symbols-outlined group-hover:text-primary transition-colors">info</span>
+                        <span class="text-sm">Tentang</span>
+                    </a>
+                    <a href="{{ url_for('profil') }}"
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold transition-all group">
+                        <span class="material-symbols-outlined group-hover:text-primary transition-colors">person</span>
+                        <span class="text-sm">Profil</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Sidebar Footer (Logout) -->
+            <div class="p-4 mt-auto">
+                <a href="{{ url_for('logout') }}"
+                    class="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 font-bold hover:bg-red-100 dark:hover:bg-red-500/20 transition-all group">
+                    <span
+                        class="material-symbols-outlined transition-transform group-hover:-translate-x-1">logout</span>
+                    <span class="text-sm">Keluar Sekarang</span>
+                </a>
+            </div>
+        </div>
+
         <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -81,15 +167,16 @@
                 <!-- Top Bar: Profile & Notif -->
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center gap-3">
-                        <div class="relative">
-                            <div class="bg-center bg-no-repeat bg-cover rounded-full size-12 ring-2 ring-white/30"
-                                data-alt="Profile picture of Ustadz Ahmed"
-                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBgmdLj49e6WgYKM8cOdO76fjgPKgIrcL1oHwTwdVXM2GWlZSqXxvudRK7At3NqUCSawkE_5ch97DMmaxzdKELQqnB3kFeFZQLy398Yu9yV1rqIqHRJySUr7aWJ_6Q305t20OjXmne1aHFhUViXZQQMeBIvuJlnHQIvZ1MtNqaVQEiwdsbW2XD4LrZ_0PSE6SsRwinVgVuyzY-g4b3EUt_LaTtzwo2Daqx0gLYiXbyUzU9MOor7haURlGv0EwzIzU1oW4EcJuPeZGk");'>
+                        <button id="sidebar-trigger" class="relative group">
+                            <div
+                                class="rounded-full size-12 ring-2 ring-white/30 group-hover:ring-white/50 transition-all overflow-hidden bg-slate-100 dark:bg-white/5">
+                                <img src="{{ url_for('static', filename='uploads/profil/' + admin.foto_profil) if admin and admin.foto_profil else 'https://ui-avatars.com/api/?name=' + session['admin_name'] + '&background=14b881&color=fff' }}"
+                                    class="w-full h-full object-cover" alt="Profile">
                             </div>
                             <div
                                 class="absolute bottom-0 right-0 size-3 bg-green-400 border-2 border-primary rounded-full">
                             </div>
-                        </div>
+                        </button>
                         <div class="flex flex-col">
                             <span class="text-xs text-white/80 font-medium tracking-wide">Selamat Datang</span>
                             <h2 class="text-white text-base font-bold leading-none">{{ session['admin_name'] if

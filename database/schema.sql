@@ -32,6 +32,7 @@ CREATE TABLE `admins` (
   `nama_lengkap` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `gender` enum('L','P') NOT NULL,
+  `foto_profil` varchar(255) DEFAULT NULL,
   `status_role` varchar(50) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()

@@ -170,6 +170,31 @@ function updatePrayerUI(timings) {
 
 // Announcement Slider Logic
 document.addEventListener('DOMContentLoaded', function () {
+    // === Sidebar Navigation ===
+    const sidebarTrigger = document.getElementById('sidebar-trigger');
+    const sidebarClose = document.getElementById('sidebar-close');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const sidebarMenu = document.getElementById('sidebar-menu');
+
+    const toggleSidebar = (show) => {
+        if (show) {
+            sidebarOverlay.classList.remove('pointer-events-none', 'opacity-0');
+            sidebarOverlay.classList.add('opacity-100');
+            sidebarMenu.classList.remove('-translate-x-full');
+            document.body.style.overflow = 'hidden';
+        } else {
+            sidebarOverlay.classList.add('opacity-0', 'pointer-events-none');
+            sidebarOverlay.classList.remove('opacity-100');
+            sidebarMenu.classList.add('-translate-x-full');
+            document.body.style.overflow = '';
+        }
+    };
+
+    if (sidebarTrigger) sidebarTrigger.addEventListener('click', () => toggleSidebar(true));
+    if (sidebarClose) sidebarClose.addEventListener('click', () => toggleSidebar(false));
+    if (sidebarOverlay) sidebarOverlay.addEventListener('click', () => toggleSidebar(false));
+
+    // === Announcement Slider Logic ===
     const container = document.getElementById('admin-announcement-container');
     const prevBtn = document.getElementById('admin-prev-slide');
     const nextBtn = document.getElementById('admin-next-slide');

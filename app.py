@@ -11,12 +11,15 @@ app.secret_key = 'supersecretkey' # Change this for production
 
 # Upload Configuration
 UPLOAD_FOLDER = 'static/uploads/berita'
+UPLOAD_PROFIL_FOLDER = 'static/uploads/profil'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_PROFIL_FOLDER'] = UPLOAD_PROFIL_FOLDER
 
-# Create upload directory if it doesn't exist
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+# Create upload directories if they don't exist
+for folder in [UPLOAD_FOLDER, UPLOAD_PROFIL_FOLDER]:
+    if not os.path.exists(folder):
+        os.makedirs(folder)
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -166,17 +169,100 @@ def admin():
             """)
             berita_list = cur.fetchall()
             cur.close()
+            
+            # Fetch current admin data for dashboard (profile pic, etc)
+            cur = db.cursor(MySQLdb.cursors.DictCursor)
+            cur.execute("SELECT * FROM admins WHERE id = %s", (session.get('admin_id'),))
+            admin_data = cur.fetchone()
+            cur.close()
+            
             db.close()
         except Exception as e:
             if db: db.close()
             print(f"Error fetching news for admin: {e}")
+            admin_data = None
             
-    return render_template('admin.html', berita_list=berita_list)
+    return render_template('admin.html', berita_list=berita_list, admin=admin_data)
 
 @app.route('/laporan')
 @login_required
 def laporan():
     return render_template('laporan.html')
+
+@app.route('/profil')
+@login_required
+def profil():
+    admin_id = session.get('admin_id')
+    db = get_db()
+    if db:
+        try:
+            cur = db.cursor(MySQLdb.cursors.DictCursor)
+            cur.execute("SELECT * FROM admins WHERE id = %s", (admin_id,))
+            admin_data = cur.fetchone()
+            cur.close()
+            db.close()
+            if admin_data:
+                return render_template('profil.html', admin=admin_data)
+        except Exception as e:
+            if db: db.close()
+            flash(f'Error: {str(e)}', 'danger')
+    return redirect(url_for('admin'))
+
+@app.route('/update_profil', methods=['POST'])
+@login_required
+def update_profil():
+    admin_id = session.get('admin_id')
+    nama = request.form['nama_lengkap']
+    email = request.form['email']
+    gender = request.form['gender']
+    new_password = request.form.get('new_password')
+    
+    db = get_db()
+    if db:
+        try:
+            cur = db.cursor(MySQLdb.cursors.DictCursor)
+            cur.execute("SELECT foto_profil FROM admins WHERE id = %s", (admin_id,))
+            current_admin = cur.fetchone()
+            
+            filename = current_admin['foto_profil']
+            if 'foto_profil' in request.files:
+                file = request.files['foto_profil']
+                if file and file.filename != '' and allowed_file(file.filename):
+                    if filename:
+                        old_path = os.path.join(app.config['UPLOAD_PROFIL_FOLDER'], filename)
+                        if os.path.exists(old_path):
+                            os.remove(old_path)
+                    
+                    from datetime import datetime
+                    filename = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + secure_filename(file.filename)
+                    file.save(os.path.join(app.config['UPLOAD_PROFIL_FOLDER'], filename))
+
+            if new_password and new_password.strip() != '':
+                pass_hash = generate_password_hash(new_password)
+                cur.execute("""
+                    UPDATE admins 
+                    SET nama_lengkap = %s, email = %s, gender = %s, foto_profil = %s, password_hash = %s 
+                    WHERE id = %s
+                """, (nama, email, gender, filename, pass_hash, admin_id))
+            else:
+                cur.execute("""
+                    UPDATE admins 
+                    SET nama_lengkap = %s, email = %s, gender = %s, foto_profil = %s 
+                    WHERE id = %s
+                """, (nama, email, gender, filename, admin_id))
+            
+            db.commit()
+            cur.close()
+            db.close()
+            
+            # Update session
+            session['admin_name'] = nama
+            flash('Profil berhasil diperbarui!', 'success')
+        except Exception as e:
+            if db: db.close()
+            flash(f'Gagal memperbarui profil: {str(e)}', 'danger')
+            
+    return redirect(url_for('profil'))
 
 @app.route('/about')
 def about():
