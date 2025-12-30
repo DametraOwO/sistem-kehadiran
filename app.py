@@ -939,8 +939,8 @@ def api_jadwal():
             # Fetch Schedules with Class Names
             cur.execute("""
                 SELECT j.id, j.id_kelas, j.hari, j.mata_pelajaran, j.keterangan, 
-                       TIME_FORMAT(j.waktu_mulai, '%%H:%%i') as waktu_mulai, 
-                       TIME_FORMAT(j.waktu_selesai, '%%H:%%i') as waktu_selesai, 
+                       TIME_FORMAT(j.waktu_mulai, '%H:%i') as waktu_mulai, 
+                       TIME_FORMAT(j.waktu_selesai, '%H:%i') as waktu_selesai, 
                        k.nama_kelas 
                 FROM jadwal j 
                 JOIN kelas k ON j.id_kelas = k.id 
