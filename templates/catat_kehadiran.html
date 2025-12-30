@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catat Kehadiran {{ kelas.nama_kelas }} - MADRASAH DIGITAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" />
+    <style>
+        :root {
+            --primary: #14b881;
+            --primary-dark: #0f9669;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .islamic-pattern {
+            background-color: var(--primary);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M40 0l10 30 30 10-30 10-10 30-10-30-30-10 30-10z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* Status Button Active States */
+        .status-btn.active[data-status="H"] {
+            background-color: #22c55e !important;
+            color: white !important;
+            border-color: #22c55e !important;
+        }
+
+        .status-btn.active[data-status="I"] {
+            background-color: #eab308 !important;
+            color: white !important;
+            border-color: #eab308 !important;
+        }
+
+        .status-btn.active[data-status="S"] {
+            background-color: #3b82f6 !important;
+            color: white !important;
+            border-color: #3b82f6 !important;
+        }
+
+        .status-btn.active[data-status="A"] {
+            background-color: #ef4444 !important;
+            color: white !important;
+            border-color: #ef4444 !important;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#14b881',
+                        surface: { light: '#ffffff', dark: '#12211c' },
+                        background: { light: '#f6f8f7', dark: '#0f1715' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-50 transition-colors duration-300">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+
+        <!-- Standard Green Header -->
+        <div class="relative w-full islamic-pattern rounded-b-[40px] shadow-lg pt-12 pb-10 px-6 z-10">
+            <div class="absolute inset-0 islamic-pattern opacity-100 mix-blend-normal rounded-b-[40px]"></div>
+            <div class="relative z-10 max-w-2xl mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <a href="{{ url_for('absensi') }}"
+                        class="size-12 flex items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 transition-all">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </a>
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-white tracking-tight">{{ kelas.nama_kelas }}</h1>
+                        <p class="text-white/80 text-xs font-medium uppercase tracking-widest">Catat Kehadiran Siswa</p>
+                    </div>
+                </div>
+                <button
+                    class="h-12 px-6 rounded-2xl bg-white text-primary font-bold shadow-xl shadow-black/10 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
+                    <span class="material-symbols-outlined text-[20px]">save</span>
+                    <span>Simpan</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-1 -mt-6 px-6 pb-20 z-20">
+            <div class="max-w-2xl mx-auto space-y-3">
+
+                {% for s in santri_list %}
+                <div
+                    class="flex items-center justify-between p-4 bg-white dark:bg-surface-dark rounded-[24px] border border-slate-100 dark:border-white/5 shadow-sm">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ s.nis }}</span>
+                        <h3 class="font-bold text-slate-800 dark:text-white leading-tight">{{ s.nama_lengkap }}</h3>
+                    </div>
+
+                    <!-- Attendance Buttons -->
+                    <div class="flex gap-2">
+                        <button
+                            class="status-btn size-10 rounded-xl border-2 border-slate-100 dark:border-white/5 text-slate-400 font-black text-sm flex items-center justify-center transition-all hover:bg-slate-50 dark:hover:bg-white/5"
+                            data-student-id="{{ s.id }}" data-status="H">H</button>
+                        <button
+                            class="status-btn size-10 rounded-xl border-2 border-slate-100 dark:border-white/5 text-slate-400 font-black text-sm flex items-center justify-center transition-all hover:bg-slate-50 dark:hover:bg-white/5"
+                            data-student-id="{{ s.id }}" data-status="I">I</button>
+                        <button
+                            class="status-btn size-10 rounded-xl border-2 border-slate-100 dark:border-white/5 text-slate-400 font-black text-sm flex items-center justify-center transition-all hover:bg-slate-50 dark:hover:bg-white/5"
+                            data-student-id="{{ s.id }}" data-status="S">S</button>
+                        <button
+                            class="status-btn size-10 rounded-xl border-2 border-slate-100 dark:border-white/5 text-slate-400 font-black text-sm flex items-center justify-center transition-all hover:bg-slate-50 dark:hover:bg-white/5"
+                            data-student-id="{{ s.id }}" data-status="A">A</button>
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% if not santri_list %}
+                <div class="py-20 text-center">
+                    <span class="material-symbols-outlined text-slate-200 text-6xl mb-4">group_off</span>
+                    <p class="text-slate-500 font-medium tracking-wide">Tidak ada siswa di kelas ini.</p>
+                </div>
+                {% endif %}
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Attendance Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.status-btn');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const studentId = btn.dataset.studentId;
+
+                    // Find all buttons for this specific student
+                    const studentButtons = document.querySelectorAll(`.status-btn[data-student-id="${studentId}"]`);
+
+                    // Remove active class from all buttons of this student
+                    studentButtons.forEach(b => b.classList.remove('active'));
+
+                    // Add active class to the clicked button
+                    btn.classList.add('active');
+                });
+            });
+        });
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</body>
+
+</html>

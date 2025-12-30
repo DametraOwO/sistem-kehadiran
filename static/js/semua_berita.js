@@ -25,4 +25,52 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
+
+    // === News Modal Logic (Admin Only) ===
+    const openModalBtn = document.getElementById('open-news-modal');
+    const closeModalBtn = document.getElementById('close-news-modal');
+    const modal = document.getElementById('news-modal');
+    const backdrop = document.getElementById('modal-backdrop');
+    const content = document.getElementById('modal-content');
+    const imageInput = document.getElementById('news-image-input');
+    const fileNamePreview = document.getElementById('file-name-preview');
+    const fileNameText = document.getElementById('file-name-text');
+
+    if (openModalBtn && modal && backdrop && content) {
+        const showModal = () => {
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            // Trigger reflow for animation
+            void modal.offsetWidth;
+            backdrop.classList.add('opacity-100');
+            content.classList.remove('translate-y-full');
+            content.classList.add('translate-y-0');
+        };
+
+        const hideModal = () => {
+            backdrop.classList.remove('opacity-100');
+            content.classList.remove('translate-y-0');
+            content.classList.add('translate-y-full');
+            document.body.classList.remove('overflow-hidden');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        };
+
+        openModalBtn.addEventListener('click', showModal);
+        closeModalBtn.addEventListener('click', hideModal);
+        backdrop.addEventListener('click', hideModal);
+
+        // Image Preview Logic
+        if (imageInput) {
+            imageInput.addEventListener('change', function () {
+                if (this.files && this.files[0]) {
+                    const fileName = this.files[0].name;
+                    if (fileNameText) fileNameText.textContent = fileName;
+                    if (fileNamePreview) fileNamePreview.classList.remove('hidden');
+                }
+            });
+        }
+    }
 });

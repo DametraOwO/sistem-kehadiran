@@ -158,6 +158,109 @@
         <footer class="p-8 text-center bg-slate-50 dark:bg-black/20 mt-auto">
             <p class="text-xs text-slate-400 font-medium">© 2025 Madrasah Digital - Sistem Kehadiran Santri</p>
         </footer>
+        {% if session.get('admin_id') %}
+        <!-- Floating Action Button for Admin -->
+        <div class="fixed bottom-8 right-6 z-[60]">
+            <button id="open-news-modal"
+                class="flex items-center justify-center size-14 rounded-full bg-primary text-slate-900 shadow-2xl shadow-primary/40 transform transition-all duration-300 hover:scale-110 active:scale-95 group relative">
+                <span class="material-symbols-outlined text-[28px]">add</span>
+
+                <!-- Tooltip Label -->
+                <span
+                    class="absolute right-full mr-4 px-3 py-1.5 rounded-xl bg-white dark:bg-surface-dark shadow-xl border border-slate-100 dark:border-white/5 text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                    Buat Postingan Baru
+                </span>
+            </button>
+        </div>
+
+        <!-- News Modal Overlay -->
+        <div id="news-modal"
+            class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-hidden">
+            <!-- Backdrop -->
+            <div id="modal-backdrop"
+                class="absolute inset-0 bg-black/40 backdrop-blur-2xl transition-opacity opacity-0 duration-300"></div>
+
+            <!-- Modal Content -->
+            <div id="modal-content"
+                class="relative w-full max-w-lg bg-surface-light dark:bg-surface-dark rounded-t-3xl sm:rounded-2xl shadow-2xl transform translate-y-full transition-transform duration-300 ease-out overflow-hidden border border-white/10 text-slate-900 dark:text-white">
+                <!-- Header -->
+                <div class="flex items-center justify-between p-6 border-b border-slate-100 dark:border-white/5">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-primary/10 rounded-xl text-primary">
+                            <span class="material-symbols-outlined" id="modal-icon">edit_square</span>
+                        </div>
+                        <h3 class="text-xl font-bold leading-none" id="modal-title">Buat Posting Baru</h3>
+                    </div>
+                    <button id="close-news-modal"
+                        class="size-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/5 text-slate-500 hover:text-red-500 transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <!-- Body (Scrollable if needed) -->
+                <div class="p-6 max-h-[80vh] overflow-y-auto no-scrollbar">
+                    <form action="{{ url_for('tambah_berita') }}" method="POST" enctype="multipart/form-data"
+                        id="news-form" class="flex flex-col gap-5">
+                        <input type="hidden" name="berita_id" id="modal-berita-id">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Judul
+                                Postingan</label>
+                            <input type="text" name="judul" id="modal-judul" required
+                                placeholder="Tulis judul berita yang menarik..."
+                                class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Kategori</label>
+                            <select name="kategori" id="modal-kategori" required
+                                class="w-full h-12 px-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+                                <option value="Berita Madrasah">Berita Madrasah</option>
+                                <option value="Pengumuman">Pengumuman</option>
+                                <option value="Kegiatan">Kegiatan</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Deskripsi /
+                                Konten</label>
+                            <textarea name="konten" id="modal-konten" required rows="4"
+                                placeholder="Detail pengumuman atau berita..."
+                                class="w-full p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"></textarea>
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Gambar Unggulan
+                                (Opsional)</label>
+                            <div class="relative group">
+                                <label
+                                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 dark:border-white/10 border-dashed rounded-xl cursor-pointer bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/50 transition-all duration-300">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <span
+                                            class="material-symbols-outlined text-slate-400 mb-2 group-hover:scale-110 transition-transform">add_photo_alternate</span>
+                                        <p class="text-xs text-slate-500 font-medium">Klik untuk upload gambar</p>
+                                        <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-wider">PNG, JPG, or
+                                            JPEG</p>
+                                    </div>
+                                    <input type="file" name="gambar" id="news-image-input" class="hidden"
+                                        accept="image/*" />
+                                </label>
+                                <!-- Preview filename -->
+                                <div id="file-name-preview"
+                                    class="hidden mt-2 flex items-center gap-2 text-[10px] text-primary font-bold bg-primary/10 px-3 py-1.5 rounded-lg w-fit">
+                                    <span class="material-symbols-outlined text-[14px]">image</span>
+                                    <span id="file-name-text" class="truncate max-w-[150px]"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Submit -->
+                        <button type="submit" id="modal-submit-btn"
+                            class="mt-2 w-full h-12 bg-primary hover:bg-primary-dark text-slate-900 font-bold rounded-xl shadow-lg shadow-primary/20 transition-all duration-200 flex items-center justify-center gap-2 group transform active:scale-[0.98]">
+                            <span class="text-sm" id="modal-submit-text">Publikasikan Sekarang</span>
+                            <span
+                                class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">send</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <script src="{{ url_for('static', filename='js/semua_berita.js') }}"></script>

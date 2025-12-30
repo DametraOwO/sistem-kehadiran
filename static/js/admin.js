@@ -199,6 +199,50 @@ document.addEventListener('DOMContentLoaded', function () {
     const prevBtn = document.getElementById('admin-prev-slide');
     const nextBtn = document.getElementById('admin-next-slide');
 
+    // === Floating Action Button (FAB) ===
+    const fabMain = document.getElementById('fab-main');
+    const fabMenu = document.getElementById('fab-menu');
+    const fabIcon = document.getElementById('fab-icon');
+    const fabAddNews = document.getElementById('open-news-modal');
+    let isFabOpen = false;
+
+    if (fabMain && fabMenu) {
+        fabMain.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isFabOpen = !isFabOpen;
+            if (isFabOpen) {
+                fabMenu.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+                fabMenu.classList.add('opacity-100', 'translate-y-0');
+                fabIcon.style.transform = 'rotate(45deg)';
+            } else {
+                fabMenu.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+                fabMenu.classList.remove('opacity-100', 'translate-y-0');
+                fabIcon.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Close FAB when clicking anywhere else
+        document.addEventListener('click', () => {
+            if (isFabOpen) {
+                isFabOpen = false;
+                fabMenu.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+                fabMenu.classList.remove('opacity-100', 'translate-y-0');
+                fabIcon.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        if (fabAddNews) {
+            fabAddNews.addEventListener('click', () => {
+                if (isFabOpen) {
+                    isFabOpen = false;
+                    fabMenu.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+                    fabMenu.classList.remove('opacity-100', 'translate-y-0');
+                    fabIcon.style.transform = 'rotate(0deg)';
+                }
+            });
+        }
+    }
+
     if (container && prevBtn && nextBtn) {
         prevBtn.addEventListener('click', () => {
             container.scrollBy({ left: -300, behavior: 'smooth' });
@@ -252,6 +296,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
             void modal.offsetWidth;
             backdrop.classList.add('opacity-100');
             content.classList.remove('translate-y-full');
@@ -262,6 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
             backdrop.classList.remove('opacity-100');
             content.classList.remove('translate-y-0');
             content.classList.add('translate-y-full');
+            document.body.classList.remove('overflow-hidden');
 
             // Wait for animation to finish before hiding
             setTimeout(() => {

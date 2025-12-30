@@ -88,6 +88,18 @@ CREATE TABLE `kelas` (
   `keterangan` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `kelas`
+--
+
+INSERT INTO `kelas` (`id`, `nama_kelas`, `keterangan`) VALUES
+(1, 'Kelas 1', 'Tingkat dasar pertama'),
+(2, 'Kelas 2', 'Tingkat dasar kedua'),
+(3, 'Kelas 3', 'Tingkat dasar ketiga'),
+(4, 'Kelas 4', 'Tingkat dasar keempat'),
+(5, 'Kelas 5', 'Tingkat dasar kelima'),
+(6, 'Kelas 6', 'Tingkat dasar keenam');
+
 -- --------------------------------------------------------
 
 --

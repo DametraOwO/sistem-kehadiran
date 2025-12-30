@@ -189,6 +189,197 @@ def admin():
 def laporan():
     return render_template('laporan.html')
 
+@app.route('/absensi')
+@login_required
+def absensi():
+    db = get_db()
+    kelas_list = []
+    if db:
+        try:
+            cur = db.cursor(MySQLdb.cursors.DictCursor)
+            cur.execute("SELECT * FROM kelas ORDER BY nama_kelas ASC")
+            kelas_list = cur.fetchall()
+            cur.close()
+            db.close()
+        except Exception as e:
+            if db: db.close()
+            print(f"Error fetching classes for attendance: {e}")
+            
+    return render_template('absensi.html', kelas_list=kelas_list)
+
+@app.route('/absensi/<int:kelas_id>')
+@login_required
+def catat_kehadiran(kelas_id):
+    db = get_db()
+    kelas = None
+    santri_list = []
+    if db:
+        try:
+            cur = db.cursor(MySQLdb.cursors.DictCursor)
+            # Fetch Class Info
+            cur.execute("SELECT * FROM kelas WHERE id = %s", (kelas_id,))
+            kelas = cur.fetchone()
+            
+            if kelas:
+                # Fetch Students in this class
+                cur.execute("SELECT id, nis, nama_lengkap FROM santri WHERE kelas_id = %s ORDER BY nama_lengkap ASC", (kelas_id,))
+                santri_list = cur.fetchall()
+            
+            cur.close()
+            db.close()
+        except Exception as e:
+            if db: db.close()
+            print(f"Error fetching students for attendance: {e}")
+            
+    if not kelas:
+        flash("Kelas tidak ditemukan.", "danger")
+        return redirect(url_for('absensi'))
+        
+    return render_template('catat_kehadiran.html', kelas=kelas, santri_list=santri_list)
+
+@app.route('/santri')
+@login_required
+def santri():
+    db = get_db()
+    santri_list = []
+    kelas_list = []
+    if db:
+        try:
+            cur = db.cursor(MySQLdb.cursors.DictCursor)
+            # Fetch all students with class names
+            cur.execute("""
+                SELECT s.*, k.nama_kelas 
+                FROM santri s 
+                LEFT JOIN kelas k ON s.id_kelas = k.id 
+                ORDER BY s.nama_lengkap ASC
+            """)
+            santri_list = cur.fetchall()
+            
+            # Fetch all classes for dropdown
+            cur.execute("SELECT * FROM kelas ORDER BY nama_kelas ASC")
+            kelas_list = cur.fetchall()
+            
+            # Fetch current admin data for header
+            cur.execute("SELECT * FROM admins WHERE id = %s", (session.get('admin_id'),))
+            admin_data = cur.fetchone()
+            
+            cur.close()
+            db.close()
+            return render_template('santri.html', santri_list=santri_list, kelas_list=kelas_list, admin=admin_data)
+        except Exception as e:
+            if db: db.close()
+            flash(f'Error fetching data: {str(e)}', 'danger')
+    return redirect(url_for('admin'))
+
+@app.route('/tambah_santri', methods=['POST'])
+@login_required
+def tambah_santri():
+    nis = request.form['nis']
+    nama = request.form['nama_lengkap']
+    gender = request.form['gender']
+    id_kelas = request.form['id_kelas']
+    if id_kelas == '': id_kelas = None
+    
+    db = get_db()
+    if db:
+        try:
+            cur = db.cursor()
+            # Check NIS uniqueness
+            cur.execute("SELECT id FROM santri WHERE nis = %s", (nis,))
+            if cur.fetchone():
+                flash(f'NIS {nis} sudah terdaftar!', 'danger')
+                return redirect(url_for('santri'))
+            
+            cur.execute("""
+                INSERT INTO santri (nis, nama_lengkap, gender, id_kelas) 
+                VALUES (%s, %s, %s, %s)
+            """, (nis, nama, gender, id_kelas))
+            new_id = cur.lastrowid
+            
+            # Log activity
+            cur.execute("""
+                INSERT INTO log_aktivitas (admin_id, aksi, tabel_terkait, data_id) 
+                VALUES (%s, %s, %s, %s)
+            """, (session['admin_id'], f"Menambah santri: {nama}", "santri", new_id))
+            
+            db.commit()
+            cur.close()
+            db.close()
+            flash(f'Siswa {nama} berhasil ditambahkan!', 'success')
+        except Exception as e:
+            if db: db.close()
+            flash(f'Gagal menambah siswa: {str(e)}', 'danger')
+    return redirect(url_for('santri'))
+
+@app.route('/edit_santri/<int:id>', methods=['POST'])
+@login_required
+def edit_santri(id):
+    nis = request.form['nis']
+    nama = request.form['nama_lengkap']
+    gender = request.form['gender']
+    id_kelas = request.form['id_kelas']
+    if id_kelas == '': id_kelas = None
+    
+    db = get_db()
+    if db:
+        try:
+            cur = db.cursor()
+            # Check NIS uniqueness (excluding current student)
+            cur.execute("SELECT id FROM santri WHERE nis = %s AND id != %s", (nis, id))
+            if cur.fetchone():
+                flash(f'NIS {nis} sudah digunakan oleh siswa lain!', 'danger')
+                return redirect(url_for('santri'))
+            
+            cur.execute("""
+                UPDATE santri 
+                SET nis = %s, nama_lengkap = %s, gender = %s, id_kelas = %s 
+                WHERE id = %s
+            """, (nis, nama, gender, id_kelas, id))
+            
+            # Log activity
+            cur.execute("""
+                INSERT INTO log_aktivitas (admin_id, aksi, tabel_terkait, data_id) 
+                VALUES (%s, %s, %s, %s)
+            """, (session['admin_id'], f"Mengubah data santri: {nama}", "santri", id))
+            
+            db.commit()
+            cur.close()
+            db.close()
+            flash(f'Data {nama} berhasil diperbarui!', 'success')
+        except Exception as e:
+            if db: db.close()
+            flash(f'Gagal mengubah data: {str(e)}', 'danger')
+    return redirect(url_for('santri'))
+
+@app.route('/hapus_santri/<int:id>')
+@login_required
+def hapus_santri(id):
+    db = get_db()
+    if db:
+        try:
+            cur = db.cursor()
+            # Get name for logging
+            cur.execute("SELECT nama_lengkap FROM santri WHERE id = %s", (id,))
+            santri = cur.fetchone()
+            if santri:
+                nama = santri[0]
+                cur.execute("DELETE FROM santri WHERE id = %s", (id,))
+                
+                # Log activity
+                cur.execute("""
+                    INSERT INTO log_aktivitas (admin_id, aksi, tabel_terkait, data_id) 
+                    VALUES (%s, %s, %s, %s)
+                """, (session['admin_id'], f"Menghapus santri: {nama}", "santri", id))
+                
+                db.commit()
+                flash(f'Siswa {nama} berhasil dihapus!', 'success')
+            cur.close()
+            db.close()
+        except Exception as e:
+            if db: db.close()
+            flash(f'Gagal menghapus data: {str(e)}', 'danger')
+    return redirect(url_for('santri'))
+
 @app.route('/profil')
 @login_required
 def profil():
