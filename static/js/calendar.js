@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     let currentDate = new Date();
     window.globalScheduleData = []; // Store schedule data globally
+    window.globalHolidays = []; // Store holidays globally
 
     // Initial Render
     fetchAndRenderCalendar(currentDate);
@@ -33,10 +34,11 @@ async function fetchAndRenderCalendar(date) {
     grid.innerHTML = '<div class="col-span-7 flex items-center justify-center text-slate-400 h-64">Loading Calendar...</div>';
 
     try {
-        // Fetch Calendar Data AND Schedule Data concurrently
-        const [calendarResponse, scheduleResponse] = await Promise.all([
+        // Fetch Calendar Data, Schedule Data, and Holidays concurrently
+        const [calendarResponse, scheduleResponse, holidayResponse] = await Promise.all([
             fetch(`https://api.aladhan.com/v1/gToHCalendar/${month}/${year}?latitude=-6.9175&longitude=107.6191&method=20`),
-            fetch('/api/jadwal')
+            fetch('/api/jadwal'),
+            fetch(`https://api-harilibur.vercel.app/api?year=${year}`)
         ]);
 
         if (!calendarResponse.ok) {
@@ -55,6 +57,12 @@ async function fetchAndRenderCalendar(date) {
             if (scheduleJson.success) {
                 window.globalScheduleData = scheduleJson.data;
             }
+        }
+
+        if (holidayResponse.ok) {
+            const holidayJson = await holidayResponse.json();
+            // API returns array of objects: { "holiday_date": "2024-1-1", "holiday_name": "Tahun Baru" }
+            window.globalHolidays = holidayJson;
         }
 
         renderCalendarGrid(days, date);
@@ -144,8 +152,36 @@ function renderCalendarGrid(days, currentDate) {
         const gDate = day.gregorian;
         const hDate = day.hijri;
 
+        // Parse date
         const [d, m, y] = gDate.date.split('-');
-        const dateObj = new Date(y, m - 1, d);
+        // API returns DD-MM-YYYY
+
+        // Normalize Date for Comparison (YYYY-MM-DD or similar) to match API
+        // New API api-harilibur often returns YYYY-M-D or YYYY-MM-DD
+        // Safest is to create Date objects and compare timestamp/string
+
+        const currentYear = parseInt(y);
+        const currentMonth = parseInt(m) - 1; // JS Month is 0-indexed
+        const currentDay = parseInt(d);
+
+        // Holiday Check
+        const isHoliday = window.globalHolidays.some(h => {
+            const hDate = new Date(h.holiday_date);
+            return hDate.getFullYear() === currentYear &&
+                hDate.getMonth() === currentMonth &&
+                hDate.getDate() === currentDay &&
+                h.is_national_holiday !== false; // Ensure it is a national holiday if property exists
+        });
+
+        // Get Holiday Name
+        const holiday = window.globalHolidays.find(h => {
+            const hDate = new Date(h.holiday_date);
+            return hDate.getFullYear() === currentYear &&
+                hDate.getMonth() === currentMonth &&
+                hDate.getDate() === currentDay;
+        });
+
+        const dateObj = new Date(currentYear, currentMonth, currentDay);
         const today = new Date();
         const isToday = isSameDay(today, dateObj);
         const isSunday = gDate.weekday.en === "Sunday";
@@ -153,21 +189,32 @@ function renderCalendarGrid(days, currentDate) {
         const dayNameIndo = dayMap[gDate.weekday.en];
 
         // FILTER LOGIC
-        let todaysSchedule = window.globalScheduleData.filter(s => s.hari === dayNameIndo);
-        if (filterClass) {
+        // If filterClass is empty (""), return NO schedules (General View)
+        // If filterClass has value, return schedules for that class
+        let todaysSchedule = [];
+        if (filterClass !== "") {
+            todaysSchedule = window.globalScheduleData.filter(s => s.hari === dayNameIndo);
             todaysSchedule = todaysSchedule.filter(s => s.nama_kelas === filterClass);
         }
 
+        // Styles
         let baseClass = "min-h-[128px] border-b border-r border-slate-100 dark:border-slate-800 flex flex-col items-start justify-start p-2 gap-1 relative group transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50";
-        let textClass = isSunday ? "text-red-500" : "text-slate-800 dark:text-white";
+
+        // Text Color Logic: Sunday OR Holiday -> Red
+        let textClass = (isSunday || isHoliday) ? "text-red-500 font-bold" : "text-slate-800 dark:text-white";
 
         if (isToday) {
             baseClass += " bg-primary/5";
-            textClass = "text-primary font-bold";
+            if (!isHoliday && !isSunday) { // Only force primary if not holiday/sunday, or maybe mix? 
+                // Let holiday red take precedence for date color? 
+                // textClass = "text-primary font-bold"; 
+                // User requirement: "indonesian national holiday with a red date" -> Red takes precedence.
+            }
         }
 
         dateDiv.className = baseClass;
 
+        // Date Header inside cell
         let dateHtml = `
             <div class="w-full flex justify-between items-start mb-1">
                 <span class="text-sm font-medium ${textClass}">${gDate.day}</span>
@@ -175,6 +222,18 @@ function renderCalendarGrid(days, currentDate) {
             </div>
         `;
 
+        // Holiday Label
+        if (isHoliday && holiday) {
+            dateHtml += `
+                <div class="w-full mb-1">
+                    <span class="text-[10px] font-bold text-red-500 leading-tight block text-center bg-red-50 dark:bg-red-900/20 rounded px-1 py-0.5 border border-red-100 dark:border-red-900/30">
+                        ${holiday.holiday_name}
+                    </span>
+                </div>
+            `;
+        }
+
+        // Schedule Items
         let scheduleHtml = '';
         if (todaysSchedule.length > 0) {
             scheduleHtml = '<div class="w-full flex flex-col gap-1 overflow-y-auto max-h-[80px] no-scrollbar">';
