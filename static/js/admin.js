@@ -167,3 +167,136 @@ function updatePrayerUI(timings) {
         }
     });
 }
+
+// Announcement Slider Logic
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('admin-announcement-container');
+    const prevBtn = document.getElementById('admin-prev-slide');
+    const nextBtn = document.getElementById('admin-next-slide');
+
+    if (container && prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => {
+            container.scrollBy({ left: -300, behavior: 'smooth' });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            container.scrollBy({ left: 300, behavior: 'smooth' });
+        });
+    }
+
+    // Modal News Logic
+    const openModalBtn = document.getElementById('open-news-modal');
+    const closeModalBtn = document.getElementById('close-news-modal');
+    const modal = document.getElementById('news-modal');
+    const backdrop = document.getElementById('modal-backdrop');
+    const content = document.getElementById('modal-content');
+    const imageInput = document.getElementById('news-image-input');
+    const fileNamePreview = document.getElementById('file-name-preview');
+    const fileNameText = document.getElementById('file-name-text');
+
+    // Modal Edit Elements
+    const form = document.getElementById('news-form');
+    const modalTitle = document.getElementById('modal-title');
+    const modalIcon = document.getElementById('modal-icon');
+    const modalJudul = document.getElementById('modal-judul');
+    const modalKategori = document.getElementById('modal-kategori');
+    const modalKonten = document.getElementById('modal-konten');
+    const modalBeritaId = document.getElementById('modal-berita-id');
+    const modalSubmitText = document.getElementById('modal-submit-text');
+    const editBtns = document.querySelectorAll('.edit-news-btn');
+
+    if (openModalBtn && modal && backdrop && content) {
+        const showModal = (mode = 'add', data = {}) => {
+            if (mode === 'edit') {
+                modalTitle.textContent = 'Edit Postingan';
+                modalIcon.textContent = 'edit';
+                modalSubmitText.textContent = 'Simpan Perubahan';
+                modalJudul.value = data.judul || '';
+                modalKategori.value = data.kategori || 'Berita Madrasah';
+                modalKonten.value = data.konten || '';
+                modalBeritaId.value = data.id || '';
+                form.action = `/edit_berita/${data.id}`;
+            } else {
+                modalTitle.textContent = 'Buat Posting Baru';
+                modalIcon.textContent = 'edit_square';
+                modalSubmitText.textContent = 'Publikasikan Sekarang';
+                form.reset();
+                modalBeritaId.value = '';
+                form.action = '/tambah_berita';
+                if (fileNamePreview) fileNamePreview.classList.add('hidden');
+            }
+
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            backdrop.classList.add('opacity-100');
+            content.classList.remove('translate-y-full');
+            content.classList.add('translate-y-0');
+        };
+
+        const hideModal = () => {
+            backdrop.classList.remove('opacity-100');
+            content.classList.remove('translate-y-0');
+            content.classList.add('translate-y-full');
+
+            // Wait for animation to finish before hiding
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        };
+
+        openModalBtn.addEventListener('click', () => showModal('add'));
+        closeModalBtn.addEventListener('click', hideModal);
+        backdrop.addEventListener('click', hideModal);
+
+        // Add Listeners to Edit Buttons
+        editBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const data = {
+                    id: btn.dataset.id,
+                    judul: btn.dataset.judul,
+                    konten: btn.dataset.konten,
+                    kategori: btn.dataset.kategori
+                };
+                showModal('edit', data);
+            });
+        });
+
+        // Add Listeners to Delete Buttons
+        const deleteBtns = document.querySelectorAll('.delete-news-btn');
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const beritaId = btn.dataset.id;
+                const judul = btn.dataset.judul;
+
+                if (confirm(`Apakah Anda yakin ingin menghapus berita "${judul}"?`)) {
+                    // Create a form and submit it
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/hapus_berita/${beritaId}`;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        });
+    }
+
+    // File Preview Logic
+    if (imageInput && fileNamePreview && fileNameText) {
+        imageInput.addEventListener('change', (e) => {
+            const fileName = e.target.files[0]?.name;
+            if (fileName) {
+                fileNameText.textContent = fileName;
+                fileNamePreview.classList.remove('hidden');
+                fileNamePreview.classList.add('flex');
+            } else {
+                fileNamePreview.classList.add('hidden');
+                fileNamePreview.classList.remove('flex');
+            }
+        });
+    }
+});

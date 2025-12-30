@@ -74,239 +74,283 @@
     <!-- Mobile Container -->
     <div
         class="relative flex h-full min-h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark">
-        <!-- Decorative Background Pattern -->
-        <div class="absolute top-0 left-0 w-full h-[22rem] islamic-pattern rounded-b-[3rem] -z-0 overflow-hidden">
-            <!-- Pattern Overlay -->
-            <div class="absolute inset-0 islamic-pattern opacity-100 mix-blend-normal"></div>
-        </div>
-        <!-- Top Bar -->
-        <div class="relative z-10 flex items-center justify-between p-6">
-            <a href="{{ url_for('index') }}"
-                class="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/60 dark:bg-black/20 backdrop-blur-md text-gray-800 dark:text-white hover:bg-white dark:hover:bg-black/40 transition-colors">
-                <span class="material-symbols-outlined">arrow_back</span>
-            </a>
-        </div>
-        <!-- Content Area -->
-        <div class="relative z-10 flex-1 flex flex-col px-6 pt-2 pb-6 overflow-y-auto no-scrollbar">
-            <!-- Logo / Illustration -->
-            <div class="self-center mb-6 relative">
-                <div
-                    class="w-24 h-24 bg-white dark:bg-gray-800 rounded-2xl shadow-lg flex items-center justify-center overflow-hidden relative">
-                    <div class="absolute inset-0 bg-primary/5"></div>
-                    <span class="material-symbols-outlined text-primary text-6xl">account_circle</span>
+        <!-- Header Section (Flexible & Smaller) -->
+        <div class="relative w-full h-[14rem] z-20 shrink-0">
+            <!-- Decorative Background Pattern -->
+            <div class="absolute inset-0 islamic-pattern rounded-b-[2.5rem] overflow-hidden">
+                <!-- Pattern Overlay -->
+                <div class="absolute inset-0 islamic-pattern opacity-100 mix-blend-normal"></div>
+            </div>
+
+            <!-- Top Bar -->
+            <div class="relative z-30 flex items-center justify-between p-6">
+                <a href="{{ url_for('index') }}"
+                    class="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/60 dark:bg-black/20 backdrop-blur-md text-gray-800 dark:text-white hover:bg-white dark:hover:bg-black/40 transition-colors">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </a>
+            </div>
+
+            <!-- Hero Content (Logo + Greeting - Compact) -->
+            <div class="relative z-30 flex flex-col items-center px-6 -mt-2">
+                <!-- Logo -->
+                <div class="self-center mb-3 relative">
+                    <div
+                        class="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl shadow-lg flex items-center justify-center overflow-hidden relative">
+                        <div class="absolute inset-0 bg-primary/5"></div>
+                        <span class="material-symbols-outlined text-primary text-4xl">account_circle</span>
+                    </div>
+                </div>
+
+                <!-- Headlines -->
+                <div class="text-center">
+                    <h1 class="text-white tracking-tight text-[24px] font-bold leading-tight mb-1">
+                        Assalamu'alaikum</h1>
+                    <p class="text-white/80 text-[13px] font-normal leading-relaxed">
+                        Sistem Presensi Digital Madrasah Al-Hidayah.
+                    </p>
                 </div>
             </div>
-            <!-- Flash Messages -->
+
+            <!-- Flash Messages (Toast Style) -->
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-            <div class="mb-4">
+            <div id="toast-container"
+                class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-full max-w-xs px-4 flex flex-col gap-3">
                 {% for category, message in messages %}
                 <div
-                    class="px-4 py-3 rounded-xl text-sm font-medium mb-2 {% if category == 'danger' %}bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400{% elif category == 'success' %}bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400{% else %}bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400{% endif %}">
-                    {{ message }}
+                    class="toast-message transform transition-all duration-500 ease-in-out px-4 py-3 rounded-xl text-sm font-medium shadow-xl border flex items-center gap-3 {% if category == 'danger' %}bg-red-50 text-red-700 border-red-200{% elif category == 'success' %}bg-green-50 text-green-700 border-green-200{% else %}bg-blue-50 text-blue-700 border-blue-200{% endif %}">
+                    <span class="material-symbols-outlined text-[20px]">
+                        {% if category == 'danger' %}error{% elif category == 'success' %}check_circle{% else %}info{%
+                        endif %}
+                    </span>
+                    <span>{{ message }}</span>
                 </div>
                 {% endfor %}
             </div>
             {% endif %}
             {% endwith %}
-            <!-- Headlines -->
-            <div class="text-center mb-8">
-                <h1 class="text-white tracking-tight text-[32px] font-bold leading-tight mb-2">
-                    Assalamu'alaikum</h1>
-                <p class="text-white/90 text-sm font-normal leading-relaxed px-4">
-                    Sistem Presensi Digital Madrasah Al-Hidayah.
-                </p>
-            </div>
-            <!-- Segmented Control (Tabs) -->
-            <!-- Segmented Control (Tabs) -->
-            <div class="mb-8 relative z-20">
-                <div
-                    class="flex h-12 w-full items-center justify-center rounded-xl bg-gray-200/50 dark:bg-gray-800 p-1">
-                    <label
-                        class="group flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm transition-all duration-200">
-                        <input checked="" class="peer invisible w-0 absolute" name="auth-mode" type="radio"
-                            value="Masuk" id="tab-login" />
-                        <span
-                            class="text-gray-500 dark:text-gray-400 group-has-[:checked]:text-primary font-semibold text-sm truncate transition-colors">Masuk</span>
-                    </label>
-                    <label
-                        class="group flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm transition-all duration-200">
-                        <input class="peer invisible w-0 absolute" name="auth-mode" type="radio" value="Daftar"
-                            id="tab-register" />
-                        <span
-                            class="text-gray-500 dark:text-gray-400 group-has-[:checked]:text-primary font-semibold text-sm truncate transition-colors">Daftar</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Sliding Form Container -->
-            <div class="overflow-hidden w-full relative">
-                <div id="forms-slider" class="flex transition-transform duration-300 ease-in-out w-full">
-
-                    <!-- Login Form Section -->
-                    <div class="w-full shrink-0 px-1">
-                        <form action="{{ url_for('login') }}" method="POST" class="flex flex-col gap-5">
-                            <!-- Username Input -->
-                            <div class="flex flex-col gap-1.5">
-                                <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">ID Pengguna atau
-                                    Email</label>
-                                <div class="relative flex items-center">
-                                    <span
-                                        class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">badge</span>
-                                    <input name="identifier"
-                                        class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="alhidayah@madrasah.com" type="text" required />
-                                </div>
-                            </div>
-                            <!-- Password Input -->
-                            <div class="flex flex-col gap-1.5">
-                                <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Kata Sandi</label>
-                                <div class="relative flex items-center">
-                                    <span
-                                        class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock</span>
-                                    <input id="password-login" name="password"
-                                        class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="••••••••" type="password" required />
-                                    <button
-                                        class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
-                                        data-target="password-login" type="button">
-                                        <span class="material-symbols-outlined text-[20px]">visibility_off</span>
-                                    </button>
-                                </div>
-                                <div class="flex items-center justify-end">
-                                    <a class="text-xs font-semibold text-primary hover:text-green-600 transition-colors"
-                                        href="{{ url_for('maintenance') }}">
-                                        Lupa Kata Sandi?
-                                    </a>
-                                </div>
-                            </div>
-                            <!-- Submit Button -->
-                            <button type="submit"
-                                class="mt-2 w-full h-12 bg-primary hover:bg-green-600 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-primary/30 transition-all duration-200 flex items-center justify-center gap-2 group">
-                                <span>Masuk Sekarang</span>
-                                <span
-                                    class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Register Form Section -->
-                    <div class="w-full shrink-0 px-1">
-                        <form action="{{ url_for('register') }}" method="POST" class="flex flex-col gap-4">
-                            <!-- Nama Lengkap -->
-                            <div class="flex flex-col gap-1.5">
-                                <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Nama
-                                    Lengkap</label>
-                                <div class="relative flex items-center">
-                                    <span
-                                        class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">person</span>
-                                    <input name="nama"
-                                        class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="Nama Lengkap" type="text" required />
-                                </div>
-                            </div>
-
-                            <!-- Email -->
-                            <div class="flex flex-col gap-1.5">
-                                <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Email</label>
-                                <div class="relative flex items-center">
-                                    <span
-                                        class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">mail</span>
-                                    <input name="email"
-                                        class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="email@contoh.com" type="email" required />
-                                </div>
-                            </div>
-
-                            <!-- Gender & Status Row -->
-                            <div class="flex gap-4">
-                                <!-- Gender -->
-                                <div class="flex flex-col gap-1.5 w-1/2">
-                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Gender</label>
-                                    <div class="relative flex items-center">
-                                        <span
-                                            class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">wc</span>
-                                        <select name="gender"
-                                            class="w-full h-12 pl-11 pr-8 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none"
-                                            required>
-                                            <option value="" disabled selected>Pilih</option>
-                                            <option value="L">Laki-laki</option>
-                                            <option value="P">Perempuan</option>
-                                        </select>
-                                        <span
-                                            class="absolute right-3 text-gray-400 material-symbols-outlined text-[20px] pointer-events-none">expand_more</span>
-                                    </div>
-                                </div>
-                                <!-- Status -->
-                                <div class="flex flex-col gap-1.5 w-1/2">
-                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Status</label>
-                                    <div class="relative flex items-center">
-                                        <span
-                                            class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">school</span>
-                                        <select name="status_role"
-                                            class="w-full h-12 pl-11 pr-8 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none"
-                                            required>
-                                            <option value="" disabled selected>Pilih</option>
-                                            <option value="Guru">Guru</option>
-                                            <option value="Ketua Murid">Ketua Murid</option>
-                                            <option value="Admin">Admin</option>
-                                        </select>
-                                        <span
-                                            class="absolute right-3 text-gray-400 material-symbols-outlined text-[20px] pointer-events-none">expand_more</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Password Input -->
-                            <div class="flex flex-col gap-1.5">
-                                <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Kata Sandi</label>
-                                <div class="relative flex items-center">
-                                    <span
-                                        class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock</span>
-                                    <input id="password-reg" name="password"
-                                        class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="Min. 8 karakter" type="password" required />
-                                    <button
-                                        class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
-                                        data-target="password-reg" type="button">
-                                        <span class="material-symbols-outlined text-[20px]">visibility_off</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Confirm Password Input -->
-                            <div class="flex flex-col gap-1.5">
-                                <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Konfirmasi
-                                    Sandi</label>
-                                <div class="relative flex items-center">
-                                    <span
-                                        class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock_reset</span>
-                                    <input id="password-confirm" name="confirm_password"
-                                        class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="Ulangi kata sandi" type="password" required />
-                                    <button
-                                        class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
-                                        data-target="password-confirm" type="button">
-                                        <span class="material-symbols-outlined text-[20px]">visibility_off</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Submit Button -->
-                            <button type="submit"
-                                class="mt-2 w-full h-12 bg-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 group">
-                                <span>Daftar Akun</span>
-                                <span
-                                    class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">person_add</span>
-                            </button>
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-
         </div>
-        <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+
+        <!-- Content Area (Flows Naturally) -->
+        <div class="relative z-10 flex-1 flex flex-col overflow-y-auto no-scrollbar">
+            <div class="px-6 pt-6 pb-8">
+                <!-- Segmented Control (Tabs) -->
+                <!-- Segmented Control (Tabs) -->
+                <div class="mb-8 relative z-20">
+                    <div
+                        class="flex h-12 w-full items-center justify-center rounded-xl bg-gray-200/50 dark:bg-gray-800 p-1">
+                        <label
+                            class="group flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm transition-all duration-200">
+                            <input checked="" class="peer invisible w-0 absolute" name="auth-mode" type="radio"
+                                value="Masuk" id="tab-login" />
+                            <span
+                                class="text-gray-500 dark:text-gray-400 group-has-[:checked]:text-primary font-semibold text-sm truncate transition-colors">Masuk</span>
+                        </label>
+                        <label
+                            class="group flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm transition-all duration-200">
+                            <input class="peer invisible w-0 absolute" name="auth-mode" type="radio" value="Daftar"
+                                id="tab-register" />
+                            <span
+                                class="text-gray-500 dark:text-gray-400 group-has-[:checked]:text-primary font-semibold text-sm truncate transition-colors">Daftar</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Sliding Form Container -->
+                <div class="overflow-hidden w-full relative">
+                    <div id="forms-slider" class="flex transition-transform duration-300 ease-in-out w-full">
+
+                        <!-- Login Form Section -->
+                        <div class="w-full shrink-0 px-1">
+                            <form action="{{ url_for('login') }}" method="POST" class="flex flex-col gap-5">
+                                <!-- Username Input -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">ID Pengguna
+                                        atau
+                                        Email</label>
+                                    <div class="relative flex items-center">
+                                        <span
+                                            class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">badge</span>
+                                        <input name="identifier"
+                                            class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            placeholder="alhidayah@madrasah.com" type="text" required />
+                                    </div>
+                                </div>
+                                <!-- Password Input -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Kata
+                                        Sandi</label>
+                                    <div class="relative flex items-center">
+                                        <span
+                                            class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock</span>
+                                        <input id="password-login" name="password"
+                                            class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            placeholder="••••••••" type="password" required />
+                                        <button
+                                            class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
+                                            data-target="password-login" type="button">
+                                            <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-end">
+                                        <a class="text-xs font-semibold text-primary hover:text-green-600 transition-colors"
+                                            href="{{ url_for('maintenance') }}">
+                                            Lupa Kata Sandi?
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- Submit Button -->
+                                <button type="submit"
+                                    class="mt-2 w-full h-12 bg-primary hover:bg-green-600 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-primary/30 transition-all duration-200 flex items-center justify-center gap-2 group">
+                                    <span>Masuk Sekarang</span>
+                                    <span
+                                        class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Register Form Section -->
+                        <div class="w-full shrink-0 px-1">
+                            <form action="{{ url_for('register') }}" method="POST" class="flex flex-col gap-4">
+                                <!-- Nama Lengkap -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Nama
+                                        Lengkap</label>
+                                    <div class="relative flex items-center">
+                                        <span
+                                            class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">person</span>
+                                        <input name="nama"
+                                            class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            placeholder="Nama Lengkap" type="text" required />
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Email</label>
+                                    <div class="relative flex items-center">
+                                        <span
+                                            class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">mail</span>
+                                        <input name="email"
+                                            class="w-full h-12 pl-11 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            placeholder="email@contoh.com" type="email" required />
+                                    </div>
+                                </div>
+
+                                <!-- Gender & Status Row -->
+                                <div class="flex gap-4">
+                                    <!-- Gender -->
+                                    <div class="flex flex-col gap-1.5 w-1/2">
+                                        <label
+                                            class="text-gray-900 dark:text-white text-sm font-medium ml-1">Gender</label>
+                                        <div class="relative flex items-center">
+                                            <span
+                                                class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">wc</span>
+                                            <select name="gender"
+                                                class="w-full h-12 pl-11 pr-8 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none"
+                                                required>
+                                                <option value="" disabled selected>Pilih</option>
+                                                <option value="L">Laki-laki</option>
+                                                <option value="P">Perempuan</option>
+                                            </select>
+                                            <span
+                                                class="absolute right-3 text-gray-400 material-symbols-outlined text-[20px] pointer-events-none">expand_more</span>
+                                        </div>
+                                    </div>
+                                    <!-- Status -->
+                                    <div class="flex flex-col gap-1.5 w-1/2">
+                                        <label
+                                            class="text-gray-900 dark:text-white text-sm font-medium ml-1">Status</label>
+                                        <div class="relative flex items-center">
+                                            <span
+                                                class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">school</span>
+                                            <select name="status_role"
+                                                class="w-full h-12 pl-11 pr-8 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none"
+                                                required>
+                                                <option value="" disabled selected>Pilih</option>
+                                                <option value="Guru">Guru</option>
+                                                <option value="Ketua Murid">Ketua Murid</option>
+                                                <option value="Admin">Admin</option>
+                                            </select>
+                                            <span
+                                                class="absolute right-3 text-gray-400 material-symbols-outlined text-[20px] pointer-events-none">expand_more</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Password Input -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Kata
+                                        Sandi</label>
+                                    <div class="relative flex items-center">
+                                        <span
+                                            class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock</span>
+                                        <input id="password-reg" name="password"
+                                            class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            placeholder="Min. 8 karakter" type="password" required />
+                                        <button
+                                            class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
+                                            data-target="password-reg" type="button">
+                                            <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Confirm Password Input -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-gray-900 dark:text-white text-sm font-medium ml-1">Konfirmasi
+                                        Sandi</label>
+                                    <div class="relative flex items-center">
+                                        <span
+                                            class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock_reset</span>
+                                        <input id="password-confirm" name="confirm_password"
+                                            class="w-full h-12 pl-11 pr-12 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            placeholder="Ulangi kata sandi" type="password" required />
+                                        <button
+                                            class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
+                                            data-target="password-confirm" type="button">
+                                            <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button type="submit"
+                                    class="mt-2 w-full h-12 bg-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 group">
+                                    <span>Daftar Akun</span>
+                                    <span
+                                        class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">person_add</span>
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+    <script>
+        // Auto-hide Toast Messages
+        document.addEventListener('DOMContentLoaded', () => {
+            const toasts = document.querySelectorAll('.toast-message');
+            toasts.forEach((toast, index) => {
+                // Staggered entry (optional)
+                setTimeout(() => {
+                    toast.classList.add('translate-y-0', 'opacity-100');
+                }, index * 100);
+
+                // Auto hide after 5 seconds
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', '-translate-y-4');
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 500);
+                }, 5000 + (index * 100));
+            });
+        });
+    </script>
 </body>
 
 </html>

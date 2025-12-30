@@ -211,7 +211,7 @@
         <section>
             <div class="flex items-center justify-between px-1 mb-3">
                 <h3 class="text-slate-800 dark:text-white text-lg font-bold">Pengumuman</h3>
-                <a class="text-primary text-sm font-medium hover:underline" href="{{ url_for('maintenance') }}">Lihat
+                <a class="text-primary text-sm font-medium hover:underline" href="{{ url_for('semua_berita') }}">Lihat
                     Semua</a>
             </div>
             <!-- Horizontal Scroll Container -->
@@ -222,77 +222,51 @@
                 </button>
                 <div id="announcement-container"
                     class="flex overflow-x-auto gap-4 pb-4 no-scrollbar snap-x snap-mandatory -mx-4 px-4 scroll-smooth">
-                    <!-- Card 1 -->
-                    <div
-                        class="snap-center shrink-0 w-[280px] bg-surface-light dark:bg-surface-dark rounded-2xl shadow-card overflow-hidden border border-slate-100 dark:border-slate-800 flex flex-col">
-                        <div class="h-32 bg-slate-200 relative">
-                            <img alt="Children raising hands in a classroom setting" class="w-full h-full object-cover"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIAzBMMnC6rETmfsw9mz0QhFA2HFWroNU8ee-W-amdiq7FEWbbMvjZadtvhToM74EVCpQDfG20JThIqyglxmIACxBW1aKrlftcv54zHx6T-o1qjM4xES1OOOnQixUmQSZTC72zZNbv9cAuag-sOXekTwyS7bp-NvaiKp8MRKWXf9-HfwK_1era6831IDapQmMyLtKT_CwRzuWWzxtI_4IbZ-6-EJF8aLXgmGnBDtif0RfZX4fGsQt95QLqJ1qcYnrfJHi6o-d-J-s" />
+                    {% if berita_list %}
+                    {% for berita in berita_list %}
+                    <a href="{{ url_for('berita_detail', id=berita.id) }}"
+                        class="snap-center shrink-0 w-[280px] bg-surface-light dark:bg-surface-dark rounded-2xl shadow-card overflow-hidden border border-slate-100 dark:border-slate-800 flex flex-col group/card">
+                        <div class="h-32 bg-slate-200 relative overflow-hidden">
+                            {% if berita.gambar %}
+                            <img alt="{{ berita.judul }}"
+                                class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500"
+                                src="{{ url_for('static', filename='uploads/berita/' + berita.gambar) }}" />
+                            {% else %}
+                            <div
+                                class="w-full h-full flex items-center justify-center bg-primary/5 group-hover/card:scale-110 transition-transform duration-500">
+                                <span class="material-symbols-outlined text-primary/40 text-[48px]">campaign</span>
+                            </div>
+                            {% endif %}
                             <div
                                 class="absolute top-2 left-2 bg-white/90 dark:bg-black/80 backdrop-blur px-2 py-1 rounded-md">
-                                <p class="text-xs font-bold text-slate-800 dark:text-white">Akademik</p>
+                                <p class="text-xs font-bold text-slate-800 dark:text-white">{{ berita.penulis }}</p>
                             </div>
                         </div>
                         <div class="p-4 flex flex-col gap-2">
                             <p class="text-xs text-slate-500 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[14px]">event</span> 23 Jan 2024
+                                <span class="material-symbols-outlined text-[14px]">event</span> {{
+                                berita.created_at.strftime('%d %b %Y') if berita.created_at else '--' }}
+                                <span class="mx-1.5 size-1 rounded-full bg-slate-200 dark:bg-slate-700"></span>
+                                <span class="text-primary font-bold uppercase tracking-widest text-[9px]">{{
+                                    berita.kategori }}</span>
                             </p>
-                            <h4 class="text-slate-800 dark:text-white font-bold text-base line-clamp-2">Penerimaan
-                                Raport
-                                Semester Ganjil TA 2023/2024</h4>
+                            <h4
+                                class="text-slate-800 dark:text-white font-bold text-base line-clamp-2 group-hover/card:text-primary transition-colors">
+                                {{ berita.judul }}
+                            </h4>
                             <p class="text-slate-500 text-sm line-clamp-2 mt-1">
-                                Diberitahukan kepada seluruh wali murid untuk mengambil raport pada tanggal yang
-                                ditentukan.
+                                {{ berita.konten }}
                             </p>
                         </div>
+                    </a>
+                    {% endfor %}
+                    {% else %}
+                    <!-- Empty State -->
+                    <div class="w-full py-10 flex flex-col items-center justify-center text-slate-400">
+                        <span class="material-symbols-outlined text-[48px] mb-2 opacity-20">news</span>
+                        <p class="text-sm">Belum ada pengumuman terbaru.</p>
                     </div>
-                    <!-- Card 2 -->
-                    <div
-                        class="snap-center shrink-0 w-[280px] bg-surface-light dark:bg-surface-dark rounded-2xl shadow-card overflow-hidden border border-slate-100 dark:border-slate-800 flex flex-col">
-                        <div class="h-32 bg-slate-200 relative">
-                            <img alt="Stack of colorful books with a clean background"
-                                class="w-full h-full object-cover"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZ_qVxbwcZYnn8oQJ4nsQFvOPZDMiYrVBTV-zrtLq0K_SJdBwVvHvi-7Aa_pypn-uE_OU3srQ6OEewYVY-0RJKAkkNKlsHAKnXWCPhBkQutZUv4eR3htNxCXT-0y78dW1A5i_Sparx1MAZ0DiuWXVQ5gbJij2MOHkYKHAAGdW_e0nBjTLMlGhXvZanb2iot2sQSdpc7334SarmZQcJOY9JXp5MlzJEo51QYBX7izoGeaHWYlP1aK8_fM7fJQR_HROWz5H6aZOZl_4" />
-                            <div
-                                class="absolute top-2 left-2 bg-white/90 dark:bg-black/80 backdrop-blur px-2 py-1 rounded-md">
-                                <p class="text-xs font-bold text-slate-800 dark:text-white">Perpustakaan</p>
-                            </div>
-                        </div>
-                        <div class="p-4 flex flex-col gap-2">
-                            <p class="text-xs text-slate-500 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[14px]">event</span> 20 Jan 2024
-                            </p>
-                            <h4 class="text-slate-800 dark:text-white font-bold text-base line-clamp-2">Buku Baru
-                                Tersedia
-                                di Perpustakaan</h4>
-                            <p class="text-slate-500 text-sm line-clamp-2 mt-1">
-                                Koleksi buku sejarah Islam dan ensiklopedia sains terbaru kini dapat dipinjam.
-                            </p>
-                        </div>
-                    </div>
-                    <!-- Card 3 -->
-                    <div
-                        class="snap-center shrink-0 w-[280px] bg-surface-light dark:bg-surface-dark rounded-2xl shadow-card overflow-hidden border border-slate-100 dark:border-slate-800 flex flex-col">
-                        <div class="h-32 bg-slate-200 relative">
-                            <img alt="Green textured islamic geometric pattern" class="w-full h-full object-cover"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqhVTHom3xIFisteEiNRYCXMMkm6u359koXXlRD3X2Lb9NW0_9hcfiZRmoDQ3_SIXX7txPFrVmR8BRg6X3UVknUoGQBRZzM_rG8pCqVi7swb5Njkkx56nnYT918fw6xWutRTMnSko946dB3IKKxz9B-ISWV2UyzksBWZToGFJ-l3iCtunL7nRmjnLO-VVaikamJAmiAAVfNYZsAFYcKyD_IR1E9iq5Q3QhyvMdEOkmyg_ealzgPLIuzXFMK3owomquBdh5FEnbon4" />
-                            <div
-                                class="absolute top-2 left-2 bg-white/90 dark:bg-black/80 backdrop-blur px-2 py-1 rounded-md">
-                                <p class="text-xs font-bold text-slate-800 dark:text-white">Kegiatan</p>
-                            </div>
-                        </div>
-                        <div class="p-4 flex flex-col gap-2">
-                            <p class="text-xs text-slate-500 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[14px]">event</span> 18 Jan 2024
-                            </p>
-                            <h4 class="text-slate-800 dark:text-white font-bold text-base line-clamp-2">Lomba Tahfidz
-                                Qur'an
-                                Tingkat Kabupaten</h4>
-                            <p class="text-slate-500 text-sm line-clamp-2 mt-1">
-                                Selamat kepada ananda Yusuf yang telah memenangkan juara 1.
-                            </p>
-                        </div>
-                    </div>
+                    {% endif %}
                 </div>
                 <button id="next-slide"
                     class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-surface-dark/90 p-2 rounded-full shadow-lg text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 hidden md:flex hover:scale-105 active:scale-95 border border-slate-100 dark:border-slate-700">

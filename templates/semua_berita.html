@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semua Berita & Pengumuman - MADRASAH DIGITAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" />
+    <style>
+        :root {
+            --primary: #14b881;
+            --primary-dark: #0f9669;
+            --surface-light: #ffffff;
+            --surface-dark: #0f172a;
+            --background-light: #f8fafc;
+            --background-dark: #020617;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .islamic-pattern {
+            background-color: #14b881;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M40 0l10 30 30 10-30 10-10 30-10-30-30-10 30-10z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(20, 184, 129, 0.2);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#14b881',
+                        'primary-dark': '#0f9669',
+                        surface: {
+                            light: '#ffffff',
+                            dark: '#0f172a'
+                        },
+                        background: {
+                            light: '#f8fafc',
+                            dark: '#020617'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark transition-colors duration-300">
+    <div class="min-h-screen relative flex flex-col bg-background-light dark:bg-background-dark">
+        <!-- Header -->
+        <header class="sticky top-0 z-50 glass-card border-b border-slate-100 dark:border-white/5">
+            <div class="max-w-5xl mx-auto flex items-center gap-4 px-5 h-16">
+                <button onclick="window.history.back()"
+                    class="size-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white truncate">Semua Berita</h2>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 w-full max-w-5xl mx-auto p-5">
+            <!-- Filter Categories -->
+            <div class="flex flex-wrap justify-center gap-2 mb-6 py-2">
+                <button
+                    class="filter-btn active shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400"
+                    data-filter="all">Semua</button>
+                <button
+                    class="filter-btn shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400"
+                    data-filter="Berita Madrasah">Berita</button>
+                <button
+                    class="filter-btn shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400"
+                    data-filter="Pengumuman">Pengumuman</button>
+                <button
+                    class="filter-btn shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400"
+                    data-filter="Kegiatan">Kegiatan</button>
+            </div>
+
+            <!-- News Grid -->
+            <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% if berita_list %}
+                {% for berita in berita_list %}
+                <a href="{{ url_for('berita_detail', id=berita.id) }}"
+                    class="news-card group/card bg-surface-light dark:bg-surface-dark rounded-3xl p-4 shadow-soft border border-slate-100 dark:border-white/5 flex flex-col gap-4 transition-all duration-300 hover:shadow-card active:scale-[0.98]"
+                    data-category="{{ berita.kategori }}">
+                    <div
+                        class="w-full aspect-[16/10] shrink-0 rounded-2xl bg-slate-100 dark:bg-white/5 overflow-hidden">
+                        {% if berita.gambar %}
+                        <img src="{{ url_for('static', filename='uploads/berita/' + berita.gambar) }}"
+                            alt="{{ berita.judul }}"
+                            class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center islamic-pattern opacity-10">
+                            <span class="material-symbols-outlined text-white text-[48px]">campaign</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="flex flex-col flex-1 min-w-0 px-1">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span
+                                class="px-2.5 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase tracking-wider">
+                                {{ berita.kategori }}
+                            </span>
+                            <span class="text-[11px] text-slate-500 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">event</span>
+                                {{ berita.created_at.strftime('%d %b %Y') if berita.created_at else '--' }}
+                            </span>
+                        </div>
+                        <h4
+                            class="text-slate-900 dark:text-white font-bold text-base line-clamp-2 leading-tight mb-2 group-hover/card:text-primary transition-colors">
+                            {{ berita.judul }}
+                        </h4>
+                        <p class="text-sm text-slate-500 line-clamp-2 leading-relaxed">
+                            {{ berita.konten }}
+                        </p>
+                    </div>
+                </a>
+                {% endfor %}
+                {% else %}
+                <div class="col-span-full flex flex-col items-center justify-center py-20 text-slate-400 text-center">
+                    <span class="material-symbols-outlined text-[64px] mb-4 opacity-20">campaign</span>
+                    <p class="text-sm">Belum ada berita yang dipublikasikan.</p>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="p-8 text-center bg-slate-50 dark:bg-black/20 mt-auto">
+            <p class="text-xs text-slate-400 font-medium">© 2025 Madrasah Digital - Sistem Kehadiran Santri</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/semua_berita.js') }}"></script>
+    <!-- Dark Mode Script -->
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</body>
+
+</html>
