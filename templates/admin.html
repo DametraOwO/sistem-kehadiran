@@ -221,11 +221,12 @@
                             <span class="material-symbols-outlined text-[24px]">check_circle</span>
                         </div>
                         <span
-                            class="text-xs font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">+95%</span>
+                            class="text-xs font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">{{
+                            stats.hadir_pct }}%</span>
                     </div>
                     <div class="mt-2">
                         <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Hadir</p>
-                        <p class="text-slate-900 dark:text-white text-2xl font-bold">320</p>
+                        <p class="text-slate-900 dark:text-white text-2xl font-bold">{{ stats.hadir }}</p>
                     </div>
                 </div>
                 <!-- Sakit -->
@@ -236,11 +237,12 @@
                             <span class="material-symbols-outlined text-[24px]">sick</span>
                         </div>
                         <span
-                            class="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-full">+1%</span>
+                            class="text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-full">{{
+                            stats.sakit_pct }}%</span>
                     </div>
                     <div class="mt-2">
                         <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Sakit</p>
-                        <p class="text-slate-900 dark:text-white text-2xl font-bold">5</p>
+                        <p class="text-slate-900 dark:text-white text-2xl font-bold">{{ stats.sakit }}</p>
                     </div>
                 </div>
                 <!-- Izin -->
@@ -252,11 +254,12 @@
                             <span class="material-symbols-outlined text-[24px]">mail</span>
                         </div>
                         <span
-                            class="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-full">+2%</span>
+                            class="text-xs font-bold text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-full">{{
+                            stats.izin_pct }}%</span>
                     </div>
                     <div class="mt-2">
                         <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Izin</p>
-                        <p class="text-slate-900 dark:text-white text-2xl font-bold">10</p>
+                        <p class="text-slate-900 dark:text-white text-2xl font-bold">{{ stats.izin }}</p>
                     </div>
                 </div>
                 <!-- Alpha -->
@@ -267,11 +270,12 @@
                             <span class="material-symbols-outlined text-[24px]">close</span>
                         </div>
                         <span
-                            class="text-xs font-bold text-red-600 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-full">+2%</span>
+                            class="text-xs font-bold text-red-600 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-full">{{
+                            stats.alpha_pct }}%</span>
                     </div>
                     <div class="mt-2">
                         <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Alpha</p>
-                        <p class="text-slate-900 dark:text-white text-2xl font-bold">15</p>
+                        <p class="text-slate-900 dark:text-white text-2xl font-bold">{{ stats.alpha }}</p>
                     </div>
                 </div>
             </div>

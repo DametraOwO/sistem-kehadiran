@@ -62,9 +62,14 @@ def login_required(f):
 def index():
     db = get_db()
     berita_list = []
+    attendance_pct = 0
     if db:
         try:
+            from datetime import date
+            today = date.today().strftime('%Y-%m-%d')
+            
             cur = db.cursor(MySQLdb.cursors.DictCursor)
+            # Fetch News
             cur.execute("""
                 SELECT b.*, a.nama_lengkap as penulis 
                 FROM berita b 
@@ -72,13 +77,27 @@ def index():
                 ORDER BY b.created_at DESC
             """)
             berita_list = cur.fetchall()
+            
+            # Fetch overall attendance stats for today
+            cur.execute("""
+                SELECT 
+                    COUNT(*) as total,
+                    SUM(CASE WHEN status = 'Hadir' THEN 1 ELSE 0 END) as hadir_count
+                FROM kehadiran 
+                WHERE tanggal = %s
+            """, (today,))
+            result = cur.fetchone()
+            
+            if result and result['total'] > 0:
+                attendance_pct = round((result['hadir_count'] / result['total']) * 100)
+            
             cur.close()
             db.close()
         except Exception as e:
             if db: db.close()
-            print(f"Error fetching news: {e}")
+            print(f"Error fetching data for index: {e}")
             
-    return render_template('index.html', berita_list=berita_list)
+    return render_template('index.html', berita_list=berita_list, attendance_pct=attendance_pct)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -158,9 +177,17 @@ def logout():
 def admin():
     db = get_db()
     berita_list = []
+    stats = {'hadir': 0, 'izin': 0, 'sakit': 0, 'alpha': 0, 
+             'hadir_pct': 0, 'izin_pct': 0, 'sakit_pct': 0, 'alpha_pct': 0}
+    
     if db:
         try:
+            from datetime import date
+            today = date.today().strftime('%Y-%m-%d')
+            
             cur = db.cursor(MySQLdb.cursors.DictCursor)
+            
+            # Fetch News
             cur.execute("""
                 SELECT b.*, a.nama_lengkap as penulis 
                 FROM berita b 
@@ -168,21 +195,41 @@ def admin():
                 ORDER BY b.created_at DESC
             """)
             berita_list = cur.fetchall()
-            cur.close()
             
-            # Fetch current admin data for dashboard (profile pic, etc)
-            cur = db.cursor(MySQLdb.cursors.DictCursor)
+            # Fetch current admin data
             cur.execute("SELECT * FROM admins WHERE id = %s", (session.get('admin_id'),))
             admin_data = cur.fetchone()
-            cur.close()
             
+            # Fetch Attendance Stats for Today
+            cur.execute("""
+                SELECT status, COUNT(*) as count 
+                FROM kehadiran 
+                WHERE tanggal = %s 
+                GROUP BY status
+            """, (today,))
+            rows = cur.fetchall()
+            
+            total = 0
+            for row in rows:
+                status = row['status'].lower()
+                count = row['count']
+                stats[status] = count
+                total += count
+            
+            if total > 0:
+                stats['hadir_pct'] = round((stats['hadir'] / total) * 100, 1)
+                stats['izin_pct'] = round((stats['izin'] / total) * 100, 1)
+                stats['sakit_pct'] = round((stats['sakit'] / total) * 100, 1)
+                stats['alpha_pct'] = round((stats['alpha'] / total) * 100, 1)
+            
+            cur.close()
             db.close()
         except Exception as e:
             if db: db.close()
-            print(f"Error fetching news for admin: {e}")
+            print(f"Error fetching data for admin dashboard: {e}")
             admin_data = None
             
-    return render_template('admin.html', berita_list=berita_list, admin=admin_data)
+    return render_template('admin.html', berita_list=berita_list, admin=admin_data, stats=stats)
 
 @app.route('/laporan')
 @login_required
