@@ -197,6 +197,12 @@ function renderCalendarGrid(days, currentDate) {
             todaysSchedule = todaysSchedule.filter(s => s.nama_kelas === filterClass);
         }
 
+        // HOLIDAY PRIORITY: If it is a holiday, DO NOT show schedules
+        if (isHoliday) {
+            todaysSchedule = [];
+            // We keep the holiday display logic below, but ensure no schedule items are added.
+        }
+
         // Styles
         let baseClass = "min-h-[128px] border-b border-r border-slate-100 dark:border-slate-800 flex flex-col items-start justify-start p-2 gap-1 relative group transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50";
 

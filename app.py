@@ -63,10 +63,21 @@ def index():
     db = get_db()
     berita_list = []
     attendance_pct = 0
+    jadwal_hari_ini = []
+    status_sekolah = "Tidak ada jadwal hari ini" # Default
+    
     if db:
         try:
-            from datetime import date
-            today = date.today().strftime('%Y-%m-%d')
+            from datetime import date, datetime
+            today_date = date.today().strftime('%Y-%m-%d')
+            
+            # Map ISO Weekday (1=Monday, 7=Sunday) to Indonesian
+            today_iso = datetime.now().isoweekday()
+            days_map = {
+                1: 'Senin', 2: 'Selasa', 3: 'Rabu',
+                4: 'Kamis', 5: 'Jumat', 6: 'Sabtu', 7: 'Minggu'
+            }
+            current_day_name = days_map[today_iso]
             
             cur = db.cursor(MySQLdb.cursors.DictCursor)
             # Fetch News
@@ -85,19 +96,85 @@ def index():
                     SUM(CASE WHEN status = 'Hadir' THEN 1 ELSE 0 END) as hadir_count
                 FROM kehadiran 
                 WHERE tanggal = %s
-            """, (today,))
+            """, (today_date,))
             result = cur.fetchone()
             
             if result and result['total'] > 0:
                 attendance_pct = round((result['hadir_count'] / result['total']) * 100)
             
+            # Fetch Today's Schedule
+            cur.execute("""
+                SELECT j.*, k.nama_kelas 
+                FROM jadwal j
+                JOIN kelas k ON j.id_kelas = k.id
+                WHERE j.hari = %s
+                ORDER BY j.waktu_mulai ASC
+            """, (current_day_name,))
+            jadwal_hari_ini = list(cur.fetchall())
+            
+            # Calculate School Status
+            active_jadwal = []
+            try:
+                # Debug Info
+                # print(f"DEBUG: Day={current_day_name}, Items={len(jadwal_hari_ini)}")
+                
+                if jadwal_hari_ini:
+                    from datetime import timedelta
+                    
+                    # Helper to converts timedelta/time to datetime.time
+                    now = datetime.now().time()
+                    
+                    def get_time_obj(t):
+                        if isinstance(t, str):
+                            # Handle string format if slightly different?
+                            try:
+                                return datetime.strptime(t, "%H:%M:%S").time()
+                            except:
+                                # Fallback or re-raise
+                                return datetime.strptime(str(t), "%H:%M:%S").time()
+                        
+                        if isinstance(t, timedelta):
+                            # Convert timedelta to time (duration from midnight)
+                            return (datetime.min + t).time()
+                        return t
+                    
+                    # Sort just in case
+                    jadwal_hari_ini.sort(key=lambda x: get_time_obj(x['waktu_mulai']))
+                    
+                    start_time = get_time_obj(jadwal_hari_ini[0]['waktu_mulai'])
+                    
+                    # Find max end time
+                    max_end_time = datetime.min.time()
+                    for j in jadwal_hari_ini:
+                        s_t = get_time_obj(j['waktu_mulai'])
+                        e_t = get_time_obj(j['waktu_selesai'])
+                        if e_t > max_end_time:
+                            max_end_time = e_t
+                        
+                        # Filter for active classes
+                        if s_t <= now <= e_t:
+                            active_jadwal.append(j)
+                            
+                    if now < start_time:
+                        status_sekolah = "Pembelajaran belum dimulai"
+                    elif now > max_end_time:
+                        status_sekolah = "Pembelajaran telah berakhir"
+                    else:
+                        status_sekolah = "Pembelajaran sedang berlangsung"
+                else:
+                     status_sekolah = f"Tidak ada KBM hari ini ({current_day_name})"
+
+            except Exception as e:
+                status_sekolah = f"Error Calc: {str(e)}"
+            
             cur.close()
             db.close()
         except Exception as e:
             if db: db.close()
+            status_sekolah = f"DB/General Error: {str(e)}"
             print(f"Error fetching data for index: {e}")
             
-    return render_template('index.html', berita_list=berita_list, attendance_pct=attendance_pct)
+    return render_template('index.html', berita_list=berita_list, attendance_pct=attendance_pct, jadwal_hari_ini=active_jadwal, status_sekolah=status_sekolah)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

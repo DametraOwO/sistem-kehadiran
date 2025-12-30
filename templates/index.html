@@ -281,16 +281,23 @@
                     <span class="material-symbols-outlined text-primary text-2xl">school</span>
                 </div>
                 <div>
-                    <h3 class="text-slate-800 dark:text-white font-bold text-lg">Jam Sekolah Saat Ini</h3>
-                    <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">Pembelajaran sedang berlangsung.
-                        Istirahat kedua pada pukul <span class="font-bold text-primary">12:30</span>.</p>
-                    <div class="mt-3 flex gap-2">
+                    <h3 class="text-slate-800 dark:text-white font-bold text-lg">Jam Sekolah Hari Ini</h3>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">
+                        {{ status_sekolah }}
+                    </p>
+                    <div class="mt-3 flex flex-wrap gap-2">
+                        {% if jadwal_hari_ini %}
+                        {% for item in jadwal_hari_ini %}
                         <span
-                            class="text-xs font-medium px-2 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-slate-600 dark:text-slate-300">Kelas
-                            VII: Matematika</span>
-                        <span
-                            class="text-xs font-medium px-2 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-slate-600 dark:text-slate-300">Kelas
-                            VIII: Fiqih</span>
+                            class="text-xs font-medium px-2 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-slate-600 dark:text-slate-300">
+                            {{ item.nama_kelas }}: {{ item.mata_pelajaran }}
+                        </span>
+                        {% endfor %}
+                        {% else %}
+                        {% if status_sekolah == "Pembelajaran sedang berlangsung" %}
+                        <span class="text-xs font-medium text-slate-500 italic">Sedang Istirahat / Pergantian Jam</span>
+                        {% endif %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
