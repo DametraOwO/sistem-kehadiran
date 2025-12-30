@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from functools import wraps
 import os
+import calendar
 import MySQLdb
 
 app = Flask(__name__)
@@ -579,6 +580,162 @@ def api_laporan_stats():
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
+@app.route('/rekap_laporan')
+@login_required
+def rekap_laporan():
+    month_val = request.args.get('month') # YYYY-MM
+    kelas_id = request.args.get('kelas_id')
+    sort_by = request.args.get('sort', 'name_asc')
+    
+    if not month_val:
+        return "Bulan harus dipilih", 400
+        
+    db = get_db()
+    if not db:
+        return "Gagal menyambung database", 500
+        
+    try:
+        cur = db.cursor(MySQLdb.cursors.DictCursor)
+        from datetime import datetime
+        import calendar
+        
+        # Calculate days in month
+        year, month = map(int, month_val.split('-'))
+        days_in_month = calendar.monthrange(year, month)[1]
+        
+        # Translate month for title
+        month_names = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", 
+                       "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+        current_month_label = f"{month_names[month-1]} {year}"
+        
+        # Academic Title
+        if month >= 7:
+            semester = "Ganjil"
+            akad = f"{year}/{year + 1}"
+        else:
+            semester = "Genap"
+            akad = f"{year - 1}/{year}"
+        academic_title = f"Semester {semester} {akad}"
+
+        # Fetch students and their monthly summary
+        list_query = """
+            SELECT 
+                s.id, s.nis, s.nama_lengkap, k.nama_kelas,
+                SUM(CASE WHEN kh.status = 'Hadir' THEN 1 ELSE 0 END) as hadir,
+                SUM(CASE WHEN kh.status = 'Izin' THEN 1 ELSE 0 END) as izin,
+                SUM(CASE WHEN kh.status = 'Sakit' THEN 1 ELSE 0 END) as sakit,
+                SUM(CASE WHEN kh.status = 'Alpha' THEN 1 ELSE 0 END) as alpha
+            FROM santri s
+            LEFT JOIN kelas k ON s.id_kelas = k.id
+            LEFT JOIN kehadiran kh ON s.id = kh.id_santri AND DATE_FORMAT(kh.tanggal, '%%Y-%%m') = %s
+            WHERE 1=1
+        """
+        list_params = [month_val]
+        if kelas_id and kelas_id != 'all':
+            list_query += " AND s.id_kelas = %s"
+            list_params.append(kelas_id)
+        list_query += " GROUP BY s.id"
+        
+        sort_map = {
+            'name_asc': 'ORDER BY s.nama_lengkap ASC',
+            'name_desc': 'ORDER BY s.nama_lengkap DESC',
+            'hadir_desc': 'ORDER BY hadir DESC, s.nama_lengkap ASC',
+            'izin_desc': 'ORDER BY izin DESC, s.nama_lengkap ASC',
+            'sakit_desc': 'ORDER BY sakit DESC, s.nama_lengkap ASC',
+            'alpha_desc': 'ORDER BY alpha DESC, s.nama_lengkap ASC'
+        }
+        list_query += " " + sort_map.get(sort_by, sort_map['name_asc'])
+        
+        cur.execute(list_query, list_params)
+        students = cur.fetchall()
+        
+        # Group by class and calculate stats per class
+        grouped_data = {}
+        for s in students:
+            k_name = s['nama_kelas'] or "Tanpa Kelas"
+            if k_name not in grouped_data:
+                grouped_data[k_name] = {
+                    'students': [],
+                    'stats': {'hadir': 0, 'izin': 0, 'sakit': 0, 'alpha': 0, 'total': 0},
+                    'percentages': {}
+                }
+            
+            # Add student to class
+            grouped_data[k_name]['students'].append(s)
+            
+            # Accumulate class stats
+            grouped_data[k_name]['stats']['hadir'] += s['hadir'] or 0
+            grouped_data[k_name]['stats']['izin'] += s['izin'] or 0
+            grouped_data[k_name]['stats']['sakit'] += s['sakit'] or 0
+            grouped_data[k_name]['stats']['alpha'] += s['alpha'] or 0
+            grouped_data[k_name]['stats']['total'] += (s['hadir'] or 0) + (s['izin'] or 0) + (s['sakit'] or 0) + (s['alpha'] or 0)
+
+        # Calculate percentages for each group
+        for k_name, data in grouped_data.items():
+            total = data['stats']['total']
+            if total > 0:
+                data['percentages'] = {
+                    'hadir': round(data['stats']['hadir'] / total * 100, 1),
+                    'izin': round(data['stats']['izin'] / total * 100, 1),
+                    'sakit': round(data['stats']['sakit'] / total * 100, 1),
+                    'alpha': round(data['stats']['alpha'] / total * 100, 1)
+                }
+            else:
+                data['percentages'] = {'hadir': 0, 'izin': 0, 'sakit': 0, 'alpha': 0}
+
+        # Sort classes alphabetically
+        sorted_classes = sorted(grouped_data.keys())
+        final_groups = [(k, grouped_data[k]) for k in sorted_classes]
+        
+        # Fetch daily attendance mapping
+        att_query = """
+            SELECT id_santri, DAY(tanggal) as day, status 
+            FROM kehadiran 
+            WHERE DATE_FORMAT(tanggal, '%%Y-%%m') = %s
+        """
+        cur.execute(att_query, [month_val])
+        att_rows = cur.fetchall()
+        
+        # Map attendance by student_id then day
+        attendance_map = {}
+        for row in att_rows:
+            sid = row['id_santri']
+            if sid not in attendance_map:
+                attendance_map[sid] = {}
+            attendance_map[sid][row['day']] = row['status']
+            
+        cur.close()
+        db.close()
+        
+        # Map for translation
+        month_map = {
+            'January': 'Januari', 'February': 'Februari', 'March': 'Maret',
+            'April': 'April', 'May': 'Mei', 'June': 'Juni',
+            'July': 'Juli', 'August': 'Agustus', 'September': 'September',
+            'October': 'Oktober', 'November': 'November', 'December': 'Desember'
+        }
+
+        # Date for footer
+        print_date = datetime.now().strftime('%d %B %Y')
+        for eng, ind in month_map.items():
+            if eng in print_date:
+                print_date = print_date.replace(eng, ind)
+                break
+
+        return render_template('rekap_laporan.html', 
+                               groups=final_groups, 
+                               attendance_map=attendance_map, 
+                               days_in_month=days_in_month,
+                               current_month_label=current_month_label,
+                               academic_title=academic_title,
+                               print_date=print_date,
+                               kelas_nama="Semua Kelas" if kelas_id == 'all' else students[0]['nama_kelas'] if students else "-")
+    except Exception as e:
+        if db: db.close()
+        print(f"Rekap Error: {e}")
+        return f"Terjadi kesalahan: {e}", 500
+
+
 @app.route('/absensi')
 @login_required
 def absensi():
@@ -665,8 +822,14 @@ def simpan_absensi():
         
     try:
         from datetime import date, datetime
-        today = date.today().strftime('%Y-%m-%d')
-        now_time = datetime.now().strftime('%H:%M')
+        now = datetime.now()
+        
+        # Block Sunday (Sunday in Python's weekday() is 6)
+        if now.weekday() == 6:
+            return jsonify({'success': False, 'message': 'Hari Minggu tidak ada kegiatan absensi'}), 400
+            
+        today = now.strftime('%Y-%m-%d')
+        now_time = now.strftime('%H:%M')
         
         cur = db.cursor()
         for item in attendance:

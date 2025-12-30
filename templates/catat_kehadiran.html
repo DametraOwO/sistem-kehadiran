@@ -137,6 +137,30 @@
         document.addEventListener('DOMContentLoaded', () => {
             const saveBtn = document.getElementById('save-attendance');
             const buttons = document.querySelectorAll('.status-btn');
+
+            // Sunday Check
+            const today = new Date();
+            const isSunday = today.getDay() === 0;
+
+            if (isSunday) {
+                // Disable save button
+                if (saveBtn) {
+                    saveBtn.disabled = true;
+                    saveBtn.classList.remove('bg-white', 'text-primary');
+                    saveBtn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+                    saveBtn.querySelector('span:last-child').textContent = 'Libur';
+                }
+
+                // Show floating warning
+                const warning = document.createElement('div');
+                warning.className = 'fixed top-24 left-10 right-10 z-50 bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-2xl flex items-center gap-3 shadow-xl animate-bounce';
+                warning.innerHTML = `
+                    <span class="material-symbols-outlined">event_busy</span>
+                    <span class="text-xs font-bold uppercase tracking-tight">Hari Minggu Libur: Absensi dinonaktifkan</span>
+                `;
+                document.body.appendChild(warning);
+            }
+
             const attendanceData = JSON.parse('{{ attendance_data|tojson|safe }}');
 
             // Map full words from database to letters
