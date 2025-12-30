@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 import MySQLdb
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -197,7 +197,18 @@ def absensi():
     if db:
         try:
             cur = db.cursor(MySQLdb.cursors.DictCursor)
-            cur.execute("SELECT * FROM kelas ORDER BY nama_kelas ASC")
+            from datetime import date
+            today = date.today().strftime('%Y-%m-%d')
+            
+            # Fetch classes and count attendance records for today per class
+            cur.execute("""
+                SELECT k.*, 
+                (SELECT COUNT(*) FROM kehadiran kh 
+                 JOIN santri s ON kh.id_santri = s.id 
+                 WHERE s.id_kelas = k.id AND kh.tanggal = %s) as rekap_count
+                FROM kelas k 
+                ORDER BY k.nama_kelas ASC
+            """, (today,))
             kelas_list = cur.fetchall()
             cur.close()
             db.close()
@@ -213,6 +224,7 @@ def catat_kehadiran(kelas_id):
     db = get_db()
     kelas = None
     santri_list = []
+    attendance_data = {}
     if db:
         try:
             cur = db.cursor(MySQLdb.cursors.DictCursor)
@@ -221,9 +233,21 @@ def catat_kehadiran(kelas_id):
             kelas = cur.fetchone()
             
             if kelas:
+                from datetime import date
+                today = date.today().strftime('%Y-%m-%d')
+                
                 # Fetch Students in this class
-                cur.execute("SELECT id, nis, nama_lengkap FROM santri WHERE kelas_id = %s ORDER BY nama_lengkap ASC", (kelas_id,))
+                cur.execute("SELECT id, nis, nama_lengkap FROM santri WHERE id_kelas = %s ORDER BY nama_lengkap ASC", (kelas_id,))
                 santri_list = cur.fetchall()
+                
+                # Fetch existing attendance for today
+                cur.execute("""
+                    SELECT id_santri, status 
+                    FROM kehadiran 
+                    WHERE tanggal = %s AND id_santri IN (SELECT id FROM santri WHERE id_kelas = %s)
+                """, (today, kelas_id))
+                records = cur.fetchall()
+                attendance_data = {r['id_santri']: r['status'] for r in records}
             
             cur.close()
             db.close()
@@ -235,7 +259,52 @@ def catat_kehadiran(kelas_id):
         flash("Kelas tidak ditemukan.", "danger")
         return redirect(url_for('absensi'))
         
-    return render_template('catat_kehadiran.html', kelas=kelas, santri_list=santri_list)
+    return render_template('catat_kehadiran.html', kelas=kelas, santri_list=santri_list, attendance_data=attendance_data)
+
+@app.route('/simpan_absensi', methods=['POST'])
+@login_required
+def simpan_absensi():
+    data = request.json
+    if not data or 'attendance' not in data:
+        return jsonify({'success': False, 'message': 'Data tidak valid'}), 400
+        
+    attendance = data['attendance'] # List of {student_id, status}
+    db = get_db()
+    if not db:
+        return jsonify({'success': False, 'message': 'Gagal menyambung ke database'}), 500
+        
+    try:
+        from datetime import date, datetime
+        today = date.today().strftime('%Y-%m-%d')
+        now_time = datetime.now().strftime('%H:%M:%S')
+        
+        cur = db.cursor()
+        for item in attendance:
+            student_id = item['student_id']
+            status_map = {'H': 'Hadir', 'I': 'Izin', 'S': 'Sakit', 'A': 'Alpha'}
+            full_status = status_map.get(item['status'])
+            
+            if not full_status: continue
+            
+            # Using INSERT ... ON DUPLICATE KEY UPDATE to allow same-day changes
+            cur.execute("""
+                INSERT INTO kehadiran (id_santri, status, tanggal, waktu)
+                VALUES (%s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE status = %s, waktu = %s
+            """, (student_id, full_status, today, now_time, full_status, now_time))
+            
+        db.commit()
+        cur.close()
+        db.close()
+        return jsonify({'success': True, 'message': 'Absensi berhasil disimpan!'})
+    except Exception as e:
+        if db:
+            try:
+                db.close()
+            except:
+                pass
+        print(f"Error saving attendance: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/santri')
 @login_required

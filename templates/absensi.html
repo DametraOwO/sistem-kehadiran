@@ -101,9 +101,13 @@
                             <div>
                                 <h3 class="font-bold text-slate-800 dark:text-white">{{ k.nama_kelas }}</h3>
                                 <div class="flex items-center gap-2">
-                                    <div class="size-1.5 rounded-full bg-slate-200 dark:bg-white/10"></div>
-                                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Belum di
-                                        rekap</span>
+                                    <div
+                                        class="size-1.5 rounded-full {% if k.rekap_count > 0 %}bg-primary animate-pulse{% else %}bg-slate-200 dark:bg-white/10{% endif %}">
+                                    </div>
+                                    <span
+                                        class="text-[11px] font-bold {% if k.rekap_count > 0 %}text-primary{% else %}text-slate-400{% endif %} uppercase tracking-wider">
+                                        {% if k.rekap_count > 0 %}Sudah di rekap{% else %}Belum di rekap{% endif %}
+                                    </span>
                                 </div>
                             </div>
                         </div>

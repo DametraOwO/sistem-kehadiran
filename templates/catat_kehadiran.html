@@ -84,7 +84,7 @@
                         <p class="text-white/80 text-xs font-medium uppercase tracking-widest">Catat Kehadiran Siswa</p>
                     </div>
                 </div>
-                <button
+                <button id="save-attendance"
                     class="h-12 px-6 rounded-2xl bg-white text-primary font-bold shadow-xl shadow-black/10 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
                     <span class="material-symbols-outlined text-[20px]">save</span>
                     <span>Simpan</span>
@@ -136,22 +136,96 @@
     <!-- Attendance Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const saveBtn = document.getElementById('save-attendance');
             const buttons = document.querySelectorAll('.status-btn');
+            const attendanceData = JSON.parse('{{ attendance_data|tojson|safe }}');
 
+            // Map full words from database to letters
+            const statusMapToLetter = {
+                'Hadir': 'H',
+                'Izin': 'I',
+                'Sakit': 'S',
+                'Alpha': 'A'
+            };
+
+            // Initialize buttons based on existing data
+            Object.keys(attendanceData).forEach(studentId => {
+                const status = attendanceData[studentId];
+                const letter = statusMapToLetter[status];
+                if (letter) {
+                    const activeBtn = document.querySelector(`.status-btn[data-student-id="${studentId}"][data-status="${letter}"]`);
+                    if (activeBtn) activeBtn.classList.add('active');
+                }
+            });
+
+            // Button Click Handler
             buttons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const studentId = btn.dataset.studentId;
-
-                    // Find all buttons for this specific student
                     const studentButtons = document.querySelectorAll(`.status-btn[data-student-id="${studentId}"]`);
-
-                    // Remove active class from all buttons of this student
                     studentButtons.forEach(b => b.classList.remove('active'));
-
-                    // Add active class to the clicked button
                     btn.classList.add('active');
                 });
             });
+
+            // Save Functionality
+            if (saveBtn) {
+                saveBtn.addEventListener('click', async () => {
+                    const activeButtons = document.querySelectorAll('.status-btn.active');
+                    if (activeButtons.length === 0) {
+                        alert('Silakan isi setidaknya satu status kehadiran.');
+                        return;
+                    }
+
+                    const attendance = Array.from(activeButtons).map(btn => ({
+                        student_id: btn.dataset.studentId,
+                        status: btn.dataset.status
+                    }));
+
+                    // Show Loading State
+                    const originalContent = saveBtn.innerHTML;
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = `
+                        <span class="animate-spin material-symbols-outlined text-[20px]">sync</span>
+                        <span>Menyimpan...</span>
+                    `;
+
+                    try {
+                        const response = await fetch('/simpan_absensi', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ attendance })
+                        });
+
+                        const result = await response.json();
+                        if (result.success) {
+                            // Success Feedback
+                            saveBtn.classList.remove('bg-white', 'text-primary');
+                            saveBtn.classList.add('bg-green-500', 'text-white');
+                            saveBtn.innerHTML = `
+                                <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                                <span>Berhasil!</span>
+                            `;
+
+                            setTimeout(() => {
+                                saveBtn.disabled = false;
+                                saveBtn.classList.add('bg-white', 'text-primary');
+                                saveBtn.classList.remove('bg-green-500', 'text-white');
+                                saveBtn.innerHTML = originalContent;
+                            }, 2000);
+                        } else {
+                            alert('Gagal menyimpan: ' + result.message);
+                            saveBtn.disabled = false;
+                            saveBtn.innerHTML = originalContent;
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan jaringan.');
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = originalContent;
+                    }
+                });
+            }
         });
 
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
