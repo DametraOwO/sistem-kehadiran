@@ -64,6 +64,24 @@
                 linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.05) 75%, transparent 75%, transparent);
             background-size: 100% 100%, 100% 100%, 40px 40px;
         }
+
+        /* Custom Scrollbar for the list */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #14b88144;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #14b88188;
+        }
     </style>
     <style>
         body {
@@ -96,13 +114,20 @@
                 <!-- Context Title -->
                 <div class="px-2 mt-2 text-center">
                     <p class="text-xs font-medium text-white/80 uppercase tracking-wider mb-1">Madrasah Al-Hidayah</p>
-                    <h3 class="text-2xl font-bold leading-tight text-white">Semester Genap 2023/2024</h3>
+                    <h3 id="academic-title" class="text-2xl font-bold leading-tight text-white">Semester {{
+                        current_semester }} {{ current_akad }}</h3>
                     <div class="mt-4 flex justify-center">
-                        <div
-                            class="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-1.5 border border-white/20 backdrop-blur-sm shadow-sm hover:bg-white/30 transition-colors cursor-pointer">
-                            <span class="material-symbols-outlined text-white text-[18px]">calendar_today</span>
-                            <span class="text-sm font-semibold text-white">1 Nov - 30 Nov 2023</span>
-                            <span class="material-symbols-outlined text-white text-[16px]">expand_more</span>
+                        <div class="relative">
+                            <select id="month-select"
+                                class="appearance-none inline-flex items-center gap-2 rounded-full bg-white/20 px-6 py-2 border border-white/20 backdrop-blur-sm shadow-sm hover:bg-white/30 transition-all cursor-pointer text-sm font-semibold text-white focus:outline-none focus:ring-0">
+                                {% for m in available_months %}
+                                <option value="{{ m.month_val }}" class="bg-primary text-white">{{ m.month_label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-white">
+                                <span class="material-symbols-outlined text-[18px]">expand_more</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -120,34 +145,34 @@
                         <p class="text-sm font-medium text-slate-600">Hadir</p>
                     </div>
                     <div class="mt-2 flex items-baseline gap-2">
-                        <p class="text-2xl font-bold text-slate-900">95%</p>
-                        <p class="text-xs font-semibold text-green-600">+2.5%</p>
+                        <p id="stat-hadir-pct" class="text-2xl font-bold text-slate-900">0%</p>
+                        <p id="stat-hadir-trend" class="text-xs font-semibold">Stabil</p>
                     </div>
                 </div>
                 <!-- Card 2: Sakit -->
-                <div class="flex flex-col gap-1 rounded-xl bg-yellow-50 p-4 border border-yellow-100">
+                <div class="flex flex-col gap-1 rounded-xl bg-blue-50 p-4 border border-blue-100">
                     <div class="flex items-center gap-2">
-                        <div class="flex h-6 w-6 items-center justify-center rounded-full bg-yellow-500 text-white">
+                        <div class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white">
                             <span class="material-symbols-outlined text-[14px]">sick</span>
                         </div>
                         <p class="text-sm font-medium text-slate-600">Sakit</p>
                     </div>
                     <div class="mt-2 flex items-baseline gap-2">
-                        <p class="text-2xl font-bold text-slate-900">2%</p>
-                        <p class="text-xs font-medium text-slate-500">Stable</p>
+                        <p id="stat-sakit-pct" class="text-2xl font-bold text-slate-900">0%</p>
+                        <p id="stat-sakit-trend" class="text-xs font-medium text-slate-500">Stabil</p>
                     </div>
                 </div>
                 <!-- Card 3: Izin -->
-                <div class="flex flex-col gap-1 rounded-xl bg-blue-50 p-4 border border-blue-100">
+                <div class="flex flex-col gap-1 rounded-xl bg-yellow-50 p-4 border border-yellow-100">
                     <div class="flex items-center gap-2">
-                        <div class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white">
+                        <div class="flex h-6 w-6 items-center justify-center rounded-full bg-yellow-500 text-white">
                             <span class="material-symbols-outlined text-[14px]">mail</span>
                         </div>
                         <p class="text-sm font-medium text-slate-600">Izin</p>
                     </div>
                     <div class="mt-2 flex items-baseline gap-2">
-                        <p class="text-2xl font-bold text-slate-900">2%</p>
-                        <p class="text-xs font-semibold text-red-500">-0.5%</p>
+                        <p id="stat-izin-pct" class="text-2xl font-bold text-slate-900">0%</p>
+                        <p id="stat-izin-trend" class="text-xs font-semibold">Stabil</p>
                     </div>
                 </div>
                 <!-- Card 4: Alpha -->
@@ -159,27 +184,70 @@
                         <p class="text-sm font-medium text-slate-600">Alpha</p>
                     </div>
                     <div class="mt-2 flex items-baseline gap-2">
-                        <p class="text-2xl font-bold text-slate-900">1%</p>
-                        <p class="text-xs font-semibold text-green-600 text-nowrap">-2.0%</p>
+                        <p id="stat-alpha-pct" class="text-2xl font-bold text-slate-900">0%</p>
+                        <p id="stat-alpha-trend" class="text-xs font-semibold">Stabil</p>
                     </div>
                 </div>
             </div>
         </div>
         <!-- Filters Section -->
         <div class="mt-8 px-4">
-            <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-                <button
-                    class="flex-shrink-0 flex items-center gap-2 rounded-xl bg-primary text-white px-4 py-2.5 shadow-md shadow-primary/20">
-                    <span class="material-symbols-outlined text-[20px]">filter_list</span>
-                    <span class="text-sm font-bold">Filter</span>
-                </button>
+            <div class="flex flex-wrap gap-3 pb-2">
+                <div class="relative flex-shrink-0">
+                    <button id="filter-btn"
+                        class="flex items-center gap-2 rounded-xl bg-primary text-white px-4 py-2.5 shadow-md shadow-primary/20 hover:bg-primary-dark transition-all">
+                        <span class="material-symbols-outlined text-[20px]">filter_list</span>
+                        <span class="text-sm font-bold">Urutkan</span>
+                    </button>
+                    <!-- Sort Dropdown Menu -->
+                    <div id="sort-menu"
+                        class="absolute left-0 mt-2 w-56 origin-top-left rounded-2xl bg-white p-2 shadow-xl ring-1 ring-black/5 focus:outline-none hidden z-50 transition-all duration-200 opacity-0 scale-95">
+                        <div class="py-1">
+                            <p class="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Abjad</p>
+                            <button data-sort="name_asc"
+                                class="sort-option w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">sort_by_alpha</span>
+                                <span>Nama A - Z</span>
+                            </button>
+                            <button data-sort="name_desc"
+                                class="sort-option w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <span class="material-symbols-outlined text-[20px] scale-y-[-1]">sort_by_alpha</span>
+                                <span>Nama Z - A</span>
+                            </button>
+
+                            <p class="mt-2 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                Kehadiran</p>
+                            <button data-sort="hadir_desc"
+                                class="sort-option w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <span class="material-symbols-outlined text-[20px] text-green-500">check_circle</span>
+                                <span>Hadir Terbanyak</span>
+                            </button>
+                            <button data-sort="izin_desc"
+                                class="sort-option w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <span class="material-symbols-outlined text-[20px] text-yellow-500">mail</span>
+                                <span>Izin Terbanyak</span>
+                            </button>
+                            <button data-sort="sakit_desc"
+                                class="sort-option w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <span class="material-symbols-outlined text-[20px] text-blue-500">sick</span>
+                                <span>Sakit Terbanyak</span>
+                            </button>
+                            <button data-sort="alpha_desc"
+                                class="sort-option w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <span class="material-symbols-outlined text-[20px] text-red-500">cancel</span>
+                                <span>Alpha Terbanyak</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div class="flex-1 min-w-[140px]">
                     <div class="relative">
-                        <select
+                        <select id="kelas-select"
                             class="w-full appearance-none rounded-xl border border-slate-200 bg-white py-2.5 pl-4 pr-10 text-sm font-medium text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
-                            <option>Kelas 7A</option>
-                            <option>Kelas 7B</option>
-                            <option>Kelas 8A</option>
+                            <option value="all">Semua Kelas</option>
+                            {% for k in kelas_list %}
+                            <option value="{{ k.id }}">{{ k.nama_kelas }}</option>
+                            {% endfor %}
                         </select>
                         <div
                             class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
@@ -193,7 +261,7 @@
                             class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 group-focus-within:text-primary transition-colors">
                             <span class="material-symbols-outlined text-[20px]">search</span>
                         </span>
-                        <input
+                        <input id="search-input"
                             class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                             placeholder="Cari santri..." type="text" />
                     </div>
@@ -201,117 +269,25 @@
             </div>
         </div>
         <!-- List Section -->
-        <div class="mt-4 flex flex-col gap-4 px-4">
+        <div class="mt-4 flex flex-col gap-4 px-4 pb-12">
             <div class="flex items-center justify-between">
                 <h3 class="text-lg font-bold text-slate-900">Daftar Santri</h3>
-                <button class="text-sm font-medium text-primary hover:text-primary-dark">Lihat Semua</button>
+                <span class="text-xs font-medium text-slate-500" id="student-count">Menghitung...</span>
             </div>
-            <!-- List Item 1 -->
-            <div
-                class="group flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm border border-slate-100 hover:border-primary/50 transition-all">
-                <div class="flex items-center gap-4">
-                    <div class="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border border-slate-100">
-                        <img alt="Portrait of student Ahmad Fulan" class="h-full w-full object-cover"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4hSrxazNvxnsqI-BV1u-czcNRJ7_UIR1-wwiMOSbqw6bFvfZBD0XlZ0FaU8o1zUXAuY3uXq8JGH8OjYHPnaJQtZWpA6k4EH1iCBxz46vD0rFUHrLpwpbNwsV8vPXK2F4q5qiRyBg9D0dESkpi0B59fo4SRZUkoNyd3RUDMyOVwZcJwtAyOaANIHbVCoHai65Ms36E_RS-QcIKE06m7DtDCsoWXge3A6P1apikd6s3WDBrLnmDAxCjRI817blZgo1lIqYav0wAtFI" />
+
+            <!-- Scrollable Area -->
+            <div class="max-h-[480px] overflow-y-auto pr-1 -mr-1 custom-scrollbar">
+                <div class="flex flex-col gap-3 pb-4" id="student-list">
+                    <!-- Items will be injected here by JS -->
+                    <div id="list-loader" class="flex flex-col items-center justify-center py-20 text-slate-400">
+                        <span class="material-symbols-outlined text-[48px] animate-spin mb-4">sync</span>
+                        <p>Memuat data laporan...</p>
                     </div>
-                    <div class="flex flex-col">
-                        <p class="text-base font-bold text-slate-900">Ahmad Fulan</p>
-                        <p class="text-xs font-medium text-slate-500">NIS: 12345678</p>
-                    </div>
-                </div>
-                <div class="flex flex-col items-end gap-1">
-                    <span
-                        class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-700">
-                        Hadir
-                    </span>
-                    <span class="text-[10px] font-medium text-slate-400">07:05 AM</span>
-                </div>
-            </div>
-            <!-- List Item 2 -->
-            <div
-                class="group flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm border border-slate-100 hover:border-primary/50 transition-all">
-                <div class="flex items-center gap-4">
-                    <div
-                        class="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border border-slate-100 bg-slate-100 flex items-center justify-center">
-                        <span class="text-lg font-bold text-slate-500">ZA</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <p class="text-base font-bold text-slate-900">Zainab Aliyah</p>
-                        <p class="text-xs font-medium text-slate-500">NIS: 12345679</p>
-                    </div>
-                </div>
-                <div class="flex flex-col items-end gap-1">
-                    <span
-                        class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-semibold text-yellow-700">
-                        Sakit
-                    </span>
-                    <span class="text-[10px] font-medium text-slate-400">--:--</span>
-                </div>
-            </div>
-            <!-- List Item 3 -->
-            <div
-                class="group flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm border border-slate-100 hover:border-primary/50 transition-all">
-                <div class="flex items-center gap-4">
-                    <div class="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border border-slate-100">
-                        <img alt="Portrait of student Yusuf Ibrahim" class="h-full w-full object-cover"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY1kdFss4iVXGKvfseFeH2W711mKkGB28p4B9MZF_edORMiTMT-lf2fjE0qIvhEM5a1nhIhoHaTn2nMDMIld0Prj1p2SYkx6RnWgQlgwaFiABDsfxZBD1pPZLJ-84Qd-5cjftH83feJ8gjU3yIHc3vrXgm-AGoHfD6u7xbDwo7MflQG4EMzdJI9mcWwNRPvpbnYb9BHauGyWFtFtYeX-Owh5-tdhCMdjTgfv3TXx7HX-lWullz4AQ0RRStMgmZCjJaz46X4vWQ_GA" />
-                    </div>
-                    <div class="flex flex-col">
-                        <p class="text-base font-bold text-slate-900">Yusuf Ibrahim</p>
-                        <p class="text-xs font-medium text-slate-500">NIS: 12345680</p>
-                    </div>
-                </div>
-                <div class="flex flex-col items-end gap-1">
-                    <span
-                        class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-700">
-                        Alpha
-                    </span>
-                    <span class="text-[10px] font-medium text-slate-400">--:--</span>
-                </div>
-            </div>
-            <!-- List Item 4 -->
-            <div
-                class="group flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm border border-slate-100 hover:border-primary/50 transition-all">
-                <div class="flex items-center gap-4">
-                    <div class="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border border-slate-100">
-                        <img alt="Portrait of student Fatima Zahra" class="h-full w-full object-cover"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkHw1bDgUaLGpNlq-dt29SbefNPhIvQaBslq4U2cMhECEBGuU_S194NUa5sFA3gBf7QQp-0wDpHhm7R036OkrYYZsO98bXTxKbuajkSwXN4q0iJ5kpOcPIhotbit6rRd_0xEOs2_XdeDXHAQPv55N1kTPd4UDSRr5i74DonCDril4-zz6_Bn9f6g3qNzSqgZltCc3nFWLeDpMu0ejsof9WkHfUABp9lAGOGjXtGapXS7EM7pObPHQ0zPU3lOWB3P5CD8VaSYft3jw" />
-                    </div>
-                    <div class="flex flex-col">
-                        <p class="text-base font-bold text-slate-900">Fatima Zahra</p>
-                        <p class="text-xs font-medium text-slate-500">NIS: 12345681</p>
-                    </div>
-                </div>
-                <div class="flex flex-col items-end gap-1">
-                    <span
-                        class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-700">
-                        Hadir
-                    </span>
-                    <span class="text-[10px] font-medium text-slate-400">06:55 AM</span>
-                </div>
-            </div>
-            <!-- List Item 5 -->
-            <div
-                class="group flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm border border-slate-100 hover:border-primary/50 transition-all">
-                <div class="flex items-center gap-4">
-                    <div
-                        class="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border border-slate-100 bg-slate-100 flex items-center justify-center">
-                        <span class="text-lg font-bold text-slate-500">RA</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <p class="text-base font-bold text-slate-900">Rizky Abdullah</p>
-                        <p class="text-xs font-medium text-slate-500">NIS: 12345682</p>
-                    </div>
-                </div>
-                <div class="flex flex-col items-end gap-1">
-                    <span
-                        class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
-                        Izin
-                    </span>
-                    <span class="text-[10px] font-medium text-slate-400">--:--</span>
                 </div>
             </div>
         </div>
+
+        <script src="{{ url_for('static', filename='js/laporan.js') }}"></script>
         <!-- Sticky Bottom Action Bar -->
         <div
             class="fixed bottom-0 left-0 right-0 z-40 bg-surface-light/90 px-4 py-4 backdrop-blur-md border-t border-slate-200">

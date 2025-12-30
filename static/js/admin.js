@@ -102,70 +102,66 @@ function updatePrayerUI(timings) {
     let minDiff = Infinity;
 
     prayers.forEach((prayer, index) => {
-        // Update Time Text
+        // Update Text
         const timeElement = document.getElementById(`${prayer.id}-time`);
-        if (timeElement) {
-            timeElement.textContent = prayer.time;
-        }
+        if (timeElement) timeElement.textContent = prayer.time;
 
-        // Highlight Logic
+        // Logic for Active/Next Prayer
         const [hours, minutes] = prayer.time.split(':').map(Number);
-        const prayerTime = hours * 60 + minutes;
+        const prayerTimeMinutes = hours * 60 + minutes;
 
-        // If current time > prayer time, it's passed.
-        // We want the smallest positive difference.
+        let diff = prayerTimeMinutes - currentTime;
+        // If diff is negative, it means this prayer has passed for today
+        if (diff < 0) diff += 24 * 60;
 
-        let diff = prayerTime - currentTime;
-
-        // If diff is negative, it means passed today. Treat as tomorrow? 
-        // For simple "Next Prayer", we just look for first future time.
-
-        if (prayerTime >= currentTime) {
-            if (diff < minDiff) {
-                minDiff = diff;
-                nextPrayerIndex = index;
-            }
+        if (diff < minDiff) {
+            minDiff = diff;
+            nextPrayerIndex = index;
         }
     });
 
-    // If all passed (minDiff still Infinity), then next is Subuh (index 0 for tomorrow)
-    if (minDiff === Infinity) {
-        nextPrayerIndex = 0;
-    }
-
-    // Apply Styles
-    prayers.forEach((prayer, index) => {
-        const card = document.getElementById(`${prayer.id}-card`);
+    // Reset all cards
+    prayers.forEach(p => {
+        const card = document.getElementById(`${p.id}-card`);
         if (!card) return;
-
         const dot = card.querySelector('.indicator-dot');
         const label = card.querySelector('.label');
-        const time = document.querySelector(`#${prayer.id}-time`);
+        const time = document.getElementById(`${p.id}-time`);
 
-        if (index === nextPrayerIndex) {
-            // Highlight Next Prayer
-            dot.classList.remove('bg-slate-300', 'dark:bg-slate-600');
-            dot.classList.add('bg-primary', 'scale-125');
-
-            label.classList.remove('text-slate-500');
-            label.classList.add('text-primary', 'font-bold');
-
-            time.classList.add('text-primary');
-
-            card.classList.add('-translate-y-1');
-        } else {
-            // Reset
-            dot.classList.add('bg-slate-300', 'dark:bg-slate-600');
-            dot.classList.remove('bg-primary', 'scale-125');
-
-            label.classList.add('text-slate-500');
-            label.classList.remove('text-primary', 'font-bold');
-
-            time.classList.remove('text-primary');
-
-            card.classList.remove('-translate-y-1');
+        card.classList.remove('scale-110');
+        dot.classList.remove('w-3', 'h-3', 'bg-primary', 'shadow-glow', 'ring-4', 'ring-primary/20');
+        dot.classList.add('w-2', 'h-2', 'bg-slate-300', 'dark:bg-slate-600');
+        label.classList.remove('text-primary');
+        label.classList.add('text-slate-500');
+        if (time) {
+            time.classList.remove('text-primary', 'text-sm');
+            time.classList.add('text-xs', 'text-black');
         }
     });
+
+    // Highlight Next/Current Prayer
+    const activePrayer = prayers[nextPrayerIndex];
+    if (activePrayer) {
+        const activeCard = document.getElementById(`${activePrayer.id}-card`);
+        if (activeCard) {
+            const activeDot = activeCard.querySelector('.indicator-dot');
+            const activeLabel = activeCard.querySelector('.label');
+            const activeTime = document.getElementById(`${activePrayer.id}-time`);
+
+            activeCard.classList.add('scale-110');
+
+            activeDot.classList.remove('w-2', 'h-2', 'bg-slate-300', 'dark:bg-slate-600');
+            activeDot.classList.add('w-3', 'h-3', 'bg-primary', 'shadow-glow', 'ring-4', 'ring-primary/20');
+
+            activeLabel.classList.remove('text-slate-500');
+            activeLabel.classList.add('text-primary', 'font-bold');
+
+            if (activeTime) {
+                activeTime.classList.remove('text-xs', 'text-black');
+                activeTime.classList.add('text-sm', 'text-primary');
+            }
+        }
+    }
 }
 
 // Announcement Slider Logic

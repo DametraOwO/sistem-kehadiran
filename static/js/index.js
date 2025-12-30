@@ -92,7 +92,7 @@ function updatePrayerUI(timings) {
         label.classList.remove('text-primary');
         label.classList.add('text-slate-500');
         time.classList.remove('text-primary', 'text-sm');
-        time.classList.add('text-xs', 'text-slate-800', 'dark:text-white');
+        time.classList.add('text-xs', 'text-black');
     });
 
     // Highlight Next/Current Prayer
@@ -112,7 +112,7 @@ function updatePrayerUI(timings) {
             activeLabel.classList.remove('text-slate-500');
             activeLabel.classList.add('text-primary', 'font-bold');
 
-            activeTime.classList.remove('text-xs', 'text-slate-800', 'dark:text-white');
+            activeTime.classList.remove('text-xs', 'text-black');
             activeTime.classList.add('text-sm', 'text-primary');
         }
     }

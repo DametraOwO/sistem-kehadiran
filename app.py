@@ -390,7 +390,194 @@ def admin():
 @app.route('/laporan')
 @login_required
 def laporan():
-    return render_template('laporan.html')
+    db = get_db()
+    kelas_list = []
+    available_months = []
+    if db:
+        try:
+            cur = db.cursor(MySQLdb.cursors.DictCursor)
+            # Fetch classes
+            cur.execute("SELECT * FROM kelas ORDER BY nama_kelas ASC")
+            kelas_list = cur.fetchall()
+            
+            # Fetch available months from attendance
+            cur.execute("""
+                SELECT DISTINCT DATE_FORMAT(tanggal, '%Y-%m') as month_val, 
+                       DATE_FORMAT(tanggal, '%M %Y') as month_label 
+                FROM kehadiran 
+                ORDER BY tanggal DESC
+            """)
+            raw_months = cur.fetchall()
+            
+            # Translate to Indonesian
+            month_map = {
+                'January': 'Januari', 'February': 'Februari', 'March': 'Maret',
+                'April': 'April', 'May': 'Mei', 'June': 'Juni',
+                'July': 'Juli', 'August': 'Agustus', 'September': 'September',
+                'October': 'Oktober', 'November': 'November', 'December': 'Desember'
+            }
+            
+            available_months = []
+            for m in raw_months:
+                label = m['month_label']
+                for eng, ind in month_map.items():
+                    if eng in label:
+                        label = label.replace(eng, ind)
+                        break
+                available_months.append({
+                    'month_val': m['month_val'],
+                    'month_label': label
+                })
+            
+            cur.close()
+            db.close()
+        except Exception as e:
+            if db: db.close()
+            print(f"Error initializing laporan: {e}")
+            
+    # Calculate Academic Year & Semester
+    from datetime import datetime
+    now = datetime.now()
+    month = now.month
+    year = now.year
+    
+    if month >= 7:
+        semester = "Ganjil"
+        akad = f"{year}/{year + 1}"
+    else:
+        semester = "Genap"
+        akad = f"{year - 1}/{year}"
+            
+    return render_template('laporan.html', kelas_list=kelas_list, available_months=available_months, 
+                           current_semester=semester, current_akad=akad)
+
+@app.route('/api/laporan_stats')
+@login_required
+def api_laporan_stats():
+    month = request.args.get('month') # Format YYYY-MM
+    kelas_id = request.args.get('kelas_id')
+    search = request.args.get('search', '')
+    sort_by = request.args.get('sort', 'name_asc')
+    
+    if not month:
+        return jsonify({'success': False, 'message': 'Bulan harus dipilih'}), 400
+        
+    db = get_db()
+    if not db:
+        return jsonify({'success': False, 'message': 'Gagal menyambung database'}), 500
+        
+    try:
+        cur = db.cursor(MySQLdb.cursors.DictCursor)
+        from datetime import datetime, timedelta
+        
+        # Parse current month and previous month
+        current_date = datetime.strptime(month, '%Y-%m')
+        # Simple previous month calculation
+        first_of_month = current_date.replace(day=1)
+        prev_month_date = (first_of_month - timedelta(days=1)).replace(day=1)
+        prev_month = prev_month_date.strftime('%Y-%m')
+        
+        def get_stats(m, k_id):
+            query = """
+                SELECT 
+                    status, 
+                    COUNT(*) as count
+                FROM kehadiran kh
+                JOIN santri s ON kh.id_santri = s.id
+                WHERE DATE_FORMAT(kh.tanggal, '%%Y-%%m') = %s
+            """
+            params = [m]
+            if k_id and k_id != 'all':
+                query += " AND s.id_kelas = %s"
+                params.append(k_id)
+            query += " GROUP BY status"
+            
+            cur.execute(query, params)
+            rows = cur.fetchall()
+            
+            stats = {'Hadir': 0, 'Izin': 0, 'Sakit': 0, 'Alpha': 0, 'total': 0}
+            for r in rows:
+                stats[r['status']] = r['count']
+                stats['total'] += r['count']
+            
+            res = {}
+            for s in ['Hadir', 'Izin', 'Sakit', 'Alpha']:
+                pct = (stats[s] / stats['total'] * 100) if stats['total'] > 0 else 0
+                res[s] = {'count': stats[s], 'pct': round(pct, 1)}
+            res['total'] = stats['total']
+            return res
+
+        curr_stats = get_stats(month, kelas_id)
+        prev_stats = get_stats(prev_month, kelas_id)
+        
+        # Calculate trends
+        trends = {}
+        for s in ['Hadir', 'Izin', 'Sakit', 'Alpha']:
+            diff = curr_stats[s]['pct'] - prev_stats[s]['pct']
+            if diff > 0:
+                trends[s] = f"+{round(diff, 1)}%"
+                trends[s + '_status'] = 'up'
+            elif diff < 0:
+                trends[s] = f"{round(diff, 1)}%"
+                trends[s + '_status'] = 'down'
+            else:
+                trends[s] = "Stabil"
+                trends[s + '_status'] = 'stable'
+
+        # Fetch Detailed Student List for the month
+        list_query = """
+            SELECT 
+                s.id, s.nis, s.nama_lengkap, s.gender, k.nama_kelas,
+                COUNT(kh.id) as total_hari,
+                SUM(CASE WHEN kh.status = 'Hadir' THEN 1 ELSE 0 END) as hadir,
+                SUM(CASE WHEN kh.status = 'Izin' THEN 1 ELSE 0 END) as izin,
+                SUM(CASE WHEN kh.status = 'Sakit' THEN 1 ELSE 0 END) as sakit,
+                SUM(CASE WHEN kh.status = 'Alpha' THEN 1 ELSE 0 END) as alpha
+            FROM santri s
+            LEFT JOIN kelas k ON s.id_kelas = k.id
+            LEFT JOIN kehadiran kh ON s.id = kh.id_santri AND DATE_FORMAT(kh.tanggal, '%%Y-%%m') = %s
+            WHERE 1=1
+        """
+        list_params = [month]
+        
+        if kelas_id and kelas_id != 'all':
+            list_query += " AND s.id_kelas = %s"
+            list_params.append(kelas_id)
+            
+        if search:
+            list_query += " AND (s.nama_lengkap LIKE %s OR s.nis LIKE %s)"
+            list_params.extend([f"%{search}%", f"%{search}%"])
+            
+        list_query += " GROUP BY s.id"
+        
+        # Apply Sorting
+        sort_map = {
+            'name_asc': 'ORDER BY s.nama_lengkap ASC',
+            'name_desc': 'ORDER BY s.nama_lengkap DESC',
+            'hadir_desc': 'ORDER BY hadir DESC, s.nama_lengkap ASC',
+            'izin_desc': 'ORDER BY izin DESC, s.nama_lengkap ASC',
+            'sakit_desc': 'ORDER BY sakit DESC, s.nama_lengkap ASC',
+            'alpha_desc': 'ORDER BY alpha DESC, s.nama_lengkap ASC'
+        }
+        list_query += " " + sort_map.get(sort_by, sort_map['name_asc'])
+        
+        cur.execute(list_query, list_params)
+        students = cur.fetchall()
+        
+        cur.close()
+        db.close()
+        
+        return jsonify({
+            'success': True,
+            'stats': curr_stats,
+            'trends': trends,
+            'students': students
+        })
+    except Exception as e:
+        if db: db.close()
+        print(f"API Error: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 
 @app.route('/absensi')
 @login_required
