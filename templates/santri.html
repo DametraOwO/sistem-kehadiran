@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Data Siswa - MADRASAH DIGITAL</title>
+    <title>Kelola Data Santri - MADRASAH DIGITAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -103,7 +103,7 @@
                         <span class="material-symbols-outlined">arrow_back</span>
                     </a>
                     <div>
-                        <h1 class="text-2xl font-extrabold text-white tracking-tight">Data Siswa</h1>
+                        <h1 class="text-2xl font-extrabold text-white tracking-tight">Data Santri</h1>
                         <p class="text-white/80 text-xs font-medium uppercase tracking-widest">Manajemen Santri</p>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                 <button id="open-tambah-modal"
                     class="h-12 px-6 rounded-2xl bg-white text-primary font-bold shadow-xl shadow-black/10 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
                     <span class="material-symbols-outlined text-[20px]">person_add</span>
-                    <span class="hidden sm:inline">Tambah Siswa</span>
+                    <span class="hidden sm:inline">Tambah Santri</span>
                 </button>
             </div>
         </div>
@@ -142,7 +142,7 @@
                         <div class="relative flex-1 group">
                             <span
                                 class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">search</span>
-                            <input type="text" id="student-search" placeholder="Cari nama atau NIS siswa..."
+                            <input type="text" id="student-search" placeholder="Cari nama atau NIS santri..."
                                 class="w-full h-14 pl-12 pr-4 rounded-[20px] bg-white dark:bg-surface-dark border border-slate-100 dark:border-white/5 shadow-sm focus:ring-2 focus:ring-primary/50 text-sm outline-none transition-all placeholder:text-slate-400">
                         </div>
 
@@ -309,7 +309,7 @@
                                             <span
                                                 class="material-symbols-outlined text-slate-300 dark:text-slate-700 text-[40px]">group_off</span>
                                         </div>
-                                        <p class="text-slate-500 text-sm font-medium">Belum ada data siswa.</p>
+                                        <p class="text-slate-500 text-sm font-medium">Belum ada data santri.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -338,7 +338,7 @@
                         <span id="modal-icon" class="material-symbols-outlined text-[32px]">person_add</span>
                     </div>
                     <div>
-                        <h3 id="modal-title" class="text-xl font-bold dark:text-white">Tambah Siswa Baru</h3>
+                        <h3 id="modal-title" class="text-xl font-bold dark:text-white">Tambah Santri Baru</h3>
                         <p class="text-xs text-slate-500 font-medium">Lengkapi data santri dengan benar</p>
                     </div>
                 </div>
@@ -353,7 +353,7 @@
                 <form id="santri-form" action="{{ url_for('tambah_santri') }}" method="POST" class="space-y-5">
                     <div class="grid grid-cols-1 gap-5">
                         <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nomor Induk Siswa
+                            <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nomor Induk Santri
                                 (NIS)</label>
                             <input type="text" name="nis" id="form-nis" required placeholder="Contoh: 2023001"
                                 class="w-full h-14 px-5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 outline-none transition-all">
@@ -389,7 +389,7 @@
                     <!-- Submit -->
                     <button type="submit" id="form-submit-btn"
                         class="w-full h-14 mt-4 bg-primary hover:bg-primary-dark text-white font-bold rounded-2xl shadow-xl shadow-primary/20 transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-2">
-                        <span id="form-submit-text">Simpan Data Siswa</span>
+                        <span id="form-submit-text">Simpan Data Santri</span>
                         <span class="material-symbols-outlined text-[20px]">send</span>
                     </button>
                 </form>

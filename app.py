@@ -178,7 +178,8 @@ def admin():
     db = get_db()
     berita_list = []
     stats = {'hadir': 0, 'izin': 0, 'sakit': 0, 'alpha': 0, 
-             'hadir_pct': 0, 'izin_pct': 0, 'sakit_pct': 0, 'alpha_pct': 0}
+             'hadir_pct': 0, 'izin_pct': 0, 'sakit_pct': 0, 'alpha_pct': 0,
+             'total_kelas': 0, 'kelas_terisi': 0}
     
     if db:
         try:
@@ -221,6 +222,22 @@ def admin():
                 stats['izin_pct'] = round((stats['izin'] / total) * 100, 1)
                 stats['sakit_pct'] = round((stats['sakit'] / total) * 100, 1)
                 stats['alpha_pct'] = round((stats['alpha'] / total) * 100, 1)
+            
+            # Count Attendance Progress
+            cur.execute("SELECT COUNT(*) as total FROM kelas")
+            total_kelas = cur.fetchone()['total']
+            
+            # Count classes that have at least one attendance record today
+            cur.execute("""
+                SELECT COUNT(DISTINCT s.id_kelas) as terisi 
+                FROM kehadiran kh 
+                JOIN santri s ON kh.id_santri = s.id 
+                WHERE kh.tanggal = %s
+            """, (today,))
+            kelas_terisi = cur.fetchone()['terisi']
+            
+            stats['total_kelas'] = total_kelas
+            stats['kelas_terisi'] = kelas_terisi
             
             cur.close()
             db.close()
@@ -421,10 +438,10 @@ def tambah_santri():
             db.commit()
             cur.close()
             db.close()
-            flash(f'Siswa {nama} berhasil ditambahkan!', 'success')
+            flash(f'Santri {nama} berhasil ditambahkan!', 'success')
         except Exception as e:
             if db: db.close()
-            flash(f'Gagal menambah siswa: {str(e)}', 'danger')
+            flash(f'Gagal menambah santri: {str(e)}', 'danger')
     return redirect(url_for('santri'))
 
 @app.route('/edit_santri/<int:id>', methods=['POST'])
@@ -443,7 +460,7 @@ def edit_santri(id):
             # Check NIS uniqueness (excluding current student)
             cur.execute("SELECT id FROM santri WHERE nis = %s AND id != %s", (nis, id))
             if cur.fetchone():
-                flash(f'NIS {nis} sudah digunakan oleh siswa lain!', 'danger')
+                flash(f'NIS {nis} sudah digunakan oleh santri lain!', 'danger')
                 return redirect(url_for('santri'))
             
             cur.execute("""
@@ -488,7 +505,7 @@ def hapus_santri(id):
                 """, (session['admin_id'], f"Menghapus santri: {nama}", "santri", id))
                 
                 db.commit()
-                flash(f'Siswa {nama} berhasil dihapus!', 'success')
+                flash(f'Santri {nama} berhasil dihapus!', 'success')
             cur.close()
             db.close()
         except Exception as e:
@@ -577,7 +594,20 @@ def about():
 
 @app.route('/calendar')
 def calendar():
-    return render_template('calendar.html')
+    db = get_db()
+    kelas_list = []
+    if db:
+        try:
+            cur = db.cursor(MySQLdb.cursors.DictCursor)
+            cur.execute("SELECT * FROM kelas ORDER BY nama_kelas ASC")
+            kelas_list = cur.fetchall()
+            cur.close()
+            db.close()
+        except Exception as e:
+            if db: db.close()
+            print(f"Error fetching classes for calendar: {e}")
+            
+    return render_template('calendar.html', kelas_list=kelas_list)
 
 @app.route('/maintenance')
 def maintenance():
@@ -749,6 +779,144 @@ def tambah_berita():
         flash('Gagal menyambung ke database.', 'danger')
         
     return redirect(url_for('admin'))
+
+@app.route('/manage_jadwal')
+@login_required
+def manage_jadwal():
+    db = get_db()
+    jadwal_list = []
+    kelas_list = []
+    if db:
+        try:
+            cur = db.cursor(MySQLdb.cursors.DictCursor)
+            # Fetch Schedules
+            cur.execute("""
+                SELECT j.*, k.nama_kelas 
+                FROM jadwal j 
+                JOIN kelas k ON j.id_kelas = k.id 
+                ORDER BY FIELD(hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'), waktu_mulai ASC
+            """)
+            jadwal_list = cur.fetchall()
+            
+            # Fetch Classes for form
+            cur.execute("SELECT * FROM kelas ORDER BY nama_kelas ASC")
+            kelas_list = cur.fetchall()
+            
+            cur.close()
+            db.close()
+        except Exception as e:
+            if db: db.close()
+            print(f"Error fetching jadwal: {e}")
+            
+    return render_template('manage_jadwal.html', jadwal_list=jadwal_list, kelas_list=kelas_list)
+
+@app.route('/api/jadwal')
+def api_jadwal():
+    db = get_db()
+    jadwal_list = []
+    if db:
+        try:
+            cur = db.cursor(MySQLdb.cursors.DictCursor)
+            # Fetch Schedules with Class Names
+            cur.execute("""
+                SELECT j.*, k.nama_kelas 
+                FROM jadwal j 
+                JOIN kelas k ON j.id_kelas = k.id 
+                ORDER BY j.waktu_mulai ASC
+            """)
+            jadwal_list = cur.fetchall()
+            
+            # Convert time objects to string for JSON serialization
+            for jadwal in jadwal_list:
+                if 'waktu_mulai' in jadwal:
+                    jadwal['waktu_mulai'] = str(jadwal['waktu_mulai'])
+                if 'waktu_selesai' in jadwal:
+                    jadwal['waktu_selesai'] = str(jadwal['waktu_selesai'])
+            
+            cur.close()
+            db.close()
+            return jsonify({'success': True, 'data': jadwal_list})
+        except Exception as e:
+            if db: db.close()
+            print(f"Error fetching API jadwal: {e}")
+            return jsonify({'success': False, 'message': str(e)}), 500
+            
+    return jsonify({'success': False, 'message': 'Database connection failed'}), 500
+
+@app.route('/tambah_jadwal', methods=['POST'])
+@login_required
+def tambah_jadwal():
+    id_kelas = request.form.get('id_kelas')
+    hari = request.form.get('hari')
+    mata_pelajaran = request.form.get('mata_pelajaran')
+    waktu_mulai = request.form.get('waktu_mulai')
+    waktu_selesai = request.form.get('waktu_selesai')
+    keterangan = request.form.get('keterangan')
+    
+    db = get_db()
+    if db:
+        try:
+            cur = db.cursor()
+            cur.execute("""
+                INSERT INTO jadwal (id_kelas, hari, mata_pelajaran, waktu_mulai, waktu_selesai, keterangan) 
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (id_kelas, hari, mata_pelajaran, waktu_mulai, waktu_selesai, keterangan))
+            db.commit()
+            cur.close()
+            db.close()
+            flash('Jadwal berhasil ditambahkan!', 'success')
+        except Exception as e:
+            if db: db.close()
+            flash(f'Gagal menambah jadwal: {str(e)}', 'danger')
+            
+    return redirect(url_for('manage_jadwal'))
+
+@app.route('/edit_jadwal/<int:id>', methods=['POST'])
+@login_required
+def edit_jadwal(id):
+    id_kelas = request.form.get('id_kelas')
+    hari = request.form.get('hari')
+    mata_pelajaran = request.form.get('mata_pelajaran')
+    waktu_mulai = request.form.get('waktu_mulai')
+    waktu_selesai = request.form.get('waktu_selesai')
+    keterangan = request.form.get('keterangan')
+    
+    db = get_db()
+    if db:
+        try:
+            cur = db.cursor()
+            cur.execute("""
+                UPDATE jadwal 
+                SET id_kelas=%s, hari=%s, mata_pelajaran=%s, waktu_mulai=%s, waktu_selesai=%s, keterangan=%s 
+                WHERE id=%s
+            """, (id_kelas, hari, mata_pelajaran, waktu_mulai, waktu_selesai, keterangan, id))
+            db.commit()
+            cur.close()
+            db.close()
+            flash('Jadwal berhasil diperbarui!', 'success')
+        except Exception as e:
+            if db: db.close()
+            flash(f'Gagal memperbarui jadwal: {str(e)}', 'danger')
+            
+    return redirect(url_for('manage_jadwal'))
+
+@app.route('/hapus_jadwal/<int:id>')
+@login_required
+def hapus_jadwal(id):
+    db = get_db()
+    if db:
+        try:
+            cur = db.cursor()
+            cur.execute("DELETE FROM jadwal WHERE id = %s", (id,))
+            db.commit()
+            cur.close()
+            db.close()
+            flash('Jadwal berhasil dihapus!', 'success')
+        except Exception as e:
+            if db: db.close()
+            flash(f'Gagal menghapus jadwal: {str(e)}', 'danger')
+            
+    return redirect(url_for('manage_jadwal'))
 
 if __name__ == '__main__':
     app.run(debug=True)

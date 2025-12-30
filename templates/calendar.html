@@ -101,13 +101,18 @@
 
             <!-- Class Selection Dropdown -->
             <div class="relative">
-                <div
-                    class="w-full bg-white/20 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 flex items-center justify-between text-white cursor-pointer hover:bg-white/30 transition-colors">
-                    <div class="flex items-center gap-3">
-                        <span class="material-symbols-outlined text-white/80 text-[20px]">school</span>
-                        <span class="font-bold text-sm">Kelas VII-A (Putra)</span>
-                    </div>
-                    <span class="material-symbols-outlined">expand_more</span>
+                <div class="relative">
+                    <span
+                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/80 text-[20px] pointer-events-none">school</span>
+                    <select id="class-filter"
+                        class="w-full appearance-none bg-white/20 backdrop-blur-md border border-white/10 rounded-xl pl-12 pr-10 py-3 text-white font-bold text-sm cursor-pointer hover:bg-white/30 transition-colors focus:outline-none focus:ring-2 focus:ring-white/20 [&>option]:text-slate-800">
+                        <option value="">Semua Kelas</option>
+                        {% for k in kelas_list %}
+                        <option value="{{ k.nama_kelas }}">{{ k.nama_kelas }}</option>
+                        {% endfor %}
+                    </select>
+                    <span
+                        class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-white pointer-events-none">expand_more</span>
                 </div>
             </div>
         </div>

@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // === Modal Logic ===
     const showModal = (mode = 'add', data = {}) => {
         if (mode === 'edit') {
-            modalTitle.textContent = 'Edit Data Siswa';
+            modalTitle.textContent = 'Edit Data Santri';
             modalIcon.textContent = 'edit';
             formSubmitText.textContent = 'Simpan Perubahan';
             form.action = `/edit_santri/${data.id}`;
@@ -31,9 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
             formGender.value = data.gender || 'L';
             formKelas.value = data.kelas || '';
         } else {
-            modalTitle.textContent = 'Tambah Siswa Baru';
+            modalTitle.textContent = 'Tambah Santri Baru';
             modalIcon.textContent = 'person_add';
-            formSubmitText.textContent = 'Simpan Data Siswa';
+            formSubmitText.textContent = 'Simpan Data Santri';
             form.action = '/tambah_santri';
             form.reset();
         }
