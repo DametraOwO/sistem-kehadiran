@@ -347,6 +347,7 @@
             <!-- Modal Body -->
             <div class="p-8 pt-4">
                 <form id="santri-form" action="{{ url_for('tambah_santri') }}" method="POST" class="space-y-5">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     <div class="grid grid-cols-1 gap-5">
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nomor Induk Santri

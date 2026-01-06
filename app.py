@@ -7,8 +7,13 @@ import os
 import calendar
 
 
+from flask_wtf.csrf import CSRFProtect
+
 app = Flask(__name__)
-app.secret_key = 'supersecretkey' # Change this for production
+# Secure Secret Key: Use environment variable or fallback to dev key (WARN: Change in production)
+app.secret_key = os.environ.get('SECRET_KEY', 'default_dev_secret_key_change_me')
+csrf = CSRFProtect(app)
+
 from datetime import timedelta
 app.permanent_session_lifetime = timedelta(days=30)
 
@@ -1617,4 +1622,6 @@ def reset_password():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Debug mode controlled by env var (Default: False for safety)
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(debug=debug_mode)

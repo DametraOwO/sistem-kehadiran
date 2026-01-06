@@ -121,6 +121,11 @@ document.addEventListener('DOMContentLoaded', function () {
         forgotMessage.classList.add("hidden");
     }
 
+    // Helper to get CSRF Token
+    function getCsrfToken() {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    }
+
     // Main Action Handler
     forgotActionBtn.addEventListener("click", async () => {
         if (!isVerified) {
@@ -140,7 +145,10 @@ document.addEventListener('DOMContentLoaded', function () {
             try {
                 const res = await fetch('/api/verify_reset', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
                     body: JSON.stringify({ nama, email })
                 });
                 const data = await res.json();
@@ -192,7 +200,10 @@ document.addEventListener('DOMContentLoaded', function () {
             try {
                 const res = await fetch('/api/reset_password', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
                     body: JSON.stringify({
                         nama: forgotNama.value,
                         email: forgotEmail.value,

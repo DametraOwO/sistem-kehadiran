@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Catat Kehadiran {{ kelas.nama_kelas }} - MADRASAH DIGITAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
@@ -214,9 +215,13 @@
                     `;
 
                     try {
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                         const response = await fetch('/simpan_absensi', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken
+                            },
                             body: JSON.stringify({ attendance })
                         });
 

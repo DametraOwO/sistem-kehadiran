@@ -207,6 +207,7 @@
                 <div class="p-6 max-h-[80vh] overflow-y-auto no-scrollbar">
                     <form action="{{ url_for('tambah_berita') }}" method="POST" enctype="multipart/form-data"
                         id="news-form" class="flex flex-col gap-5">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                         <input type="hidden" name="berita_id" id="modal-berita-id">
                         <div class="flex flex-col gap-1.5">
                             <label class="text-slate-700 text-sm font-semibold">Judul

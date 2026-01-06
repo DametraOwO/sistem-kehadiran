@@ -181,7 +181,7 @@
                                     <td class="px-6 py-4 text-right">
                                         <div class="flex items-center justify-end gap-2">
                                             <button
-                                                onclick="editJadwal({{ j.id }}, {{ j.id_kelas }}, '{{ j.hari }}', '{{ j.mata_pelajaran }}', '{{ j.waktu_mulai }}', '{{ j.waktu_selesai }}', '{{ j.keterangan or '' }}')"
+                                                onclick="editJadwal({{ j.id }}, {{ j.id_kelas }}, '{{ j.hari }}', '{{ j.mata_pelajaran }}', '{{ j.waktu_mulai }}', '{{ j.waktu_selesai }}', '{{ j.keterangan if j.keterangan else '' }}')"
                                                 class="h-9 w-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-primary/10 hover:text-primary transition-all">
                                                 <span class="material-symbols-outlined text-[18px]">edit</span>
                                             </button>
@@ -239,6 +239,7 @@
                 <!-- Modal Body -->
                 <div class="p-6">
                     <form id="jadwal-form" action="{{ url_for('tambah_jadwal') }}" method="POST" class="space-y-4">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="id" id="form-id">
 
                         <div class="grid grid-cols-2 gap-4">
