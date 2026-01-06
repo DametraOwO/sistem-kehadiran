@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from functools import wraps
 import os
 import calendar
-import MySQLdb
+
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey' # Change this for production
