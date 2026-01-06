@@ -36,11 +36,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileNamePreview = document.getElementById('file-name-preview');
     const fileNameText = document.getElementById('file-name-text');
 
+    // Modal Edit Elements
+    const form = document.getElementById('news-form');
+    const modalTitle = document.getElementById('modal-title');
+    const modalIcon = document.getElementById('modal-icon');
+    const modalJudul = document.getElementById('modal-judul');
+    const modalKategori = document.getElementById('modal-kategori');
+    const modalKonten = document.getElementById('modal-konten');
+    const modalBeritaId = document.getElementById('modal-berita-id');
+    const modalSubmitText = document.getElementById('modal-submit-text');
+    const editBtns = document.querySelectorAll('.edit-news-btn');
+
     if (openModalBtn && modal && backdrop && content) {
-        const showModal = () => {
+        const showModal = (mode = 'add', data = {}) => {
+            if (mode === 'edit') {
+                modalTitle.textContent = 'Edit Postingan';
+                modalIcon.textContent = 'edit';
+                modalSubmitText.textContent = 'Simpan Perubahan';
+                modalJudul.value = data.judul || '';
+                modalKategori.value = data.kategori || 'Berita Madrasah';
+                modalKonten.value = data.konten || '';
+                modalBeritaId.value = data.id || '';
+                form.action = `/edit_berita/${data.id}`;
+            } else {
+                modalTitle.textContent = 'Buat Posting Baru';
+                modalIcon.textContent = 'edit_square';
+                modalSubmitText.textContent = 'Publikasikan Sekarang';
+                form.reset();
+                modalBeritaId.value = '';
+                form.action = '/tambah_berita';
+                if (fileNamePreview) fileNamePreview.classList.add('hidden');
+            }
+
             modal.classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
-            // Trigger reflow for animation
             void modal.offsetWidth;
             backdrop.classList.add('opacity-100');
             content.classList.remove('translate-y-full');
@@ -58,9 +87,44 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 300);
         };
 
-        openModalBtn.addEventListener('click', showModal);
+        openModalBtn.addEventListener('click', () => showModal('add'));
         closeModalBtn.addEventListener('click', hideModal);
         backdrop.addEventListener('click', hideModal);
+
+        // Add Listeners to Edit Buttons
+        editBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const data = {
+                    id: btn.dataset.id,
+                    judul: btn.dataset.judul,
+                    konten: btn.dataset.konten,
+                    kategori: btn.dataset.kategori
+                };
+                showModal('edit', data);
+            });
+        });
+
+        // Add Listeners to Delete Buttons
+        const deleteBtns = document.querySelectorAll('.delete-news-btn');
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const beritaId = btn.dataset.id;
+                const judul = btn.dataset.judul;
+
+                if (confirm(`Apakah Anda yakin ingin menghapus berita "${judul}"?`)) {
+                    const deleteForm = document.createElement('form');
+                    deleteForm.method = 'POST';
+                    deleteForm.action = `/hapus_berita/${beritaId}`;
+                    document.body.appendChild(deleteForm);
+                    deleteForm.submit();
+                }
+            });
+        });
 
         // Image Preview Logic
         if (imageInput) {

@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -26,6 +27,7 @@
 
             .print-break-inside-avoid {
                 break-inside: avoid;
+                page-break-inside: avoid;
             }
 
             body {
@@ -69,21 +71,28 @@
     <div
         class="no-print bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-50 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-4">
-            <button onclick="window.close()"
+            <a href="{{ url_for('laporan') }}"
                 class="p-2 hover:bg-slate-100 rounded-full transition-colors flex items-center justify-center">
                 <span class="material-symbols-outlined">close</span>
-            </button>
+            </a>
             <div>
                 <h1 class="text-sm font-bold text-slate-900">Rekap Laporan Kehadiran</h1>
                 <p class="text-[10px] text-slate-500 uppercase font-bold">{{ current_month_label }} - {{ kelas_nama }}
                 </p>
             </div>
         </div>
-        <button onclick="window.print()"
-            class="flex items-center gap-2 bg-[#14b881] text-white px-6 py-2 rounded-xl font-bold shadow-lg shadow-[#14b881]/20 hover:bg-[#0f9669] transition-all">
-            <span class="material-symbols-outlined">print</span>
-            <span>Cetak / Simpan PDF</span>
-        </button>
+        <div class="flex items-center gap-3">
+            <button onclick="window.print()"
+                class="flex items-center justify-center bg-white border border-slate-200 text-slate-700 w-10 h-10 rounded-xl font-bold hover:bg-slate-50 transition-all"
+                title="Cetak">
+                <span class="material-symbols-outlined">print</span>
+            </button>
+            <button id="download-btn" onclick="downloadPDF(this)"
+                class="flex items-center justify-center bg-[#14b881] text-white w-10 h-10 rounded-xl font-bold shadow-lg shadow-[#14b881]/20 hover:bg-[#0f9669] transition-all"
+                title="Unduh PDF">
+                <span class="material-symbols-outlined">download</span>
+            </button>
+        </div>
     </div>
 
     <!-- Wrapper for fixed document feel on mobile -->
@@ -259,6 +268,120 @@
                         }
                     }
                 }
+            }
+        </script>
+        <script>
+            function downloadPDF(btn) {
+                // 1. Show Loading State
+                if (!btn) btn = document.getElementById('download-btn');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span>';
+                btn.disabled = true;
+
+                // 2. Clone content
+                const originalElement = document.querySelector('.w-\\[1100px\\]');
+                const clone = originalElement.cloneNode(true);
+
+                // 3. Create CLEAN Overlay (A4 Landscape Dimensions)
+                // User requested: "Remove any gaps". We set it to strict A4 width.
+                const overlay = document.createElement('div');
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '297mm'; // Exact A4 Landscape Width
+                overlay.style.height = '100vh';
+                overlay.style.backgroundColor = 'white';
+                overlay.style.zIndex = '99999';
+                overlay.style.overflow = 'hidden';
+                overlay.style.display = 'block';
+
+                // Paper container
+                const paper = document.createElement('div');
+                paper.style.width = '100%';
+                paper.style.backgroundColor = 'white';
+                paper.style.padding = '10mm'; // Internal padding instead of margins
+                paper.style.boxSizing = 'border-box';
+
+                paper.appendChild(clone);
+                overlay.appendChild(paper);
+                document.body.appendChild(overlay);
+
+                // 4. Transform Clone for Print
+
+                // Layout: Remove web styles (fixed width, margins)
+                clone.classList.remove('w-[1100px]', 'my-8', 'p-10', 'shadow-xl', 'mx-auto', 'min-h-screen');
+                clone.classList.add('w-full');
+
+                // Directive: "1 page 1 class"
+                // Find all class groups (div.mb-12)
+                const classGroups = clone.querySelectorAll('.mb-12');
+                classGroups.forEach((group, index) => {
+                    // Remove bottom margin to save space
+                    group.classList.remove('mb-12');
+                    group.classList.add('mb-4');
+                    // Force page break after each group, except the last one
+                    if (index < classGroups.length - 1) {
+                        group.style.pageBreakAfter = 'always';
+                    }
+                });
+
+                // Styling: Thinner borders
+                const borderElements = clone.querySelectorAll('.border-2');
+                borderElements.forEach(el => {
+                    el.classList.remove('border-2');
+                    el.classList.add('border'); // 1px
+                    el.style.borderColor = '#000';
+                });
+
+                // Styling: Transparent headers
+                const headerRows = clone.querySelectorAll('thead tr, thead th');
+                headerRows.forEach(el => {
+                    el.classList.remove('bg-slate-100', 'bg-slate-50', 'bg-green-50', 'bg-blue-50', 'bg-yellow-50', 'bg-red-50');
+                    el.style.backgroundColor = 'transparent';
+                });
+
+                // Fix: Remove Sticky Headers
+                const stickies = clone.querySelectorAll('.sticky, .fixed');
+                stickies.forEach(el => {
+                    el.classList.remove('sticky', 'fixed', 'top-0', 'z-50');
+                    el.style.position = 'static';
+                });
+
+                // Filename
+                const monthLabel = "{{ current_month_label }}";
+                const filename = `Laporan Rekapitulasi Kehadiran Santri Madrasah Al-Hidayah ${monthLabel}.pdf`;
+
+                // 5. PDF Generation
+                const opt = {
+                    // Minimize margins as we use internal padding, but add Top margin to prevent drift
+                    margin: [10, 0, 0, 0],
+                    filename: filename,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        scrollY: 0,
+                        x: 0,
+                        y: 0,
+                        // Force canvas to match overlay width exactly (~1122px)
+                        windowWidth: 1123
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+                    pagebreak: { mode: ['css', 'legacy'] }
+                };
+
+                html2pdf().set(opt).from(paper).save().then(() => {
+                    document.body.removeChild(overlay);
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                }).catch(err => {
+                    console.error(err);
+                    document.body.removeChild(overlay);
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                    alert("Gagal mengunduh PDF.");
+                });
             }
         </script>
 </body>

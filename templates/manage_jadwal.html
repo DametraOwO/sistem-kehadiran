@@ -75,11 +75,13 @@
                         </p>
                     </div>
                 </div>
+                {% if session['admin_role'] != 'Ketua Murid' %}
                 <button id="open-tambah-modal"
                     class="h-12 px-6 rounded-2xl bg-white text-primary font-bold shadow-xl shadow-black/10 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
                     <span class="material-symbols-outlined text-[20px]">calendar_add_on</span>
                     <span class="">Tambah Jadwal</span>
                 </button>
+                {% endif %}
             </div>
         </div>
 
@@ -137,9 +139,11 @@
                                     <th
                                         class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                                         Kelas</th>
+                                    {% if session['admin_role'] != 'Ketua Murid' %}
                                     <th
                                         class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest text-right">
                                         Aksi</th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody id="jadwal-table-body" class="divide-y divide-slate-50">
@@ -173,6 +177,7 @@
                                     <td class="px-6 py-4 text-sm font-bold text-primary">
                                         {{ j.nama_kelas }}
                                     </td>
+                                    {% if session['admin_role'] != 'Ketua Murid' %}
                                     <td class="px-6 py-4 text-right">
                                         <div class="flex items-center justify-end gap-2">
                                             <button
@@ -187,6 +192,7 @@
                                             </a>
                                         </div>
                                     </td>
+                                    {% endif %}
                                 </tr>
                                 {% else %}
                                 <tr>

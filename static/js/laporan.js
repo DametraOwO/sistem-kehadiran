@@ -240,19 +240,18 @@ document.addEventListener('DOMContentLoaded', function () {
         debounceTimer = setTimeout(fetchLaporan, 300);
     });
 
-    // Rekap Download/Print
-    const rekapPrintBtn = document.getElementById('rekap-print-btn');
-    const rekapDownloadBtn = document.getElementById('rekap-download-btn');
+    // Rekap Navigation
+    const generateRekapBtn = document.getElementById('generate-rekap-btn');
 
-    function openRekap() {
-        const month = monthSelect.value;
-        const kelasId = kelasSelect.value;
-        const url = `/rekap_laporan?month=${month}&kelas_id=${kelasId}&sort=${currentSort}`;
-        window.open(url, '_blank');
+    if (generateRekapBtn) {
+        generateRekapBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const month = monthSelect.value;
+            const kelasId = kelasSelect.value;
+            const url = `/rekap_laporan?month=${month}&kelas_id=${kelasId}&sort=${currentSort}`;
+            window.location.href = url;
+        });
     }
-
-    if (rekapPrintBtn) rekapPrintBtn.addEventListener('click', openRekap);
-    if (rekapDownloadBtn) rekapDownloadBtn.addEventListener('click', openRekap);
 
     // Initial Fetch
     fetchLaporan();

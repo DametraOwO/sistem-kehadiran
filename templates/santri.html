@@ -95,11 +95,13 @@
                     </div>
                 </div>
 
+                {% if session['admin_role'] != 'Ketua Murid' %}
                 <button id="open-tambah-modal"
                     class="h-12 px-6 rounded-2xl bg-white text-primary font-bold shadow-xl shadow-black/10 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
                     <span class="material-symbols-outlined text-[20px]">person_add</span>
                     <span class="hidden sm:inline">Tambah Santri</span>
                 </button>
+                {% endif %}
             </div>
         </div>
 
@@ -239,9 +241,11 @@
                                 <th
                                     class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">
                                     Kelas</th>
+                                {% if session['admin_role'] != 'Ketua Murid' %}
                                 <th
                                     class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider text-center bg-slate-50">
                                     Aksi</th>
+                                {% endif %}
                             </tr>
                         </thead>
                         <tbody id="student-table-body" class="divide-y divide-slate-100">
@@ -273,6 +277,7 @@
                                     <span class="text-sm font-medium text-slate-600">{{
                                         s.nama_kelas if s.nama_kelas else 'Tanpa Kelas' }}</span>
                                 </td>
+                                {% if session['admin_role'] != 'Ketua Murid' %}
                                 <td class="px-6 py-4">
                                     <div class="flex items-center justify-center gap-2">
                                         <button
@@ -289,6 +294,7 @@
                                         </a>
                                     </div>
                                 </td>
+                                {% endif %}
                             </tr>
                             {% endfor %}
                             {% else %}

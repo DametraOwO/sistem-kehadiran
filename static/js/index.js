@@ -56,27 +56,47 @@ function updatePrayerUI(timings) {
 
     const now = new Date();
     const currentTime = now.getHours() * 60 + now.getMinutes();
-    let nextPrayerIndex = 0;
-    let minDiff = Infinity;
-
-    prayers.forEach((prayer, index) => {
-        // Update Text
+    let highlightIndex = -1;
+    // 1. Update all prayer time texts first
+    prayers.forEach((prayer) => {
         const timeElement = document.getElementById(`${prayer.id}-time`);
         if (timeElement) timeElement.textContent = prayer.time;
+    });
 
-        // Logic for Active/Next Prayer
+    // 2. Check for "recently started" (last 30 mins)
+    prayers.forEach((prayer, index) => {
         const [hours, minutes] = prayer.time.split(':').map(Number);
         const prayerTimeMinutes = hours * 60 + minutes;
+        let elapsed = currentTime - prayerTimeMinutes;
 
-        let diff = prayerTimeMinutes - currentTime;
-        // If diff is negative, it means this prayer has passed for today
-        if (diff < 0) diff += 24 * 60;
+        // Handle case where it's early morning (e.g. 00:05) 
+        // and we check if Isya from yesterday is still within 30 mins
+        if (elapsed < 0) {
+            let elapsedYesterday = (1440 - prayerTimeMinutes) + currentTime;
+            if (elapsedYesterday < 30) elapsed = elapsedYesterday;
+        }
 
-        if (diff < minDiff) {
-            minDiff = diff;
-            nextPrayerIndex = index;
+        if (elapsed >= 0 && elapsed < 30) {
+            highlightIndex = index;
         }
     });
+
+    // 2. If no "recent" prayer started within 30 mins, focus on the upcoming one
+    if (highlightIndex === -1) {
+        let minDiff = Infinity;
+        prayers.forEach((prayer, index) => {
+            const [hours, minutes] = prayer.time.split(':').map(Number);
+            const prayerTimeMinutes = hours * 60 + minutes;
+
+            let diff = prayerTimeMinutes - currentTime;
+            if (diff < 0) diff += 1440;
+
+            if (diff < minDiff) {
+                minDiff = diff;
+                highlightIndex = index;
+            }
+        });
+    }
 
     // Reset all cards
     prayers.forEach(p => {
@@ -96,7 +116,7 @@ function updatePrayerUI(timings) {
     });
 
     // Highlight Next/Current Prayer
-    const activePrayer = prayers[nextPrayerIndex];
+    const activePrayer = prayers[highlightIndex];
     if (activePrayer) {
         const activeCard = document.getElementById(`${activePrayer.id}-card`);
         if (activeCard) {

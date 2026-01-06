@@ -9,6 +9,8 @@ import MySQLdb
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey' # Change this for production
+from datetime import timedelta
+app.permanent_session_lifetime = timedelta(days=30)
 
 # Upload Configuration
 UPLOAD_FOLDER = 'static/uploads/berita'
@@ -88,6 +90,10 @@ def index():
     jadwal_hari_ini = []
     active_jadwal = [] # Initialized early to prevent UnboundLocalError
     status_sekolah = "Tidak ada jadwal hari ini" # Default
+    
+    # Redirect if already logged in
+    if session.get('logged_in'):
+        return redirect(url_for('admin'))
     
     if db:
         try:
@@ -206,6 +212,9 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if session.get('logged_in'):
+        return redirect(url_for('admin'))
+        
     if request.method == 'POST':
         identifier = request.form['identifier']
         password = request.form['password']
@@ -223,6 +232,7 @@ def login():
             db.close()
             
             if user and check_password_hash(user[1], password):
+                session.permanent = True
                 session['logged_in'] = True
                 session['admin_id'] = user[0]
                 session['admin_name'] = user[2]
@@ -267,7 +277,12 @@ def register():
         flash('Akun berhasil dibuat! Silakan masuk.', 'success')
     except Exception as e:
         if db: db.close()
-        flash(f'Pendaftaran gagal: {str(e)}', 'danger')
+        # Handle duplicate entry error (MySQL error 1062)
+        error_msg = str(e)
+        if "1062" in error_msg and "email" in error_msg:
+            flash('Email tidak dapat digunakan karena sudah terdaftar.', 'danger')
+        else:
+            flash(f'Pendaftaran gagal: {error_msg}', 'danger')
         print(f"Registration Error: {e}")
         
     return redirect(url_for('login'))
@@ -373,7 +388,7 @@ def admin():
                 SELECT aksi, TIME_FORMAT(waktu, '%H:%i') as waktu_formatted 
                 FROM log_aktivitas 
                 ORDER BY waktu DESC 
-                LIMIT 10
+                LIMIT 4
             """)
             recent_logs = cur.fetchall()
             
@@ -906,6 +921,10 @@ def santri():
 @app.route('/tambah_santri', methods=['POST'])
 @login_required
 def tambah_santri():
+    if session.get('admin_role') == 'Ketua Murid':
+        flash('Anda tidak memiliki akses untuk menambah data santri.', 'danger')
+        return redirect(url_for('santri'))
+
     nis = request.form['nis']
     nama = request.form['nama_lengkap']
     gender = request.form['gender']
@@ -928,12 +947,6 @@ def tambah_santri():
             """, (nis, nama, gender, id_kelas))
             new_id = cur.lastrowid
             
-            # Log activity
-            cur.execute("""
-                INSERT INTO log_aktivitas (admin_id, aksi, tabel_terkait, data_id) 
-                VALUES (%s, %s, %s, %s)
-            """, (session['admin_id'], f"Menambah santri: {nama}", "santri", new_id))
-            
             db.commit()
             cur.close()
             db.close()
@@ -946,6 +959,10 @@ def tambah_santri():
 @app.route('/edit_santri/<int:id>', methods=['POST'])
 @login_required
 def edit_santri(id):
+    if session.get('admin_role') == 'Ketua Murid':
+        flash('Anda tidak memiliki akses untuk mengubah data santri.', 'danger')
+        return redirect(url_for('santri'))
+
     nis = request.form['nis']
     nama = request.form['nama_lengkap']
     gender = request.form['gender']
@@ -968,12 +985,6 @@ def edit_santri(id):
                 WHERE id = %s
             """, (nis, nama, gender, id_kelas, id))
             
-            # Log activity
-            cur.execute("""
-                INSERT INTO log_aktivitas (admin_id, aksi, tabel_terkait, data_id) 
-                VALUES (%s, %s, %s, %s)
-            """, (session['admin_id'], f"Mengubah data santri: {nama}", "santri", id))
-            
             db.commit()
             cur.close()
             db.close()
@@ -986,6 +997,10 @@ def edit_santri(id):
 @app.route('/hapus_santri/<int:id>')
 @login_required
 def hapus_santri(id):
+    if session.get('admin_role') == 'Ketua Murid':
+        flash('Anda tidak memiliki akses untuk menghapus data santri.', 'danger')
+        return redirect(url_for('santri'))
+
     db = get_db()
     if db:
         try:
@@ -996,13 +1011,6 @@ def hapus_santri(id):
             if santri:
                 nama = santri[0]
                 cur.execute("DELETE FROM santri WHERE id = %s", (id,))
-                
-                # Log activity
-                cur.execute("""
-                    INSERT INTO log_aktivitas (admin_id, aksi, tabel_terkait, data_id) 
-                    VALUES (%s, %s, %s, %s)
-                """, (session['admin_id'], f"Menghapus santri: {nama}", "santri", id))
-                
                 db.commit()
                 flash(f'Santri {nama} berhasil dihapus!', 'success')
             cur.close()
@@ -1039,12 +1047,14 @@ def update_profil():
     email = request.form['email']
     gender = request.form['gender']
     new_password = request.form.get('new_password')
+    current_password = request.form.get('current_password')
     
     db = get_db()
     if db:
         try:
             cur = db.cursor(MySQLdb.cursors.DictCursor)
-            cur.execute("SELECT foto_profil FROM admins WHERE id = %s", (admin_id,))
+            # Fetch current photo and password hash
+            cur.execute("SELECT foto_profil, password_hash FROM admins WHERE id = %s", (admin_id,))
             current_admin = cur.fetchone()
             
             filename = current_admin['foto_profil']
@@ -1061,6 +1071,15 @@ def update_profil():
                     file.save(os.path.join(app.config['UPLOAD_PROFIL_FOLDER'], filename))
 
             if new_password and new_password.strip() != '':
+                # Require Current Password for verification
+                if not current_password:
+                    flash('Harap masukkan kata sandi saat ini untuk mengubah kata sandi.', 'warning')
+                    return redirect(url_for('profil'))
+                
+                if not check_password_hash(current_admin['password_hash'], current_password):
+                    flash('Kata sandi saat ini salah!', 'danger')
+                    return redirect(url_for('profil'))
+
                 pass_hash = generate_password_hash(new_password)
                 cur.execute("""
                     UPDATE admins 
@@ -1083,7 +1102,11 @@ def update_profil():
             flash('Profil berhasil diperbarui!', 'success')
         except Exception as e:
             if db: db.close()
-            flash(f'Gagal memperbarui profil: {str(e)}', 'danger')
+            error_msg = str(e)
+            if "1062" in error_msg and "email" in error_msg:
+                flash('Email tidak dapat digunakan karena sudah terdaftar.', 'danger')
+            else:
+                flash(f'Gagal memperbarui profil: {error_msg}', 'danger')
             
     return redirect(url_for('profil'))
 
@@ -1165,6 +1188,10 @@ def berita_detail(id):
 @app.route('/edit_berita/<int:id>', methods=['POST'])
 @login_required
 def edit_berita(id):
+    if session.get('admin_role') == 'Ketua Murid':
+        flash('Anda tidak memiliki akses untuk mengubah berita.', 'danger')
+        return redirect(url_for('semua_berita'))
+
     judul = request.form['judul']
     konten = request.form['konten']
     admin_id = session.get('admin_id')
@@ -1173,11 +1200,14 @@ def edit_berita(id):
     if db:
         try:
             cur = db.cursor(MySQLdb.cursors.DictCursor)
-            # Verify ownership
+            # Verify ownership or admin role
             cur.execute("SELECT penulis_id, gambar FROM berita WHERE id = %s", (id,))
             berita = cur.fetchone()
             
-            if not berita or berita['penulis_id'] != admin_id:
+            is_admin = session.get('admin_role') == 'Admin'
+            is_owner = berita and berita['penulis_id'] == admin_id
+
+            if not berita or (not is_admin and not is_owner):
                 cur.close()
                 db.close()
                 flash('Anda tidak memiliki izin untuk mengedit berita ini.', 'danger')
@@ -1212,16 +1242,23 @@ def edit_berita(id):
 @app.route('/hapus_berita/<int:id>', methods=['POST'])
 @login_required
 def hapus_berita(id):
+    if session.get('admin_role') == 'Ketua Murid':
+        flash('Anda tidak memiliki akses untuk menghapus berita.', 'danger')
+        return redirect(url_for('semua_berita'))
+
     admin_id = session.get('admin_id')
     db = get_db()
     if db:
         try:
             cur = db.cursor(MySQLdb.cursors.DictCursor)
-            # Verify ownership
+            # Verify ownership or admin role
             cur.execute("SELECT penulis_id, gambar FROM berita WHERE id = %s", (id,))
             berita = cur.fetchone()
             
-            if not berita or berita['penulis_id'] != admin_id:
+            is_admin = session.get('admin_role') == 'Admin'
+            is_owner = berita and berita['penulis_id'] == admin_id
+            
+            if not berita or (not is_admin and not is_owner):
                 cur.close()
                 db.close()
                 flash('Anda tidak memiliki izin untuk menghapus berita ini.', 'danger')
@@ -1247,6 +1284,10 @@ def hapus_berita(id):
 @app.route('/tambah_berita', methods=['POST'])
 @login_required
 def tambah_berita():
+    if session.get('admin_role') == 'Ketua Murid':
+        flash('Anda tidak memiliki akses untuk menambah berita.', 'danger')
+        return redirect(url_for('semua_berita'))
+
     judul = request.form['judul']
     konten = request.form['konten']
     penulis_id = session.get('admin_id')
@@ -1354,7 +1395,11 @@ def api_jadwal():
             
             cur.close()
             db.close()
-            return jsonify({'success': True, 'data': jadwal_list})
+            return jsonify({
+                'success': True, 
+                'data': jadwal_list,
+                'user_role': session.get('admin_role')
+            })
         except Exception as e:
             if db: db.close()
             print(f"Error fetching API jadwal: {e}")
@@ -1365,6 +1410,10 @@ def api_jadwal():
 @app.route('/tambah_jadwal', methods=['POST'])
 @login_required
 def tambah_jadwal():
+    if session.get('admin_role') == 'Ketua Murid':
+        flash('Anda tidak memiliki akses untuk menambah jadwal.', 'danger')
+        return redirect(url_for('manage_jadwal'))
+
     id_kelas = request.form.get('id_kelas')
     hari = request.form.get('hari')
     mata_pelajaran = request.form.get('mata_pelajaran')
@@ -1393,6 +1442,10 @@ def tambah_jadwal():
 @app.route('/edit_jadwal/<int:id>', methods=['POST'])
 @login_required
 def edit_jadwal(id):
+    if session.get('admin_role') == 'Ketua Murid':
+        flash('Anda tidak memiliki akses untuk mengubah jadwal.', 'danger')
+        return redirect(url_for('manage_jadwal'))
+
     id_kelas = request.form.get('id_kelas')
     hari = request.form.get('hari')
     mata_pelajaran = request.form.get('mata_pelajaran')
@@ -1422,6 +1475,10 @@ def edit_jadwal(id):
 @app.route('/hapus_jadwal/<int:id>')
 @login_required
 def hapus_jadwal(id):
+    if session.get('admin_role') == 'Ketua Murid':
+        flash('Anda tidak memiliki akses untuk menghapus jadwal.', 'danger')
+        return redirect(url_for('manage_jadwal'))
+
     db = get_db()
     if db:
         try:
@@ -1436,6 +1493,128 @@ def hapus_jadwal(id):
             flash(f'Gagal menghapus jadwal: {str(e)}', 'danger')
             
     return redirect(url_for('manage_jadwal'))
+
+
+@app.route('/api/cari_santri')
+def api_cari_santri():
+    query = request.args.get('q', '').strip()
+    
+    if not query:
+        return jsonify({'success': False, 'message': 'Masukkan nama atau NIS santri'}), 400
+        
+    db = get_db()
+    if not db:
+        return jsonify({'success': False, 'message': 'Gagal menyambung database'}), 500
+        
+    try:
+        cur = db.cursor(MySQLdb.cursors.DictCursor)
+        from datetime import date
+        today = date.today().strftime('%Y-%m-%d')
+        
+        # Search student and their attendance for today
+        # Using LEFT JOIN to get student data even if they haven't attended yet
+        sql = """
+            SELECT 
+                s.id, s.nis, s.nama_lengkap, s.gender, k.nama_kelas,
+                COALESCE(kh.status, 'Belum Absen') as status_hari_ini,
+                TIME_FORMAT(kh.waktu, '%%H:%%i') as waktu_absen
+            FROM santri s
+            LEFT JOIN kelas k ON s.id_kelas = k.id
+            LEFT JOIN kehadiran kh ON s.id = kh.id_santri AND kh.tanggal = %s
+            WHERE s.nama_lengkap LIKE %s OR s.nis LIKE %s
+            ORDER BY s.nama_lengkap ASC
+            LIMIT 10
+        """
+        search_term = f"%{query}%"
+        cur.execute(sql, (today, search_term, search_term))
+        results = cur.fetchall()
+        
+        cur.close()
+        db.close()
+        
+        return jsonify({
+            'success': True,
+            'results': results,
+            'count': len(results)
+        })
+        
+    except Exception as e:
+        if db: db.close()
+        print(f"Search Error: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# Forgot Password API Endpoints
+@app.route('/api/verify_reset', methods=['POST'])
+def verify_reset():
+    data = request.json
+    nama = data.get('nama')
+    email = data.get('email')
+    
+    if not nama or not email:
+        return jsonify({'success': False, 'message': 'Nama dan Email harus diisi'}), 400
+        
+    db = get_db()
+    if not db:
+        return jsonify({'success': False, 'message': 'Database error'}), 500
+        
+    try:
+        cur = db.cursor(MySQLdb.cursors.DictCursor)
+        # Check for exact match
+        cur.execute("SELECT id FROM admins WHERE nama_lengkap = %s AND email = %s", (nama, email))
+        user = cur.fetchone()
+        
+        cur.close()
+        db.close()
+        
+        if user:
+            return jsonify({'success': True, 'message': 'Verifikasi berhasil'})
+        else:
+            return jsonify({'success': False, 'message': 'Data tidak ditemukan'}), 404
+            
+    except Exception as e:
+        if db: db.close()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/api/reset_password', methods=['POST'])
+def reset_password():
+    data = request.json
+    nama = data.get('nama')
+    email = data.get('email')
+    new_password = data.get('new_password')
+    
+    if not nama or not email or not new_password:
+        return jsonify({'success': False, 'message': 'Semua field harus diisi'}), 400
+        
+    db = get_db()
+    if not db:
+        return jsonify({'success': False, 'message': 'Database error'}), 500
+        
+    try:
+        cur = db.cursor(MySQLdb.cursors.DictCursor)
+        # Verify again before updating
+        cur.execute("SELECT id FROM admins WHERE nama_lengkap = %s AND email = %s", (nama, email))
+        user = cur.fetchone()
+        
+        if not user:
+            cur.close()
+            db.close()
+            return jsonify({'success': False, 'message': 'Validasi gagal'}), 401
+            
+        # Update Password
+        hashed_password = generate_password_hash(new_password)
+        cur.execute("UPDATE admins SET password_hash = %s WHERE id = %s", (hashed_password, user['id']))
+        
+        db.commit()
+        cur.close()
+        db.close()
+        
+        return jsonify({'success': True, 'message': 'Kata sandi berhasil direset'})
+            
+    except Exception as e:
+        if db: db.close()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

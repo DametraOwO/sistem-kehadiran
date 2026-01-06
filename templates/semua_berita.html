@@ -99,40 +99,57 @@
             <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% if berita_list %}
                 {% for berita in berita_list %}
-                <a href="{{ url_for('berita_detail', id=berita.id) }}"
-                    class="news-card group/card bg-surface-light rounded-3xl p-4 shadow-soft border border-slate-100 flex flex-col gap-4 transition-all duration-300 hover:shadow-card active:scale-[0.98]"
-                    data-category="{{ berita.kategori }}">
-                    <div class="w-full aspect-[16/10] shrink-0 rounded-2xl bg-slate-100 overflow-hidden">
-                        {% if berita.gambar %}
-                        <img src="{{ url_for('static', filename='uploads/berita/' + berita.gambar) }}"
-                            alt="{{ berita.judul }}"
-                            class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500">
-                        {% else %}
-                        <div class="w-full h-full flex items-center justify-center islamic-pattern opacity-10">
-                            <span class="material-symbols-outlined text-white text-[48px]">campaign</span>
-                        </div>
-                        {% endif %}
+                <div class="news-card relative group/card" data-category="{{ berita.kategori }}">
+                    {% if session.get('admin_role') == 'Admin' or (session.get('admin_role') == 'Guru' and
+                    session.get('admin_id') == berita.penulis_id) %}
+                    <div class="absolute top-4 right-4 flex gap-2 z-20">
+                        <button
+                            class="edit-news-btn size-8 bg-white/90 backdrop-blur rounded-lg flex items-center justify-center text-primary hover:text-primary-dark transition-colors shadow-sm"
+                            data-id="{{ berita.id }}" data-judul="{{ berita.judul }}" data-konten="{{ berita.konten }}"
+                            data-kategori="{{ berita.kategori }}" title="Edit Postingan">
+                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                        </button>
+                        <button
+                            class="delete-news-btn size-8 bg-white/90 backdrop-blur rounded-lg flex items-center justify-center text-red-500 hover:text-red-600 transition-colors shadow-sm"
+                            data-id="{{ berita.id }}" data-judul="{{ berita.judul }}" title="Hapus Postingan">
+                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
                     </div>
-                    <div class="flex flex-col flex-1 min-w-0 px-1">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span
-                                class="px-2.5 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase tracking-wider">
-                                {{ berita.kategori }}
-                            </span>
-                            <span class="text-[11px] text-slate-500 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[14px]">event</span>
-                                {{ berita.created_at.strftime('%d %b %Y') if berita.created_at else '--' }}
-                            </span>
+                    {% endif %}
+                    <a href="{{ url_for('berita_detail', id=berita.id) }}"
+                        class="bg-surface-light rounded-3xl p-4 shadow-soft border border-slate-100 flex flex-col gap-4 transition-all duration-300 hover:shadow-card active:scale-[0.98] h-full">
+                        <div class="w-full aspect-[16/10] shrink-0 rounded-2xl bg-slate-100 overflow-hidden">
+                            {% if berita.gambar %}
+                            <img src="{{ url_for('static', filename='uploads/berita/' + berita.gambar) }}"
+                                alt="{{ berita.judul }}"
+                                class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500">
+                            {% else %}
+                            <div class="w-full h-full flex items-center justify-center islamic-pattern opacity-10">
+                                <span class="material-symbols-outlined text-white text-[48px]">campaign</span>
+                            </div>
+                            {% endif %}
                         </div>
-                        <h4
-                            class="text-slate-900 font-bold text-base line-clamp-2 leading-tight mb-2 group-hover/card:text-primary transition-colors">
-                            {{ berita.judul }}
-                        </h4>
-                        <p class="text-sm text-slate-500 line-clamp-2 leading-relaxed">
-                            {{ berita.konten }}
-                        </p>
-                    </div>
-                </a>
+                        <div class="flex flex-col flex-1 min-w-0 px-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span
+                                    class="px-2.5 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase tracking-wider">
+                                    {{ berita.kategori }}
+                                </span>
+                                <span class="text-[11px] text-slate-500 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">event</span>
+                                    {{ berita.created_at.strftime('%d %b %Y') if berita.created_at else '--' }}
+                                </span>
+                            </div>
+                            <h4
+                                class="text-slate-900 font-bold text-base line-clamp-2 leading-tight mb-2 group-hover/card:text-primary transition-colors">
+                                {{ berita.judul }}
+                            </h4>
+                            <p class="text-sm text-slate-500 line-clamp-2 leading-relaxed">
+                                {{ berita.konten }}
+                            </p>
+                        </div>
+                    </a>
+                </div>
                 {% endfor %}
                 {% else %}
                 <div class="col-span-full flex flex-col items-center justify-center py-20 text-slate-400 text-center">
@@ -147,7 +164,7 @@
         <footer class="p-8 text-center bg-slate-50 mt-auto">
             <p class="text-xs text-slate-400 font-medium">© 2025 Madrasah Digital - Sistem Kehadiran Santri</p>
         </footer>
-        {% if session.get('admin_id') %}
+        {% if session.get('admin_id') and session['admin_role'] != 'Ketua Murid' %}
         <!-- Floating Action Button for Admin -->
         <div class="fixed bottom-8 right-6 z-[60]">
             <button id="open-news-modal"

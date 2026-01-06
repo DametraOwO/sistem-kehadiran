@@ -167,7 +167,8 @@
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">badge</span>
                                         <input name="identifier"
                                             class="w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                            placeholder="alhidayah@madrasah.com" type="text" required />
+                                            placeholder="alhidayah@madrasah.com" type="text" autocomplete="off" readonly
+                                            onfocus="this.removeAttribute('readonly');" required />
                                     </div>
                                 </div>
                                 <!-- Password Input -->
@@ -179,7 +180,8 @@
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock</span>
                                         <input id="password-login" name="password"
                                             class="w-full h-12 pl-11 pr-12 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                            placeholder="••••••••" type="password" required />
+                                            placeholder="••••••••" type="password" autocomplete="new-password" readonly
+                                            onfocus="this.removeAttribute('readonly');" required />
                                         <button
                                             class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
                                             data-target="password-login" type="button">
@@ -215,7 +217,8 @@
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">person</span>
                                         <input name="nama"
                                             class="w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                            placeholder="Nama Lengkap" type="text" required />
+                                            placeholder="Nama Lengkap" type="text" autocomplete="off" readonly
+                                            onfocus="this.removeAttribute('readonly');" required />
                                     </div>
                                 </div>
 
@@ -227,7 +230,8 @@
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">mail</span>
                                         <input name="email"
                                             class="w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                            placeholder="email@contoh.com" type="email" required />
+                                            placeholder="alhidayah@madrasah.com" type="email" autocomplete="off"
+                                            readonly onfocus="this.removeAttribute('readonly');" required />
                                     </div>
                                 </div>
 
@@ -279,7 +283,8 @@
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock</span>
                                         <input id="password-reg" name="password"
                                             class="w-full h-12 pl-11 pr-12 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                            placeholder="Min. 8 karakter" type="password" required />
+                                            placeholder="Min. 8 karakter" type="password" autocomplete="new-password"
+                                            readonly onfocus="this.removeAttribute('readonly');" required />
                                         <button
                                             class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
                                             data-target="password-reg" type="button">
@@ -297,7 +302,8 @@
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock_reset</span>
                                         <input id="password-confirm" name="confirm_password"
                                             class="w-full h-12 pl-11 pr-12 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                            placeholder="Ulangi kata sandi" type="password" required />
+                                            placeholder="Ulangi kata sandi" type="password" autocomplete="new-password"
+                                            readonly onfocus="this.removeAttribute('readonly');" required />
                                         <button
                                             class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
                                             data-target="password-confirm" type="button">
@@ -319,6 +325,105 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="hidden fixed inset-0 z-[100] flex items-end justify-center sm:items-center">
+        <!-- Backdrop -->
+        <div id="forgot-modal-backdrop"
+            class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
+
+        <!-- Modal Content -->
+        <div id="forgot-modal-content"
+            class="relative w-full max-w-lg bg-surface-light rounded-t-[32px] sm:rounded-2xl shadow-2xl overflow-hidden translate-y-full transition-transform duration-300 p-6 flex flex-col gap-5">
+            <!-- Header -->
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">Lupa Kata Sandi?</h3>
+                    <p class="text-sm text-slate-500 font-medium">Verifikasi identitas Anda untuk mereset sandi.</p>
+                </div>
+                <button id="close-forgot-modal"
+                    class="size-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Form -->
+            <div class="flex flex-col gap-4">
+                <!-- Step 1: Verification -->
+                <div id="step-verification" class="flex flex-col gap-4 transition-all duration-300">
+                    <!-- Nama Lengkap -->
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-gray-900 text-sm font-medium ml-1">Nama Lengkap</label>
+                        <div class="relative flex items-center">
+                            <span
+                                class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">person</span>
+                            <input id="forgot-nama" type="text"
+                                class="w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                placeholder="Sesuai akun terdaftar" autocomplete="off" readonly
+                                onfocus="this.removeAttribute('readonly');">
+                        </div>
+                    </div>
+                    <!-- Email -->
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-gray-900 text-sm font-medium ml-1">Email</label>
+                        <div class="relative flex items-center">
+                            <span
+                                class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">mail</span>
+                            <input id="forgot-email" type="email"
+                                class="w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                placeholder="alhidayah@madrasah.com" autocomplete="off" readonly
+                                onfocus="this.removeAttribute('readonly');">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: New Password (Initially Disabled) -->
+                <div id="step-reset"
+                    class="flex flex-col gap-4 opacity-50 pointer-events-none transition-all duration-300">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-gray-900 text-sm font-medium ml-1">Kata Sandi Baru</label>
+                        <div class="relative flex items-center">
+                            <span
+                                class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock</span>
+                            <input id="forgot-new-pass" type="password" disabled
+                                class="w-full h-12 pl-11 pr-12 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                placeholder="Min. 8 karakter" autocomplete="new-password">
+                            <button
+                                class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
+                                data-target="forgot-new-pass" type="button">
+                                <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-gray-900 text-sm font-medium ml-1">Konfirmasi Sandi</label>
+                        <div class="relative flex items-center">
+                            <span
+                                class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">lock_reset</span>
+                            <input id="forgot-confirm-pass" type="password" disabled
+                                class="w-full h-12 pl-11 pr-12 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                placeholder="Ulangi kata sandi" autocomplete="new-password">
+                            <button
+                                class="absolute right-4 text-gray-400 hover:text-primary transition-colors flex items-center justify-center toggle-password"
+                                data-target="forgot-confirm-pass" type="button">
+                                <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message Area -->
+                <div id="forgot-message" class="hidden p-3 rounded-xl text-sm font-medium flex items-center gap-2">
+                </div>
+
+                <!-- Action Button -->
+                <button id="forgot-action-btn"
+                    class="w-full h-12 bg-primary hover:bg-green-600 text-white font-bold rounded-xl shadow-lg shadow-primary/30 transition-all duration-200">
+                    Verifikasi
+                </button>
             </div>
         </div>
     </div>
