@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login Portal Madrasah</title>
+    <title>Login Portal Madrasah Diniyah Al-Hidayah Ciparay</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
@@ -102,7 +102,7 @@
                     <h1 class="text-white tracking-tight text-[24px] font-bold leading-tight mb-1">
                         Assalamu'alaikum</h1>
                     <p class="text-white/80 text-[13px] font-normal leading-relaxed">
-                        Sistem Presensi Digital Madrasah Al-Hidayah.
+                        Sistem Presensi Digital Madrasah Diniyah Al-Hidayah Ciparay.
                     </p>
                 </div>
             </div>
@@ -161,7 +161,7 @@
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                                 <!-- Username Input -->
                                 <div class="flex flex-col gap-1.5">
-                                    <label class="text-gray-900 text-sm font-medium ml-1">ID Pengguna
+                                    <label class="text-gray-900 text-sm font-medium ml-1">Username
                                         atau
                                         Email</label>
                                     <div class="relative flex items-center">
@@ -169,7 +169,7 @@
                                             class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">badge</span>
                                         <input name="identifier"
                                             class="w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                            placeholder="alhidayah@madrasah.com" type="text" autocomplete="off" readonly
+                                            placeholder="Username atau Email" type="text" autocomplete="off" readonly
                                             onfocus="this.removeAttribute('readonly');" required />
                                     </div>
                                 </div>
@@ -225,6 +225,19 @@
                                     </div>
                                 </div>
 
+                                <!-- Username -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-gray-900 text-sm font-medium ml-1">Username</label>
+                                    <div class="relative flex items-center">
+                                        <span
+                                            class="absolute left-4 text-gray-400 material-symbols-outlined text-[20px]">alternate_email</span>
+                                        <input name="username"
+                                            class="w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                            placeholder="Username" type="text" autocomplete="off" readonly
+                                            onfocus="this.removeAttribute('readonly');" required />
+                                    </div>
+                                </div>
+
                                 <!-- Email -->
                                 <div class="flex flex-col gap-1.5">
                                     <label class="text-gray-900 text-sm font-medium ml-1">Email</label>
@@ -269,7 +282,6 @@
                                                 <option value="" disabled selected>Pilih</option>
                                                 <option value="Guru">Guru</option>
                                                 <option value="Ketua Murid">Ketua Murid</option>
-                                                <option value="Admin">Admin</option>
                                             </select>
                                             <span
                                                 class="absolute right-3 text-gray-400 material-symbols-outlined text-[20px] pointer-events-none">expand_more</span>

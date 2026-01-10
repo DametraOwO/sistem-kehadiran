@@ -5,9 +5,10 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Madrasah Attendance Dashboard</title>
+    <title>Dashboard - Madrasah Diniyah Al-Hidayah Ciparay</title>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
         rel="stylesheet" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
@@ -126,7 +127,16 @@
                             class="material-symbols-outlined group-hover:text-primary transition-colors">description</span>
                         <span class="text-sm">Laporan</span>
                     </a>
+                    {% if session.get('admin_role') == 'Admin' %}
+                    <a href="{{ url_for('manage_accounts') }}"
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 hover:bg-slate-50 font-semibold transition-all group">
+                        <span
+                            class="material-symbols-outlined group-hover:text-primary transition-colors">manage_accounts</span>
+                        <span class="text-sm">Manajemen Akun</span>
+                    </a>
+                    {% endif %}
                     <div class="h-px bg-slate-100 my-4 mx-4"></div>
+
                     <a href="{{ url_for('about') }}"
                         class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-600 hover:bg-slate-50 font-semibold transition-all group">
                         <span class="material-symbols-outlined group-hover:text-primary transition-colors">info</span>
@@ -656,6 +666,7 @@
                 <div class="p-6 max-h-[80vh] overflow-y-auto no-scrollbar">
                     <form action="{{ url_for('tambah_berita') }}" method="POST" enctype="multipart/form-data"
                         id="news-form" class="flex flex-col gap-5">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="berita_id" id="modal-berita-id">
                         <div class="flex flex-col gap-1.5">
                             <label class="text-slate-700 text-sm font-semibold text-wrap">Judul

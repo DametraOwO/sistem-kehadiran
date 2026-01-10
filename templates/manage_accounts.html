@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Akun - MADRASAH DIGITAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
+        :root {
+            --primary: #14b881;
+            --primary-dark: #0f9669;
+            --surface-light: #ffffff;
+            --background-light: #f6f8f7;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .islamic-pattern {
+            background-color: #14b881;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M40 0l10 30 30 10-30 10-10 30-10-30-30-10 30-10z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Custom Scrollbar for Table */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 5px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #14b88144;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #14b88188;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#14b881',
+                        'primary-dark': '#0f9669',
+                        surface: {
+                            light: '#ffffff',
+                        },
+                        background: {
+                            light: '#f6f8f7',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background-light text-slate-900 transition-colors duration-300">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+
+        <!-- Standard Green Header -->
+        <div class="relative w-full islamic-pattern rounded-b-[40px] shadow-lg pt-12 pb-10 px-6 z-10">
+            <div class="absolute inset-0 islamic-pattern opacity-100 mix-blend-normal rounded-b-[40px]"></div>
+
+            <div class="relative z-10 max-w-5xl mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <a href="{{ url_for('admin') }}"
+                        class="size-12 flex items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 transition-all">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </a>
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-white tracking-tight">Kelola Akun</h1>
+                        <p class="text-white/80 text-xs font-medium uppercase tracking-widest">Manajemen Pengguna Sistem
+                        </p>
+                    </div>
+                </div>
+
+                <button id="open-tambah-modal"
+                    class="h-12 px-6 rounded-2xl bg-white text-primary font-bold shadow-xl shadow-black/10 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
+                    <span class="material-symbols-outlined text-[20px]">person_add</span>
+                    <span class="hidden sm:inline">Tambah Akun</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-1 -mt-6 px-6 pb-20 z-20">
+            <div class="max-w-5xl mx-auto">
+
+                <!-- Toast Messages (JavaScript handled mostly, but for initial flashes) -->
+                <div id="toast-container" class="mb-6 space-y-3">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div
+                        class="p-4 rounded-2xl text-sm font-bold border flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300 {% if category == 'danger' %}bg-red-50 text-red-700 border-red-100{% else %}bg-green-50 text-green-700 border-green-100{% endif %}">
+                        <span class="material-symbols-outlined text-[20px]">{{ 'error' if category == 'danger' else
+                            'check_circle' }}</span>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+
+                <!-- Search & Filters Container -->
+                <div class="space-y-4 mb-8">
+                    <div class="flex flex-col lg:flex-row justify-between gap-4">
+                        <div class="relative flex-1 group">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">search</span>
+                            <input type="text" id="account-search" placeholder="Cari nama, username, atau email..."
+                                class="w-full h-14 pl-12 pr-4 rounded-[20px] bg-white border border-slate-100 shadow-sm focus:ring-2 focus:ring-primary/50 text-sm outline-none transition-all placeholder:text-slate-400">
+                        </div>
+
+                        <div class="flex flex-wrap sm:flex-nowrap gap-3">
+                            <!-- Role Filter -->
+                            <div class="relative group/role flex-1 sm:flex-none h-14 min-w-[200px]">
+                                <div
+                                    class="absolute inset-0 flex items-center px-5 bg-white rounded-2xl border border-slate-100 shadow-sm group-hover/role:border-primary/50 transition-colors pointer-events-none">
+                                    <span class="material-symbols-outlined text-slate-400 mr-3 text-[20px]">badge</span>
+                                    <span id="role-label"
+                                        class="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex-1">SEMUA
+                                        ROLE</span>
+                                    <span
+                                        class="material-symbols-outlined text-slate-400 text-[18px] ml-2">expand_more</span>
+                                </div>
+                                <select id="role-filter"
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                    <option value="all">SEMUA ROLE</option>
+                                    <option value="Admin">ADMIN</option>
+                                    <option value="Guru">GURU</option>
+                                    <option value="Ketua Murid">KETUA MURID</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="max-h-[600px] overflow-auto custom-scrollbar relative">
+                        <table class="w-full min-w-[700px] text-left border-collapse">
+                            <thead class="sticky top-0 z-10">
+                                <tr class="bg-slate-50 border-b border-slate-100">
+                                    <th
+                                        class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">
+                                        Nama Lengkap</th>
+                                    <th
+                                        class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">
+                                        Username</th>
+                                    <th
+                                        class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">
+                                        Email</th>
+                                    <th
+                                        class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50 text-center">
+                                        Role</th>
+                                    <th
+                                        class="px-6 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider text-center bg-slate-50">
+                                        Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="account-table-body" class="divide-y divide-slate-100">
+                                <!-- Table rows will be populated by JS -->
+                                <tr>
+                                    <td colspan="5" class="px-6 py-20 text-center">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <div
+                                                class="animate-spin size-8 border-4 border-primary border-t-transparent rounded-full">
+                                            </div>
+                                            <p class="text-slate-500 text-sm font-medium">Memuat data akun...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- CRUD Modal -->
+        <div id="account-modal"
+            class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-hidden">
+            <!-- Backdrop -->
+            <div id="modal-backdrop"
+                class="absolute inset-0 bg-black/40 backdrop-blur-2xl transition-opacity opacity-0 duration-300"></div>
+
+            <!-- Modal Content -->
+            <div id="modal-content"
+                class="relative w-full max-w-lg bg-white rounded-t-[40px] sm:rounded-[40px] shadow-2xl transition-transform translate-y-full duration-300 overflow-hidden">
+                <!-- Modal Header -->
+                <div class="p-8 pb-4 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="size-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                            <span id="modal-icon" class="material-symbols-outlined text-[32px]">person_add</span>
+                        </div>
+                        <div>
+                            <h3 id="modal-title" class="text-xl font-bold">Tambah Akun Baru</h3>
+                            <p class="text-xs text-slate-500 font-medium">Lengkapi data pengguna dengan benar</p>
+                        </div>
+                    </div>
+                    <button id="close-modal"
+                        class="size-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:text-red-500 transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-8 pt-4">
+                    <form id="account-form" class="space-y-5">
+                        <input type="hidden" name="id" id="form-id">
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nama Lengkap</label>
+                                <input type="text" name="nama_lengkap" id="form-nama" required
+                                    placeholder="Masukkan nama lengkap..."
+                                    class="w-full h-14 px-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-slate-500 uppercase ml-1">Username</label>
+                                    <input type="text" name="username" id="form-username" required
+                                        placeholder="Username"
+                                        class="w-full h-14 px-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-slate-500 uppercase ml-1">Jenis Kelamin</label>
+                                    <select name="gender" id="form-gender" required
+                                        class="w-full h-14 px-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all cursor-pointer">
+                                        <option value="L">Laki-laki</option>
+                                        <option value="P">Perempuan</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Email</label>
+                                <input type="email" name="email" id="form-email" required
+                                    placeholder="email@example.com"
+                                    class="w-full h-14 px-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-slate-500 uppercase ml-1">Role</label>
+                                    <select name="status_role" id="form-role" required
+                                        class="w-full h-14 px-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all cursor-pointer">
+                                        <option value="Admin">Admin</option>
+                                        <option value="Guru">Guru</option>
+                                        <option value="Ketua Murid">Ketua Murid</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-slate-500 uppercase ml-1">Kata Sandi</label>
+                                    <div class="relative">
+                                        <input type="password" name="password" id="form-password" placeholder="••••••••"
+                                            class="w-full h-14 px-5 pr-12 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all">
+                                        <button type="button" id="toggle-password"
+                                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors flex items-center justify-center">
+                                            <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                        </button>
+                                    </div>
+                                    <p id="password-hint" class="hidden text-[10px] text-slate-400 ml-1">Kosongkan jika
+                                        tidak ingin mengubah kata sandi</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <button type="submit" id="form-submit-btn"
+                            class="w-full h-14 mt-4 bg-primary hover:bg-primary-dark text-white font-bold rounded-2xl shadow-xl shadow-primary/20 transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-2">
+                            <span id="form-submit-text">Simpan Akun</span>
+                            <span class="material-symbols-outlined text-[20px]">send</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/manage_accounts.js') }}"></script>
+</body>
+
+</html>

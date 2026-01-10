@@ -231,7 +231,7 @@ def login():
             
         try:
             cur = db.cursor()
-            cur.execute("SELECT id, password_hash, nama_lengkap, status_role FROM admins WHERE email = %s OR id = %s", (identifier, identifier))
+            cur.execute("SELECT id, password_hash, nama_lengkap, status_role FROM admins WHERE email = %s OR username = %s OR id = %s", (identifier, identifier, identifier))
             user = cur.fetchone()
             cur.close()
             db.close()
@@ -255,6 +255,7 @@ def login():
 @app.route('/register', methods=['POST'])
 def register():
     nama = request.form['nama']
+    username = request.form['username']
     email = request.form['email']
     gender = request.form['gender']
     status_role = request.form['status_role']
@@ -274,8 +275,8 @@ def register():
         
     try:
         cur = db.cursor()
-        cur.execute("INSERT INTO admins (nama_lengkap, email, gender, status_role, password_hash) VALUES (%s, %s, %s, %s, %s)", 
-                    (nama, email, gender, status_role, hashed_password))
+        cur.execute("INSERT INTO admins (nama_lengkap, username, email, gender, status_role, password_hash) VALUES (%s, %s, %s, %s, %s, %s)", 
+                    (nama, username, email, gender, status_role, hashed_password))
         db.commit()
         cur.close()
         db.close()
@@ -284,8 +285,13 @@ def register():
         if db: db.close()
         # Handle duplicate entry error (MySQL error 1062)
         error_msg = str(e)
-        if "1062" in error_msg and "email" in error_msg:
-            flash('Email tidak dapat digunakan karena sudah terdaftar.', 'danger')
+        if "1062" in error_msg:
+            if "email" in error_msg:
+                flash('Email sudah terdaftar.', 'danger')
+            elif "username" in error_msg:
+                flash('Username sudah digunakan.', 'danger')
+            else:
+                 flash('Email atau Username sudah terdaftar.', 'danger')
         else:
             flash(f'Pendaftaran gagal: {error_msg}', 'danger')
         print(f"Registration Error: {e}")
@@ -1049,6 +1055,7 @@ def profil():
 def update_profil():
     admin_id = session.get('admin_id')
     nama = request.form['nama_lengkap']
+    username = request.form['username']
     email = request.form['email']
     gender = request.form['gender']
     new_password = request.form.get('new_password')
@@ -1088,15 +1095,15 @@ def update_profil():
                 pass_hash = generate_password_hash(new_password)
                 cur.execute("""
                     UPDATE admins 
-                    SET nama_lengkap = %s, email = %s, gender = %s, foto_profil = %s, password_hash = %s 
+                    SET nama_lengkap = %s, username = %s, email = %s, gender = %s, foto_profil = %s, password_hash = %s 
                     WHERE id = %s
-                """, (nama, email, gender, filename, pass_hash, admin_id))
+                """, (nama, username, email, gender, filename, pass_hash, admin_id))
             else:
                 cur.execute("""
                     UPDATE admins 
-                    SET nama_lengkap = %s, email = %s, gender = %s, foto_profil = %s 
+                    SET nama_lengkap = %s, username = %s, email = %s, gender = %s, foto_profil = %s 
                     WHERE id = %s
-                """, (nama, email, gender, filename, admin_id))
+                """, (nama, username, email, gender, filename, admin_id))
             
             db.commit()
             cur.close()
@@ -1108,8 +1115,13 @@ def update_profil():
         except Exception as e:
             if db: db.close()
             error_msg = str(e)
-            if "1062" in error_msg and "email" in error_msg:
-                flash('Email tidak dapat digunakan karena sudah terdaftar.', 'danger')
+            if "1062" in error_msg:
+                if "email" in error_msg:
+                    flash('Email tidak dapat digunakan karena sudah terdaftar.', 'danger')
+                elif "username" in error_msg:
+                    flash('Username tidak dapat digunakan karena sudah terdaftar.', 'danger')
+                else:
+                    flash('Email atau Username sudah terdaftar.', 'danger')
             else:
                 flash(f'Gagal memperbarui profil: {error_msg}', 'danger')
             
@@ -1384,19 +1396,7 @@ def api_jadwal():
             """)
             jadwal_list = cur.fetchall()
             
-            # Convert time objects to string for JSON serialization
-            # TIME_FORMAT returns strings, so we might not need extra conversion relative to datetime.timedelta
-            # But let's keep the loop just in case or simpler:
-            # Actually TIME_FORMAT returns a string, so the JSON serializer will handle it fine.
-            # We can remove the manual conversion loop if it was only for timedelta/time objects.
-            # However, let's just leave the loop or remove it? Use caution.
-            # Previous loop:
-            # for jadwal in jadwal_list:
-            #     if 'waktu_mulai' in jadwal:
-            #         jadwal['waktu_mulai'] = str(jadwal['waktu_mulai'])
-            
-            # Since we return strings now, let's check if we need to do anything.
-            # If the DB returns strings, we are good.
+            # TIME_FORMAT returns strings, so the JSON serializer will handle it fine.
             
             cur.close()
             db.close()
@@ -1619,6 +1619,186 @@ def reset_password():
         if db: db.close()
         return jsonify({'success': False, 'message': str(e)}), 500
 
+
+@app.route('/manage_accounts')
+@login_required
+def manage_accounts():
+    if session.get('admin_role') != 'Admin':
+        flash('Anda tidak memiliki akses ke halaman ini.', 'danger')
+        return redirect(url_for('admin'))
+    
+    db = get_db()
+    kelas_list = []
+    if db:
+        try:
+            cur = db.cursor(MySQLdb.cursors.DictCursor)
+            cur.execute("SELECT * FROM kelas ORDER BY nama_kelas ASC")
+            kelas_list = cur.fetchall()
+            cur.close()
+            db.close()
+        except Exception as e:
+            if db: db.close()
+            print(f"Error fetching classes for account management: {e}")
+            
+    return render_template('manage_accounts.html', kelas_list=kelas_list)
+
+@app.route('/api/accounts', methods=['GET'])
+@login_required
+def api_get_accounts():
+    if session.get('admin_role') != 'Admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+    
+    db = get_db()
+    if not db:
+        return jsonify({'success': False, 'message': 'Database error'}), 500
+        
+    try:
+        cur = db.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute("SELECT id, nama_lengkap, username, email, gender, status_role FROM admins ORDER BY nama_lengkap ASC")
+        accounts = cur.fetchall()
+        cur.close()
+        db.close()
+        return jsonify({'success': True, 'data': accounts})
+    except Exception as e:
+        if db: db.close()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/api/accounts', methods=['POST'])
+@login_required
+def api_create_account():
+    if session.get('admin_role') != 'Admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+    
+    data = request.form
+    nama = data.get('nama_lengkap')
+    username = data.get('username')
+    email = data.get('email')
+    gender = data.get('gender')
+    role = data.get('status_role')
+    password = data.get('password')
+    
+    if not all([nama, username, email, gender, role, password]):
+        return jsonify({'success': False, 'message': 'Semua field harus diisi'}), 400
+        
+    db = get_db()
+    if not db:
+        return jsonify({'success': False, 'message': 'Database error'}), 500
+        
+    try:
+        cur = db.cursor()
+        hashed_password = generate_password_hash(password)
+        cur.execute("INSERT INTO admins (nama_lengkap, username, email, gender, status_role, password_hash) VALUES (%s, %s, %s, %s, %s, %s)", 
+                    (nama, username, email, gender, role, hashed_password))
+        db.commit()
+        
+        # Log Activity
+        admin_name = session.get('admin_name', 'Admin')
+        record_log(session.get('admin_id'), 'Akun', f"<b>{admin_name}</b> menambahkan akun baru: <b>{nama}</b> ({role})")
+        
+        cur.close()
+        db.close()
+        return jsonify({'success': True, 'message': 'Akun berhasil ditambahkan'})
+    except Exception as e:
+        if db: db.close()
+        error_msg = str(e)
+        if "1062" in error_msg:
+            if "email" in error_msg:
+                return jsonify({'success': False, 'message': 'Email sudah terdaftar'}), 400
+            elif "username" in error_msg:
+                return jsonify({'success': False, 'message': 'Username sudah digunakan'}), 400
+        return jsonify({'success': False, 'message': error_msg}), 500
+
+@app.route('/api/accounts/<int:id>', methods=['PUT'])
+@login_required
+def api_update_account(id):
+    if session.get('admin_role') != 'Admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+    
+    data = request.form
+    nama = data.get('nama_lengkap')
+    username = data.get('username')
+    email = data.get('email')
+    gender = data.get('gender')
+    role = data.get('status_role')
+    password = data.get('password')
+    
+    db = get_db()
+    if not db:
+        return jsonify({'success': False, 'message': 'Database error'}), 500
+        
+    try:
+        cur = db.cursor()
+        if password and password.strip() != '':
+            hashed_password = generate_password_hash(password)
+            cur.execute("""
+                UPDATE admins 
+                SET nama_lengkap = %s, username = %s, email = %s, gender = %s, status_role = %s, password_hash = %s 
+                WHERE id = %s
+            """, (nama, username, email, gender, role, hashed_password, id))
+        else:
+            cur.execute("""
+                UPDATE admins 
+                SET nama_lengkap = %s, username = %s, email = %s, gender = %s, status_role = %s 
+                WHERE id = %s
+            """, (nama, username, email, gender, role, id))
+        
+        db.commit()
+        
+        # Log Activity
+        admin_name = session.get('admin_name', 'Admin')
+        record_log(session.get('admin_id'), 'Akun', f"<b>{admin_name}</b> memperbarui akun: <b>{nama}</b>")
+        
+        cur.close()
+        db.close()
+        return jsonify({'success': True, 'message': 'Akun berhasil diperbarui'})
+    except Exception as e:
+        if db: db.close()
+        error_msg = str(e)
+        if "1062" in error_msg:
+            if "email" in error_msg:
+                return jsonify({'success': False, 'message': 'Email sudah terdaftar'}), 400
+            elif "username" in error_msg:
+                return jsonify({'success': False, 'message': 'Username sudah digunakan'}), 400
+        return jsonify({'success': False, 'message': error_msg}), 500
+
+@app.route('/api/accounts/<int:id>', methods=['DELETE'])
+@login_required
+def api_delete_account(id):
+    if session.get('admin_role') != 'Admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+    
+    # Prevent deleting own account
+    if id == session.get('admin_id'):
+        return jsonify({'success': False, 'message': 'Anda tidak bisa menghapus akun sendiri'}), 400
+        
+    db = get_db()
+    if not db:
+        return jsonify({'success': False, 'message': 'Database error'}), 500
+        
+    try:
+        cur = db.cursor()
+        # Get name for logging
+        cur.execute("SELECT nama_lengkap FROM admins WHERE id = %s", (id,))
+        user = cur.fetchone()
+        if user:
+            nama = user[0]
+            cur.execute("DELETE FROM admins WHERE id = %s", (id,))
+            db.commit()
+            
+            # Log Activity
+            admin_name = session.get('admin_name', 'Admin')
+            record_log(session.get('admin_id'), 'Akun', f"<b>{admin_name}</b> menghapus akun: <b>{nama}</b>")
+            
+            cur.close()
+            db.close()
+            return jsonify({'success': True, 'message': 'Akun berhasil dihapus'})
+        else:
+            cur.close()
+            db.close()
+            return jsonify({'success': False, 'message': 'Akun tidak ditemukan'}), 404
+    except Exception as e:
+        if db: db.close()
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 
 if __name__ == '__main__':

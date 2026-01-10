@@ -417,12 +417,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const beritaId = btn.dataset.id;
                 const judul = btn.dataset.judul;
+                // Get CSRF Token
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                 if (confirm(`Apakah Anda yakin ingin menghapus berita "${judul}"?`)) {
                     // Create a form and submit it
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = `/hapus_berita/${beritaId}`;
+
+                    // Add CSRF Input
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = 'csrf_token';
+                    csrfInput.value = csrfToken;
+                    form.appendChild(csrfInput);
+
                     document.body.appendChild(form);
                     form.submit();
                 }
