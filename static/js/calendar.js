@@ -60,7 +60,7 @@ async function fetchAndRenderCalendar(date) {
         const [calendarResponse, scheduleResponse, holidayResponse] = await Promise.all([
             fetch(`https://api.aladhan.com/v1/gToHCalendar/${month}/${year}?latitude=-6.9175&longitude=107.6191&method=20`),
             fetch('/api/jadwal'),
-            fetch(`https://api-harilibur.vercel.app/api?year=${year}`)
+            fetch(`https://libur.deno.dev/api?year=${year}`)
         ]);
 
         if (!calendarResponse.ok) {
@@ -83,8 +83,11 @@ async function fetchAndRenderCalendar(date) {
 
         if (holidayResponse.ok) {
             const holidayJson = await holidayResponse.json();
-            // API returns array of objects: { "holiday_date": "2024-1-1", "holiday_name": "Tahun Baru" }
-            window.globalHolidays = holidayJson;
+            window.globalHolidays = holidayJson.map(h => ({
+                holiday_date: h.date || h.holiday_date,
+                holiday_name: h.name || h.holiday_name,
+                is_national_holiday: h.is_national_holiday !== false
+            }));
         }
 
         renderCalendarGrid(days, date);

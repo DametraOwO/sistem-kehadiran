@@ -252,52 +252,6 @@ def login():
             
     return render_template('login.html')
 
-@app.route('/register', methods=['POST'])
-def register():
-    nama = request.form['nama']
-    username = request.form['username']
-    email = request.form['email']
-    gender = request.form['gender']
-    status_role = request.form['status_role']
-    password = request.form['password']
-    confirm_password = request.form['confirm_password']
-    
-    if password != confirm_password:
-        flash('Konfirmasi kata sandi tidak cocok.', 'danger')
-        return redirect(url_for('login'))
-    
-    hashed_password = generate_password_hash(password)
-    
-    db = get_db()
-    if db is None:
-        flash('Gagal menyambung ke database.', 'danger')
-        return redirect(url_for('login'))
-        
-    try:
-        cur = db.cursor()
-        cur.execute("INSERT INTO admins (nama_lengkap, username, email, gender, status_role, password_hash) VALUES (%s, %s, %s, %s, %s, %s)", 
-                    (nama, username, email, gender, status_role, hashed_password))
-        db.commit()
-        cur.close()
-        db.close()
-        flash('Akun berhasil dibuat! Silakan masuk.', 'success')
-    except Exception as e:
-        if db: db.close()
-        # Handle duplicate entry error (MySQL error 1062)
-        error_msg = str(e)
-        if "1062" in error_msg:
-            if "email" in error_msg:
-                flash('Email sudah terdaftar.', 'danger')
-            elif "username" in error_msg:
-                flash('Username sudah digunakan.', 'danger')
-            else:
-                 flash('Email atau Username sudah terdaftar.', 'danger')
-        else:
-            flash(f'Pendaftaran gagal: {error_msg}', 'danger')
-        print(f"Registration Error: {e}")
-        
-    return redirect(url_for('login'))
-
 @app.route('/logout')
 def logout():
     session.clear()
